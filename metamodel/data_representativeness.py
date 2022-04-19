@@ -307,8 +307,6 @@ class SampleRepresentativeness:
 
 
 
-
-
 if __name__ == "__main__":
 
     filename_qMC_Sobol = 'dataset_for_metamodel_creation.txt'
@@ -322,13 +320,11 @@ if __name__ == "__main__":
 
     samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
 
-
     samplerepresentativeness.plot_cumulative_mean_vs_sample_size(
         createfigure,
         savefigure,
         fonts
     )
-
 
     samplerepresentativeness.plot_cumulative_std_vs_sample_size(
         createfigure,
