@@ -149,7 +149,20 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
+        """
+        Plots the cumulative mean of a sample with the
+            std (computed from the self.nb_of_shuffled_samples shuffled
+                samples)
 
+        Parameters:
+            ----------
+            None
+
+        Returns:
+            -------
+            None
+
+        """
         with open("data_representativeness.pkl", "rb") as f:
             [cumulative_mean, std_of_cumulative_means, _, _, all_shuffled_phase3] = pickle.load(f)
 
@@ -188,7 +201,20 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
+        """
+        Plots the cumulative std of a sample with the
+            std (computed from the self.nb_of_shuffled_samples shuffled
+                samples)
 
+        Parameters:
+            ----------
+            None
+
+        Returns:
+            -------
+            None
+
+        """
         with open("data_representativeness.pkl", "rb") as f:
             [_, _, cumulative_std, std_of_cumulative_stds, all_shuffled_phase3] = pickle.load(f)
         sample_size = np.arange(1, len(cumulative_std) + 1)
@@ -226,7 +252,18 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
+        """
+        Plots the absolute gradient of the cumulative mean of a sample
 
+        Parameters:
+            ----------
+            None
+
+        Returns:
+            -------
+            None
+
+        """
         with open("data_representativeness.pkl", "rb") as f:
             [mean_of_cumulative_means, _, _, _, _] = pickle.load(f)
 
@@ -263,7 +300,18 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
+        """
+        Plots the absolute gradient of the cumulative std of a sample
 
+        Parameters:
+            ----------
+            None
+
+        Returns:
+            -------
+            None
+
+        """
         with open("data_representativeness.pkl", "rb") as f:
             [_, _, cumulative_std, _, _] = pickle.load(f)
 
