@@ -28,9 +28,16 @@ class SampleRepresentativeness:
             ----------
             filename: string
                 name of the .txt file from which the data will be extracted
-            training_amount : float
-                proportion (between 0 and 1) of the initial data used for training
-                (the remaining data are used for testing)
+            training_amount: float
+                proportion (between 0 and 1) of the initial data used for training (the remaining
+                data are used for testing)
+            nb_of_shuffled_samples: float
+                number of shuffled samples of the dataset, used to evaluate the standard
+                deviation of the cumulative mean of a sample
+            pixels: string
+                number of points per pixel in the figures
+                Recommended: 360 
+
 
         Returns:
             -------
