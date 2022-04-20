@@ -36,7 +36,7 @@ class SampleRepresentativeness:
                 deviation of the cumulative mean of a sample
             pixels: string
                 number of points per pixel in the figures
-                Recommended: 360 
+                Recommended: 360
 
 
         Returns:
