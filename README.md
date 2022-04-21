@@ -1,7 +1,7 @@
 # Enhancement of the model of the cellular uptake of nanoparticles with the membrane’s mechano-adaptation : validation with sensitivity analysis
 
 ## Associated paper
-The present code is the supplemental material associated to the paper ![1](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/Cellular_uptake_of_rigid_elliptic_random_nanoparticles.pdf). 
+The present code is the supplemental material associated to the paper ![1](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/Cellular_uptake_of_rigid_elliptic_random_nanoparticles.pdf).
 
 ## Dependencies
 In order to make sure that you are able to run the code, please install the required versions of the libraries by executing the command bellow in your terminal.
@@ -34,12 +34,12 @@ Figure 5: Definition of delta angle
 This repository is divided into 4 folders:
 - *model*: contains the code used to compute the total variation of energy of the interface between a circular NP and a membrane by accounting for the mechanical accommodation of the latter. This folder also contains the routine to determine the final wrapping phase of the system. A part of this code was already shared in the repository associated to [2];
 - *metamodel*: contains a script to check for the representativeness of the dataset used to create a metamodel, a script to create a Kriging metamodel using the Openturns [3] opensource library, and a routine to validate the metamodel that has just been created;
-- *sensitivity_analysis*: contains a script that allows to create samples based on the metamodels that have been created and exported as .pkl files in the metamodel folder. These samples are then used to the  apply sensitivity algorithms. The user can choose among the various sensitivity algorithms provided by Openturns. 
+- *sensitivity_analysis*: contains a script that allows to create samples based on the metamodels that have been created and exported as .pkl files in the metamodel folder. These samples are then used to the  apply sensitivity algorithms. The user can choose among the various sensitivity algorithms provided by Openturns.
 - *figures*: contains a utils script to display the graphs and save them as PNG files with consistency.
 
 
 
-Remark: Depending on your python version, you might use a different command than "python", as "py", "py3" or "python3" for instance. 
+Remark: Depending on your python version, you might use a different command than "python", as "py", "py3" or "python3" for instance.
 
 It is also possible to run the code from any Python development environment. It will run the code written in the main section.
 
@@ -78,6 +78,6 @@ A [GPL](https://tldrlegal.com/license/bsd-3-clause-license-(revised)) license is
         author={Baudin, Micha{\"e}l and Dutfoy, Anne and Iooss, Bertrand and Popelin, Anne-Laure},
         year={2016},
         publisher={Springer International Publishing}
-} 
+}
 
 ```
