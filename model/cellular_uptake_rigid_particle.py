@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.integrate
 import scipy.signal
-
 from system_definition import MechanicalProperties_Adaptation, MembraneGeometry, ParticleGeometry, Wrapping
 
 

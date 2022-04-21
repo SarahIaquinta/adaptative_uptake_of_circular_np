@@ -1,8 +1,10 @@
 from functools import lru_cache
-import numpy as np
-from math import sin, cos, atan, exp, pi, sqrt
-from mpmath import csch, coth
+from math import atan, cos, exp, pi, sin, sqrt
+
 import matplotlib.pyplot as plt
+import numpy as np
+from mpmath import coth, csch
+
 
 class Fixed_Mechanical_Properties:
     """
@@ -20,10 +22,11 @@ class Fixed_Mechanical_Properties:
         None
     """
 
-    def __init__(self,
-                 gamma_bar_0_list,
-                 sigma_bar_0_list,
-                 ):
+    def __init__(
+        self,
+        gamma_bar_0_list,
+        sigma_bar_0_list,
+    ):
         """
         Constructs all the necessary attributes for the mechanical properties object.
 
@@ -35,10 +38,10 @@ class Fixed_Mechanical_Properties:
                 adimensional membrane tension, initial value
         Returns:
             -------
-            None                    
+            None
         """
-        self.gamma_bar_0_list = gamma_bar_0_list 
-        self.sigma_bar_0_list = sigma_bar_0_list 
+        self.gamma_bar_0_list = gamma_bar_0_list
+        self.sigma_bar_0_list = sigma_bar_0_list
 
 
 class MechanicalProperties_Adaptation:
@@ -76,17 +79,18 @@ class MechanicalProperties_Adaptation:
 
     """
 
-    def __init__(self,
-                 testcase,
-                 gamma_bar_r,
-                 gamma_bar_fs,
-                 gamma_bar_lambda,
-                 sigma_bar_r,
-                 sigma_bar_fs,
-                 sigma_bar_lambda,
-                 gamma_bar_0,
-                 sigma_bar_0
-                 ):
+    def __init__(
+        self,
+        testcase,
+        gamma_bar_r,
+        gamma_bar_fs,
+        gamma_bar_lambda,
+        sigma_bar_r,
+        sigma_bar_fs,
+        sigma_bar_lambda,
+        gamma_bar_0,
+        sigma_bar_0,
+    ):
         """
         Constructs all the necessary attributes for the mechanical properties object.
 
@@ -114,7 +118,7 @@ class MechanicalProperties_Adaptation:
 
         Returns:
             -------
-            None                    
+            None
         """
         self.testcase = testcase
         self.gamma_bar_0 = gamma_bar_0
@@ -142,7 +146,7 @@ class MechanicalProperties_Adaptation:
         Returns:
             -------
             sigma_bar: float
-                adimensional membrane tension  
+                adimensional membrane tension
         """
         if self.sigma_bar_r == 1:
             sigma_bar = self.sigma_bar_0
@@ -151,7 +155,7 @@ class MechanicalProperties_Adaptation:
             x_list = np.linspace(-1, 1, len(wrapping.wrapping_list))
             sigma_bar = 0
             for i in range(len(wrapping.wrapping_list)):
-                if wrapping.wrapping_list[i] == f: 
+                if wrapping.wrapping_list[i] == f:
                     x = x_list[i]
                     """
                     Sigmoid expression
@@ -160,10 +164,9 @@ class MechanicalProperties_Adaptation:
                         sigma_additional_term = self.sigma_bar_0
                     else:
                         sigma_additional_term = sigma_bar_final
-                    sigma_bar += \
-                                (abs(sigma_bar_final - self.sigma_bar_0)) \
-                                * (1 / (1 + exp(-self.sigma_bar_lambda * (x - self.sigma_bar_fs))))\
-                                + sigma_additional_term
+                    sigma_bar += (abs(sigma_bar_final - self.sigma_bar_0)) * (
+                        1 / (1 + exp(-self.sigma_bar_lambda * (x - self.sigma_bar_fs)))
+                    ) + sigma_additional_term
         return sigma_bar
 
     @lru_cache(maxsize=128)
@@ -182,7 +185,7 @@ class MechanicalProperties_Adaptation:
         Returns:
             -------
             gamma_bar: float
-                adimensional membrane tension  
+                adimensional membrane tension
         """
         if self.gamma_bar_r == 1:
             gamma_bar = self.gamma_bar_0
@@ -191,7 +194,7 @@ class MechanicalProperties_Adaptation:
             x_list = np.linspace(-1, 1, len(wrapping.wrapping_list))
             gamma_bar = 0
             for i in range(len(wrapping.wrapping_list)):
-                if wrapping.wrapping_list[i] == f: 
+                if wrapping.wrapping_list[i] == f:
                     x = x_list[i]
                     """
                     Sigmoid expression
@@ -200,7 +203,9 @@ class MechanicalProperties_Adaptation:
                         gamma_additional_term = self.gamma_bar_0
                     else:
                         gamma_additional_term = gamma_bar_final
-                    gamma_bar += (abs(gamma_bar_final - self.gamma_bar_0)) * (1 / (1 + exp(-self.gamma_bar_lambda * (x - self.gamma_bar_fs)))) + gamma_additional_term    
+                    gamma_bar += (abs(gamma_bar_final - self.gamma_bar_0)) * (
+                        1 / (1 + exp(-self.gamma_bar_lambda * (x - self.gamma_bar_fs)))
+                    ) + gamma_additional_term
             return gamma_bar
         return gamma_bar
 
@@ -217,9 +222,9 @@ class MechanicalProperties_Adaptation:
         Returns:
             -------
             sigma_bar_list: list
-                value of sigma_bar computed for all values of wrapping 
+                value of sigma_bar computed for all values of wrapping
             gamma_bar_list: list
-                value of gamma_bar computed for all values of wrapping 
+                value of gamma_bar computed for all values of wrapping
         """
         sigma_bar_list = [self.sigma_bar(f, wrapping) for f in wrapping.wrapping_list]
         gamma_bar_list = [self.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
@@ -240,19 +245,39 @@ class MechanicalProperties_Adaptation:
             None
         """
         fig, axs = plt.subplots(2, 1, constrained_layout=True)
-        sub1 = axs[0] #plt.subplot(2, 1, 1)
-        sub2 = axs[1] #plt.subplot(2, 1, 2)
+        sub1 = axs[0]  # plt.subplot(2, 1, 1)
+        sub2 = axs[1]  # plt.subplot(2, 1, 2)
         sigma_bar_list, gamma_bar_list = self.mechanical_parameters_evolution(wrapping)
-        sub1.plot(wrapping.wrapping_list, sigma_bar_list, '-k',
-                 label = '$\overline{\sigma}_0 = $ ; ' + str(self.sigma_bar_0) + '$\overline{\sigma}_{fs} = $ ; ' + str(self.sigma_bar_fs) + '$\overline{\sigma}_{r} = $ ; ' + str(self.sigma_bar_r) + '$\overline{\sigma}_{\lambda} = $ ; ' + str(self.sigma_bar_lambda)  
-                         )
-        sub2.plot(wrapping.wrapping_list, gamma_bar_list, '-k',
-                 label = '$\overline{\gamma}_0 = $ ; ' + str(self.gamma_bar_0) + '$\overline{\gamma}_{fs} = $ ; ' + str(self.gamma_bar_fs) + '$\overline{\gamma}_{r} = $ ; ' + str(self.gamma_bar_r) + '$\overline{\gamma}_{\lambda} = $ ; ' + str(self.gamma_bar_lambda)  
-                         )
-        sub1.set_xlabel('wrapping degree f [ - ]')
-        sub1.set_ylabel('$\overline{\sigma}$')
-        sub2.set_xlabel('wrapping degree f [ - ]')
-        sub2.set_ylabel('$\overline{\gamma}$')
+        sub1.plot(
+            wrapping.wrapping_list,
+            sigma_bar_list,
+            "-k",
+            label=r"$\overline{\sigma}_0 = $ ; "
+            + str(self.sigma_bar_0)
+            + r"$\overline{\sigma}_{fs} = $ ; "
+            + str(self.sigma_bar_fs)
+            + r"$\overline{\sigma}_{r} = $ ; "
+            + str(self.sigma_bar_r)
+            + r"$\overline{\sigma}_{\lambda} = $ ; "
+            + str(self.sigma_bar_lambda),
+        )
+        sub2.plot(
+            wrapping.wrapping_list,
+            gamma_bar_list,
+            "-k",
+            label=r"$\overline{\gamma}_0 = $ ; "
+            + str(self.gamma_bar_0)
+            + r"$\overline{\gamma}_{fs} = $ ; "
+            + str(self.gamma_bar_fs)
+            + r"$\overline{\gamma}_{r} = $ ; "
+            + str(self.gamma_bar_r)
+            + r"$\overline{\gamma}_{\lambda} = $ ; "
+            + str(self.gamma_bar_lambda),
+        )
+        sub1.set_xlabel("wrapping degree f [ - ]")
+        sub1.set_ylabel(r"$\overline{\sigma}$")
+        sub2.set_xlabel("wrapping degree f [ - ]")
+        sub2.set_ylabel(r"$\overline{\gamma}$")
         sub1.legend()
         sub2.legend()
 
@@ -270,7 +295,7 @@ class ParticleGeometry:
         sampling_points_circle: int
             number of points to describe a circular particle with radius 1
         f: float
-            wrapping degree 
+            wrapping degree
         theta: float
             angle used as polar coordinate to define the ellipse, see figure * of readme
 
@@ -290,10 +315,8 @@ class ParticleGeometry:
             Returns the values of dpsi3**2
 
     """
-    def __init__(self,
-                 r_bar,
-                 particle_perimeter,
-                 sampling_points_circle):
+
+    def __init__(self, r_bar, particle_perimeter, sampling_points_circle):
         """
         Constructs all the necessary attributes for the particle object.
 
@@ -308,7 +331,7 @@ class ParticleGeometry:
 
         Returns:
             -------
-            None                    
+            None
         """
         self.sampling_points_circle = sampling_points_circle
         self.r_bar = r_bar
@@ -317,17 +340,17 @@ class ParticleGeometry:
         # computes the semi-minor and semi-major axes lengths of the elliptic particle
         # using Ramanujan's formula [2]
 
-        h = ((self.r_bar-1)/(self.r_bar+1))**2 
-        self.semi_minor_axis = self.particle_perimeter / \
-                               (pi*(1 + self.r_bar)*(1+ 3*h/(10 + sqrt(4-3*h)))) 
+        h = ((self.r_bar - 1) / (self.r_bar + 1)) ** 2
+        self.semi_minor_axis = self.particle_perimeter / (pi * (1 + self.r_bar) * (1 + 3 * h / (10 + sqrt(4 - 3 * h))))
         self.semi_major_axis = self.semi_minor_axis * self.r_bar
         self.effective_radius = self.particle_perimeter / (2 * pi)
 
         # amount of points to sample the particle.
-        self.sampling_points_ellipse = self.sampling_points_circle * self.particle_perimeter / \
-                                      (2*pi*self.semi_major_axis)
+        self.sampling_points_ellipse = (
+            self.sampling_points_circle * self.particle_perimeter / (2 * pi * self.semi_major_axis)
+        )
 
-    @lru_cache(maxsize=10)                             
+    @lru_cache(maxsize=10)
     def define_particle_geometry_variables(self, f):
         """
         Defines all the necessary variables to describe the elliptic particle
@@ -341,9 +364,9 @@ class ParticleGeometry:
         Returns:
             -------
             beta: float
-                trigonometric angle at intersection between regions 1, 2r and 3 (see figure *)  
+                trigonometric angle at intersection between regions 1, 2r and 3 (see figure *)
             beta_left: float
-                trigonometric angle at intersection between regions 1, 2l and 3 (see figure *)       
+                trigonometric angle at intersection between regions 1, 2l and 3 (see figure *)
             theta_list_region1: array
                 trigonomic angle theta into the region 1 (see figure *)
             theta_list_region3: array
@@ -358,11 +381,11 @@ class ParticleGeometry:
                 sampling of the arclength of the region 3 (see figure *)
 
         """
-        beta = pi*f + 1.5 * pi
-        beta_left = 3*pi - beta
+        beta = pi * f + 1.5 * pi
+        beta_left = 3 * pi - beta
         n3 = int(f * self.sampling_points_ellipse)
-        n1 = int((1-f) * self.sampling_points_ellipse)
-        theta_list_region1 = np.linspace(beta, 2*pi + beta_left, n1)
+        n1 = int((1 - f) * self.sampling_points_ellipse)
+        theta_list_region1 = np.linspace(beta, 2 * pi + beta_left, n1)
         theta_list_region3 = np.linspace(beta_left, beta, n3)
         l1 = self.particle_perimeter * (1 - f)
         l3 = self.particle_perimeter * f
@@ -386,9 +409,9 @@ class ParticleGeometry:
         Returns:
             -------
             r_coordinate: float
-                r coordinate (see figure *)  
+                r coordinate (see figure *)
         """
-        compute_x_coordinate = lambda t : self.semi_major_axis * cos(t)
+        compute_x_coordinate = lambda t: self.semi_major_axis * cos(t)
         _, beta_left, _, _, _, _, _, _ = self.define_particle_geometry_variables(f)
         r_coordinate = compute_x_coordinate(theta) - compute_x_coordinate(beta_left)
         return r_coordinate
@@ -409,9 +432,9 @@ class ParticleGeometry:
         Returns:
             -------
             z_coordinate: float
-                z coordinate (see figure *)  
+                z coordinate (see figure *)
         """
-        compute_y_coordinate = lambda t : self.semi_minor_axis * sin(t)
+        compute_y_coordinate = lambda t: self.semi_minor_axis * sin(t)
         _, beta_left, _, _, _, _, _, _ = self.define_particle_geometry_variables(f)
         z_coordinate = compute_y_coordinate(theta) - compute_y_coordinate(beta_left)
         return z_coordinate
@@ -429,7 +452,7 @@ class ParticleGeometry:
         Returns:
             -------
             alpha: float
-                curvature angle at intersection between regions 1, 2l and 3 (see figure *)  
+                curvature angle at intersection between regions 1, 2l and 3 (see figure *)
 
         """
         psi_list_region1, _ = self.compute_psi1_psi3_angles(f)
@@ -455,15 +478,23 @@ class ParticleGeometry:
                 psi angle in region 3 (see figure *)
 
         """
-        beta, beta_left, theta_list_region1, theta_list_region3, s_list_region3, _, s_list_region1, _ \
-            = self.define_particle_geometry_variables(f)
+        (
+            beta,
+            beta_left,
+            theta_list_region1,
+            theta_list_region3,
+            s_list_region3,
+            _,
+            s_list_region1,
+            _,
+        ) = self.define_particle_geometry_variables(f)
         x_bl = self.semi_major_axis * cos(beta_left)
 
         def compute_psi_from_r_z(theta):
             """
             Computes the curvature angle given the position in the ellipse,
                 depicted by theta (see figure *), using r and z coordinates
-            
+
             Parameters:
                 ----------
                 theta: float
@@ -481,7 +512,7 @@ class ParticleGeometry:
             def compute_tangent_to_ellipse_at_rtan_and_theta(r_tan):
                 """
                 Computes the position of the tangent to the particle (z with respect to r)
-                
+
                 Parameters:
                     ----------
                     r_tan: float
@@ -508,14 +539,18 @@ class ParticleGeometry:
                 # depending on the side of the particle, the tangent's slope is positive or negative
                 if theta > pi:
                     slope1 = -1
-                dz = -self.semi_minor_axis * (r_elli + x_bl) / (self.semi_major_axis **2) / \
-                    sqrt(1 - ((r_elli + x_bl)/self.semi_major_axis)**2)
-                z_tan = z_elli  + slope1 * dz * (r_tan - r_elli)
+                dz = (
+                    -self.semi_minor_axis
+                    * (r_elli + x_bl)
+                    / (self.semi_major_axis ** 2)
+                    / sqrt(1 - ((r_elli + x_bl) / self.semi_major_axis) ** 2)
+                )
+                z_tan = z_elli + slope1 * dz * (r_tan - r_elli)
                 return z_tan
 
             r1 = 1.5 * r_elli + 0.5
             z1 = compute_tangent_to_ellipse_at_rtan_and_theta(r1)
-            delta = atan(abs((z1 - z_elli)/(r1 - r_elli)))
+            delta = atan(abs((z1 - z_elli) / (r1 - r_elli)))
             return delta
 
         delta_list_region1 = [compute_psi_from_r_z(t) for t in theta_list_region1]
@@ -527,53 +562,53 @@ class ParticleGeometry:
             for i in range(len(s_list_region3)):
                 theta = theta_list_region3[i]
                 delta = delta_list_region3[i]
-                if theta < 1.5*pi:
-                    psi = 2*pi - delta
-                elif theta == 1.5*pi:
-                    psi = 2*pi
+                if theta < 1.5 * pi:
+                    psi = 2 * pi - delta
+                elif theta == 1.5 * pi:
+                    psi = 2 * pi
                 elif theta <= beta:
-                    psi = 2*pi + delta
+                    psi = 2 * pi + delta
                 psi_list_region3[i] = psi
             for i in range(len(s_list_region1)):
                 theta = theta_list_region1[i]
                 delta = delta_list_region1[i]
-                if theta <= 2*pi:
+                if theta <= 2 * pi:
                     psi = delta
-                elif theta <= 2*pi + pi/2:
+                elif theta <= 2 * pi + pi / 2:
                     psi = pi - delta
-                elif theta <= 3*pi:
+                elif theta <= 3 * pi:
                     psi = pi + delta
                 else:
-                    psi = 2*pi - delta
+                    psi = 2 * pi - delta
                 psi_list_region1[i] = psi
         else:
             for i in range(len(s_list_region3)):
                 theta = theta_list_region3[i]
                 delta = delta_list_region3[i]
-                if theta <pi:
+                if theta < pi:
                     psi = pi + delta
                 elif theta == pi:
-                    psi = 1.5*pi
-                elif theta < 1.5*pi:
-                    psi = 2*pi - delta
-                elif theta == 1.5*pi:
-                    psi = 2*pi        
-                elif theta < 2*pi:
-                    psi = 2*pi + delta
-                elif theta == 2*pi:
-                    psi = 2.5*pi
-                elif theta <=beta:
-                    psi = 3*pi - delta
+                    psi = 1.5 * pi
+                elif theta < 1.5 * pi:
+                    psi = 2 * pi - delta
+                elif theta == 1.5 * pi:
+                    psi = 2 * pi
+                elif theta < 2 * pi:
+                    psi = 2 * pi + delta
+                elif theta == 2 * pi:
+                    psi = 2.5 * pi
+                elif theta <= beta:
+                    psi = 3 * pi - delta
                 psi_list_region3[i] = psi
 
             for i in range(len(s_list_region1)):
                 theta = theta_list_region1[i]
                 delta = delta_list_region1[i]
-                if theta < 2.5*pi:
+                if theta < 2.5 * pi:
                     psi = pi - delta
                 elif theta == 2.5 * pi:
                     theta = pi
-                elif theta <= 2*pi + beta_left:
+                elif theta <= 2 * pi + beta_left:
                     psi = pi + delta
                 psi_list_region1[i] = psi
 
@@ -583,7 +618,7 @@ class ParticleGeometry:
         """
         Computes the values of dpsi3**2, necessary to evaluate the bending energy
             of the region 3, for a given wrapping degree f
-        
+
         Parameters:
             ----------
             f: float
@@ -600,9 +635,10 @@ class ParticleGeometry:
         ds = s_list_region3[1] - s_list_region3[0]
         # computes the derivative of psi in region 3 using finite differences method. The value of
         # ds was set after a convergence study.
-        dpsi3_list_region3 = [(psi_list_region3[i+1] - psi_list_region3[i])/ds 
-                               for i in range(0, len(psi_list_region3)-1)]
-        squared_dpsi_list_region3 = [p**2 for p in dpsi3_list_region3]
+        dpsi3_list_region3 = [
+            (psi_list_region3[i + 1] - psi_list_region3[i]) / ds for i in range(0, len(psi_list_region3) - 1)
+        ]
+        squared_dpsi_list_region3 = [p ** 2 for p in dpsi3_list_region3]
         return squared_dpsi_list_region3
 
 
@@ -624,7 +660,8 @@ class MembraneGeometry:
         compute_r2r_r2l_z2r_z2l_from_analytic_expression(self, f, particle, mechanics):
             Returns r and z coordinates in the regions 2r and 2l
 
-    """    
+    """
+
     def __init__(self, particle, sampling_points_membrane):
         """
         Constructs all the necessary attributes for the membrane object.
@@ -638,12 +675,12 @@ class MembraneGeometry:
 
         Returns:
             -------
-            None                    
+            None
         """
         self.sampling_points_membrane = sampling_points_membrane
         self.l2 = 20 * particle.effective_radius
-        S2a = np.linspace(0, (self.l2 / 2), int((0.8*self.sampling_points_membrane) + 1))
-        S2b = np.linspace(1.2 * self.l2 / 2, self.l2, int((0.2 * self.sampling_points_membrane)))
+        S2a = np.linspace(0, (self.l2 / 2), int((0.8 * self.sampling_points_membrane) + 1))
+        S2b = np.linspace(1.2 * self.l2 / 2, self.l2, int(0.2 * self.sampling_points_membrane))
         self.S2 = np.concatenate((S2a, S2b), axis=None)
 
     @lru_cache(maxsize=10)
@@ -681,10 +718,10 @@ class MembraneGeometry:
 
         for i in range(1, len(self.S2)):
             s = self.S2[i]
-            r = r2r_0 + s - sqrt(2 / sigma) * (1 - cos(alpha)) / \
-                (coth(s * sqrt(0.5*sigma)) + cos(alpha * 0.5))
-            z = z2r_0 + sqrt(8 / sigma) * sin(0.5*alpha) * \
-                (1 - (csch(s *sqrt(0.5*sigma))) / (coth(s* sqrt(0.5*sigma)) + cos(0.5*alpha)))
+            r = r2r_0 + s - sqrt(2 / sigma) * (1 - cos(alpha)) / (coth(s * sqrt(0.5 * sigma)) + cos(alpha * 0.5))
+            z = z2r_0 + sqrt(8 / sigma) * sin(0.5 * alpha) * (
+                1 - (csch(s * sqrt(0.5 * sigma))) / (coth(s * sqrt(0.5 * sigma)) + cos(0.5 * alpha))
+            )
             r2r[i] = r
             z2r[i] = z
 
@@ -702,9 +739,10 @@ class Wrapping:
     Attributes:
         ----------
         wrapíng_list: list
-            list of wrapping degrees at which the system is evaluated 
-    
+            list of wrapping degrees at which the system is evaluated
+
     """
+
     def __init__(self, wrapping_list):
         """
         Constructs all the necessary attributes for the membrane object.
@@ -712,10 +750,10 @@ class Wrapping:
         Parameters:
             ----------
             wrapíng_list: list
-                list of wrapping degrees at which the system is evaluated 
+                list of wrapping degrees at which the system is evaluated
 
         Returns:
             -------
-            None                    
+            None
         """
         self.wrapping_list = wrapping_list
