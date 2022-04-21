@@ -1,5 +1,7 @@
 # Enhancement of the model of the cellular uptake of nanoparticles with the membrane’s mechano-adaptation : validation with sensitivity analysis
 
+*Please open this README file with a proper Markdown reader to make sure to properly display its content, especially the mathematical expressions.*
+
 ## Associated paper
 The present code is the supplemental material associated to the paper ![1](https://doi.org/10.1002/cnm.3598).
 Please feel free to contact the authors if you have any question or if you wish to go more into details for some points.
@@ -29,6 +31,8 @@ The data that is provided in this repository, in the *dataset_for_metamodel_crea
 | $\overline{\sigma}_r$ | $\overline{\sigma}_{fs}$ | $\overline{\sigma}_{\lambda}$ | $\overline{\gamma}_r$ | $\overline{\gamma}_{fs}$ | $\overline{\gamma}_{\lambda}$ | $\psi_1$ | $\psi_2$ | $\psi_3$ |
 |:---------------------:|:------------------------:|:-----------------------------:|:---------------------:|:------------------------:|:-----------------------------:|:--------:|:--------:|:--------:|
 |                       |                          |                               |                       |                          |                               |          |          |          |
+
+
 
 The notations introduced in the table above are the same as the ones introduced in [1].
 If the user wants to use different data, it is recommended that they make a copy of the actual .txt file and that they paste their data in this .txt file. We spotted an error with the type of textfile that is given as an input to create the metamodels (Suggestions to address this issue are more than welcome!)
