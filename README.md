@@ -10,25 +10,6 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the req
 
 ```pip3 install -r requirements.txt```
 
-## Figures
-
-![coordinates](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/coordinates.png)
-Figure 1: Definition of the coordinates system
-
-![psi1](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/psi1_gif.gif)
-Figure 2: Definition of psi 1 angle
-
-![psi3](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/psi3_gif.gif)
-Figure 3: Definition of psi 3 angle
-
-![beta](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/beta_angles.png)
-Figure 4: Definition of beta angles
-
-![theta](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/theta_angles.png)
-Figure 5: Definition of theta angles
-
-![delta](https://github.com/SarahIaquinta/uptake_of_random_rigid_elliptic_particle/blob/main/figures/delta_angles.png)
-Figure 5: Definition of delta angle
 
 ## Tutorial
 This repository is divided into 4 folders:
