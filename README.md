@@ -5,7 +5,6 @@
 
 <div style="text-align: justify"> 
 
-*Please open this README file with a proper Markdown reader to make sure to properly display its content, especially the mathematical expressions introduced in the Tutorial section.*
 
 ## Associated paper
 The present code is the supplemental material associated to the paper ![1](https://doi.org/10.1002/cnm.3598).
