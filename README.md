@@ -33,7 +33,9 @@ We recommend the user to follow the following order:
 
 The data that is provided in this repository, in the *dataset_for_metamodel_creation.txt* textfile was obtained by computing the code contained in the *model* folder. To fulfill the criteria of OpenTurns, the document needs to contain only floats, that is why the title of the columns does not appear in this file. They are the following:
 
-| $\overline{\sigma}_r$ | $\overline{\sigma}_{fs}$ | $\overline{\sigma}_{\lambda}$ | $\overline{\gamma}_r$ | $\overline{\gamma}_{fs}$ | $\overline{\gamma}_{\lambda}$ | $\psi_1$ | $\psi_2$ | $\psi_3$ |
+
+
+| <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_r"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_{fs}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_{\lambda}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_r"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{fs}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{\lambda}"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_1"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_2"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_3"> |
 |:---------------------:|:------------------------:|:-----------------------------:|:---------------------:|:------------------------:|:-----------------------------:|:--------:|:--------:|:--------:|
 |                       |                          |                               |                       |                          |                               |          |          |          |
 
