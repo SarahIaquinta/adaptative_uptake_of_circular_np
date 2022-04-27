@@ -14,7 +14,9 @@ def get_path():
         Returns the current path
     """
     return os.path.dirname(os.path.abspath(__file__))  # linux
-    # return os.path.dirname(os.path.abspath(__file__)) + '//' #windows
+    # TODO replace by:
+    # from path import Path
+    # Path(__file__).abspath().parent
 
 
 def define_pkl_filename(particle, mechanics):
@@ -84,6 +86,7 @@ def delete_empty_pkl_files():
 def delete_pkl_files(testcase):
     path = get_path()
     path_extension = "/" + testcase + "*.pkl"
+    # file_path = path / (testcase + "*.pkl")
     file_path = path + path_extension
     for filename in glob.glob(file_path):
         os.remove(filename)

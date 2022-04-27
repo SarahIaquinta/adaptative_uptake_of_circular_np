@@ -3,12 +3,12 @@ import os
 import sys
 
 path = os.path.dirname(os.path.abspath(__file__))
-path_model = path + "/../model"
-sys.path.insert(1, path_model)
+# path_model = path + "/../model"
+# sys.path.insert(1, path_model)
 path_metamodel = path + "/../metamodel"
 sys.path.insert(1, path_metamodel)
-path_figures = path + "/../figures"
-sys.path.insert(1, path_figures)
+# path_figures = path + "/../figures"
+# sys.path.insert(1, path_figures)
 
 import openturns as ot
 import openturns.viewer as viewer

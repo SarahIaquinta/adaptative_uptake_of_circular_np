@@ -17,6 +17,11 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the req
 
 ```pip3 install -r requirements.txt```
 
+# Install the package
+Go to the root of the repo and:
+``` sh
+python3 setup.py develop --user
+```
 
 ## Tutorial
 This repository is divided into 4 folders:
