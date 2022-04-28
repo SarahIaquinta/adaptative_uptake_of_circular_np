@@ -13,8 +13,9 @@ import openturns.viewer as viewer
 
 ot.Log.Show(ot.Log.NONE)
 
-import metamodel_implementation.utils
 from matplotlib import pylab as plt
+
+import metamodel_implementation.utils
 from metamodel_implementation.metamodel_creation import DataPreSetting, MetamodelPostTreatment
 
 
@@ -130,7 +131,9 @@ def metamodel_validation_routine(
 
     """
     complete_pkl_filename = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    shuffled_sample, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(complete_pkl_filename)
+    shuffled_sample, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+        complete_pkl_filename
+    )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     inputTest, outputTest = datapresetting.extract_testing_data(shuffled_sample)
     metamodel_validator = metamodelvalidation.validate_metamodel_with_test(inputTest, outputTest, metamodel)

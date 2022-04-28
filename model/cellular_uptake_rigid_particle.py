@@ -1,7 +1,6 @@
 import argparse
 import pickle
 import time
-
 from functools import lru_cache
 from math import exp, pi, sqrt, tan
 
@@ -9,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.integrate
 import scipy.signal
+
 from model.system_definition import MechanicalProperties_Adaptation, MembraneGeometry, ParticleGeometry, Wrapping
 
 
@@ -371,4 +371,3 @@ if __name__ == "__main__":
     )
     print(f_eq)
     print("wrapping phase at equilibrium: ", wrapping_phase)
-

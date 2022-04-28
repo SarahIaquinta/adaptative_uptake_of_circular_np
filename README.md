@@ -3,7 +3,7 @@
 
 # Enhancement of the model of the cellular uptake of nanoparticles with the membrane’s mechano-adaptation : validation with sensitivity analysis
 
-<div style="text-align: justify"> 
+<div style="text-align: justify">
 
 
 ## Associated paper
@@ -87,5 +87,3 @@ A [GPL](https://tldrlegal.com/license/bsd-3-clause-license-(revised)) license is
         year={2016},
         publisher={Springer International Publishing}
 }
-
-

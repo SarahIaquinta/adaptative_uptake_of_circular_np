@@ -1,8 +1,6 @@
 import os
 
-
 path = os.path.dirname(os.path.abspath(__file__))
-
 
 
 import numpy as np
@@ -285,8 +283,12 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     kri = metamodelcreation.create_kriging_algorithm()
     metamodelposttreatment.run_algorithm(kri)
     results_from_kri = metamodelposttreatment.extract_results_from_algorithm(kri)
-    complete_pkl_filename_Kriging = metamodel_implementation.utils.create_pkl_name("Kriging", datapresetting.training_amount)
-    metamodel_implementation.utils.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
+    complete_pkl_filename_Kriging = metamodel_implementation.utils.create_pkl_name(
+        "Kriging", datapresetting.training_amount
+    )
+    metamodel_implementation.utils.export_metamodel_and_data_to_pkl(
+        shuffled_sample, results_from_kri, complete_pkl_filename_Kriging
+    )
 
 
 if __name__ == "__main__":
