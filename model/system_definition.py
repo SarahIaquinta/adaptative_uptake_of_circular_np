@@ -4,8 +4,8 @@ from math import atan, cos, exp, pi, sin, sqrt
 import matplotlib.pyplot as plt
 import numpy as np
 from mpmath import coth, csch
-
-
+from figures.utils import CreateFigure, Fonts, SaveFigure
+import model.cellular_uptake_rigid_particle
 class Fixed_Mechanical_Properties:
     """
     A class to represent the mechanical properties of the cell membrane and the particle.
@@ -35,7 +35,7 @@ class Fixed_Mechanical_Properties:
             gamma_bar_0: float
                 adimensional linear adhesion energy between membrane and the particle, initial value
             sigma_bar: float
-                adimensional membrane tension, initial value
+                adimensional membrane tension
         Returns:
             -------
             None
@@ -123,53 +123,13 @@ class MechanicalProperties_Adaptation:
         self.gamma_bar_fs = gamma_bar_fs
         self.gamma_bar_lambda = gamma_bar_lambda
         self.sigma_bar = sigma_bar
-        self.sigma_bar_r = sigma_bar_r
-        self.sigma_bar_fs = sigma_bar_fs
-        self.sigma_bar_lambda = sigma_bar_lambda
 
-    @lru_cache(maxsize=128)
-    def sigma_bar(self, f, wrapping):
-        """
-        Computes the adimensional value of the membrane tension sigma_bar for a given
-            wrapping degree f
 
-        Parameters:
-            ----------
-            f: float
-                wrapping degree
-            wrapping: class
-                Wrapping class
-
-        Returns:
-            -------
-            sigma_bar: float
-                adimensional membrane tension
-        """
-        if self.sigma_bar_r == 1:
-            sigma_bar = self.sigma_bar
-        else:
-            sigma_bar_final = self.sigma_bar_r * self.sigma_bar
-            x_list = np.linspace(-1, 1, len(wrapping.wrapping_list))
-            sigma_bar = 0
-            for i in range(len(wrapping.wrapping_list)):
-                if wrapping.wrapping_list[i] == f:
-                    x = x_list[i]
-                    """
-                    Sigmoid expression
-                    """
-                    if self.sigma_bar_lambda > 0:
-                        sigma_additional_term = self.sigma_bar
-                    else:
-                        sigma_additional_term = sigma_bar_final
-                    sigma_bar += (abs(sigma_bar_final - self.sigma_bar)) * (
-                        1 / (1 + exp(-self.sigma_bar_lambda * (x - self.sigma_bar_fs)))
-                    ) + sigma_additional_term
-        return sigma_bar
 
     @lru_cache(maxsize=128)
     def gamma_bar(self, f, wrapping):
         """
-        Computes the adimensional value of the membrane-particle adhesion sigma_bar for a given
+        Computes the adimensional value of the membrane-particle adhesion gamma_bar for a given
             wrapping degree f
 
         Parameters:
@@ -223,11 +183,10 @@ class MechanicalProperties_Adaptation:
             gamma_bar_list: list
                 value of gamma_bar computed for all values of wrapping
         """
-        sigma_bar_list = [self.sigma_bar(f, wrapping) for f in wrapping.wrapping_list]
         gamma_bar_list = [self.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
-        return sigma_bar_list, gamma_bar_list
+        return gamma_bar_list
 
-    def plot_mechanical_parameters(self, wrapping):
+    def plot_mechanical_parameters(self, wrapping, createfigure, savefigure, fonts):
         """
         Plots the evolution of gamma_bar and sigma_bar with respect to the
             wrapping degree f
@@ -241,42 +200,42 @@ class MechanicalProperties_Adaptation:
             -------
             None
         """
-        fig, axs = plt.subplots(2, 1, constrained_layout=True)
-        sub1 = axs[0]  # plt.subplot(2, 1, 1)
-        sub2 = axs[1]  # plt.subplot(2, 1, 2)
-        sigma_bar_list, gamma_bar_list = self.mechanical_parameters_evolution(wrapping)
-        sub1.plot(
-            wrapping.wrapping_list,
-            sigma_bar_list,
-            "-k",
-            label=r"$\overline{\sigma}_0 = $ ; "
-            + str(self.sigma_bar)
-            + r"$\overline{\sigma}_{fs} = $ ; "
-            + str(self.sigma_bar_fs)
-            + r"$\overline{\sigma}_{r} = $ ; "
-            + str(self.sigma_bar_r)
-            + r"$\overline{\sigma}_{\lambda} = $ ; "
-            + str(self.sigma_bar_lambda),
-        )
-        sub2.plot(
+        fig = createfigure.rectangle_figure(pixels=360)
+        ax = fig.gca()
+        gamma_bar_list = self.mechanical_parameters_evolution(wrapping)
+
+        ax.plot(
             wrapping.wrapping_list,
             gamma_bar_list,
             "-k",
             label=r"$\overline{\gamma}_0 = $ ; "
             + str(self.gamma_bar_0)
-            + r"$\overline{\gamma}_{fs} = $ ; "
+            + r" ; $\overline{\gamma}_{fs} = $ ; "
             + str(self.gamma_bar_fs)
-            + r"$\overline{\gamma}_{r} = $ ; "
+            + r" ; $\overline{\gamma}_{r} = $ ; "
             + str(self.gamma_bar_r)
-            + r"$\overline{\gamma}_{\lambda} = $ ; "
+            + r" ; $\overline{\gamma}_{\lambda} = $ ; "
             + str(self.gamma_bar_lambda),
         )
-        sub1.set_xlabel("wrapping degree f [ - ]")
-        sub1.set_ylabel(r"$\overline{\sigma}$")
-        sub2.set_xlabel("wrapping degree f [ - ]")
-        sub2.set_ylabel(r"$\overline{\gamma}$")
-        sub1.legend()
-        sub2.legend()
+        ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+        ax.set_xticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+
+        ax.set_yticks([gamma_bar_list[0], gamma_bar_list[-1]])
+        ax.set_yticklabels(
+            [np.round(gamma_bar_list[0], 2), np.round(gamma_bar_list[-1], 2)],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+
+
+        ax.set_xlabel("f [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"$\overline{\gamma}$ [ - ] ", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.9)
+        savefigure.save_as_png(fig, "adhesion_during_wrapping")
 
 
 class ParticleGeometry:
@@ -754,3 +713,23 @@ class Wrapping:
             None
         """
         self.wrapping_list = wrapping_list
+
+
+if __name__ == "__main__":
+    wrapping = Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
+    createfigure = CreateFigure()
+    fonts = Fonts()
+    savefigure = SaveFigure()
+    args = model.cellular_uptake_rigid_particle.parse_arguments()
+
+    mechanics = MechanicalProperties_Adaptation(
+        testcase="test-classimplementation",
+        # gamma_bar_r=args.gamma_bar_r,
+        gamma_bar_r=2,
+        gamma_bar_fs=args.gamma_bar_fs,
+        gamma_bar_lambda=args.gamma_bar_lambda,
+        gamma_bar_0=args.gamma_bar_0,
+        sigma_bar=args.sigma_bar_0,
+    )
+
+    mechanics.plot_mechanical_parameters(wrapping, createfigure, savefigure, fonts)
