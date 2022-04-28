@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="uptake_of_np",  # TODO improve name
+    name="membrane_mechano_adaptation_during_wrapping",  # TODO improve name
     version="0.1.0",
     author="Sarah Iaquinta",
     author_email="sarah.r.iaquinta@gmail.com",
