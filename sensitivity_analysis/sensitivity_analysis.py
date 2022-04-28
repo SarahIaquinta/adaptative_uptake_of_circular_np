@@ -137,7 +137,7 @@ def compute_and_export_sensitivity_algo_Saltelli(
     complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensivity_algo_to_pkl(
+    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Saltelli, complete_pkl_filename_sensitivy_algo
     )
 
@@ -214,7 +214,7 @@ def compute_and_export_sensitivity_algo_Jansen(
     complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensivity_algo_to_pkl(
+    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Jansen, complete_pkl_filename_sensitivy_algo
     )
 
@@ -293,7 +293,7 @@ def compute_and_export_sensitivity_algo_MauntzKucherenko(
     complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensivity_algo_to_pkl(
+    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
         sensitivity_algo_MauntzKucherenko, complete_pkl_filename_sensitivy_algo
     )
 
@@ -371,7 +371,7 @@ def compute_and_export_sensitivity_algo_Martinez(
     complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensivity_algo_to_pkl(
+    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Martinez, complete_pkl_filename_sensitivy_algo
     )
 
