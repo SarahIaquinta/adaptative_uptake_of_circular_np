@@ -25,7 +25,7 @@ class Fixed_Mechanical_Properties:
     def __init__(
         self,
         gamma_bar_0_list,
-        sigma_bar_0_list,
+        sigma_bar_list,
     ):
         """
         Constructs all the necessary attributes for the mechanical properties object.
@@ -41,7 +41,7 @@ class Fixed_Mechanical_Properties:
             None
         """
         self.gamma_bar_0_list = gamma_bar_0_list
-        self.sigma_bar_0_list = sigma_bar_0_list
+        self.sigma_bar_list = sigma_bar_list
 
 
 class MechanicalProperties_Adaptation:
@@ -85,9 +85,6 @@ class MechanicalProperties_Adaptation:
         gamma_bar_r,
         gamma_bar_fs,
         gamma_bar_lambda,
-        sigma_bar_r,
-        sigma_bar_fs,
-        sigma_bar_lambda,
         gamma_bar_0,
         sigma_bar_0,
     ):
@@ -133,7 +130,7 @@ class MechanicalProperties_Adaptation:
     @lru_cache(maxsize=128)
     def sigma_bar(self, f, wrapping):
         """
-        Computes the adimensional value of the memebrane tension sigma_bar for a given
+        Computes the adimensional value of the membrane tension sigma_bar for a given
             wrapping degree f
 
         Parameters:
