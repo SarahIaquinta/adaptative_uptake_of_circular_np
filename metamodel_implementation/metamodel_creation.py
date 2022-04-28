@@ -1,8 +1,4 @@
-import os
-
-path = os.path.dirname(os.path.abspath(__file__))
-
-
+from pathlib import Path
 import numpy as np
 import openturns as ot
 
@@ -49,7 +45,7 @@ class DataPreSetting:
             None
         """
 
-        self.filename = path + "/" + filename
+        self.filename = Path.cwd() / 'metamodel_implementation' / filename
         self.training_amount = training_amount
 
     def shuffle_dataset_from_datafile(self):
@@ -66,7 +62,7 @@ class DataPreSetting:
                 shuffled input dataset
 
         """
-        sample = ot.Sample.ImportFromTextFile(self.filename, "\t", 0)
+        sample = ot.Sample.ImportFromTextFile(self.filename.as_posix(), "\t", 0)
         np.random.shuffle(sample)
         return sample
 
