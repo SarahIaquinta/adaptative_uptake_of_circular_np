@@ -3,8 +3,7 @@ import os
 import sys
 
 path = os.path.dirname(os.path.abspath(__file__))
-path_model = path + "/../model"
-sys.path.insert(1, path_model)
+
 
 
 import pickle
