@@ -15,7 +15,7 @@ ot.Log.Show(ot.Log.NONE)
 
 
 import metamodel_implementation.utils
-from metamodel_validation import MetamodelPostTreatment
+from metamodel_implementation.metamodel_validation import MetamodelPostTreatment
 from utils_figures import Colors, CreateFigure, Fonts, SaveFigure
 
 
