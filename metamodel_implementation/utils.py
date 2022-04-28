@@ -24,9 +24,9 @@ def create_pkl_name(type_of_metamodel, training_amount, folder=""):
             name of the .pkl file
 
     """
-    path = Path.cwd() /  folder
+    path = Path.cwd() / folder
     pkl_name = "metamodel_" + type_of_metamodel + "_trainingamount_" + str(training_amount) + ".pkl"
-    complete_filename = path  / pkl_name
+    complete_filename = path / pkl_name
     return complete_filename
 
 
@@ -65,7 +65,7 @@ def create_pkl_name_sensitivityalgo(
             name of the .pkl file
 
     """
-    path = Path.cwd() /  folder
+    path = Path.cwd() / folder
     pkl_name = (
         "sensitivityalgo="
         + sobol_implementation

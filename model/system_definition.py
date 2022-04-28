@@ -4,8 +4,10 @@ from math import atan, cos, exp, pi, sin, sqrt
 import matplotlib.pyplot as plt
 import numpy as np
 from mpmath import coth, csch
-from figures.utils import CreateFigure, Fonts, SaveFigure
+
 import model.cellular_uptake_rigid_particle
+from figures.utils import CreateFigure, Fonts, SaveFigure
+
 
 class Fixed_Mechanical_Properties:
     """
@@ -125,8 +127,6 @@ class MechanicalProperties_Adaptation:
         self.gamma_bar_lambda = gamma_bar_lambda
         self.sigma_bar = sigma_bar
 
-
-
     @lru_cache(maxsize=128)
     def gamma_bar(self, f, wrapping):
         """
@@ -231,7 +231,6 @@ class MechanicalProperties_Adaptation:
             font=fonts.serif(),
             fontsize=fonts.axis_legend_size(),
         )
-
 
         ax.set_xlabel("f [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.set_ylabel(r"$\overline{\gamma}$ [ - ] ", font=fonts.serif(), fontsize=fonts.axis_label_size())
@@ -675,7 +674,11 @@ class MembraneGeometry:
 
         for i in range(1, len(self.S2)):
             s = self.S2[i]
-            r = r2r_0 + s - sqrt(2 / sigma_bar) * (1 - cos(alpha)) / (coth(s * sqrt(0.5 * sigma_bar)) + cos(alpha * 0.5))
+            r = (
+                r2r_0
+                + s
+                - sqrt(2 / sigma_bar) * (1 - cos(alpha)) / (coth(s * sqrt(0.5 * sigma_bar)) + cos(alpha * 0.5))
+            )
             z = z2r_0 + sqrt(8 / sigma_bar) * sin(0.5 * alpha) * (
                 1 - (csch(s * sqrt(0.5 * sigma_bar))) / (coth(s * sqrt(0.5 * sigma_bar)) + cos(0.5 * alpha))
             )

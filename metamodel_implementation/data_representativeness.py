@@ -1,5 +1,5 @@
-from pathlib import Path
 import pickle
+from pathlib import Path
 
 import numpy as np
 import openturns as ot
@@ -34,7 +34,7 @@ class SampleRepresentativeness:
             None
         """
 
-        self.filename = Path.cwd() / 'metamodel_implementation' / filename
+        self.filename = Path.cwd() / "metamodel_implementation" / filename
         self.training_amount = training_amount
         self.pixels = pixels
         self.nb_of_shuffled_samples = nb_of_shuffled_samples

@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import numpy as np
 import openturns as ot
 
@@ -45,7 +46,7 @@ class DataPreSetting:
             None
         """
 
-        self.filename = Path.cwd() / 'metamodel_implementation' / filename
+        self.filename = Path.cwd() / "metamodel_implementation" / filename
         self.training_amount = training_amount
 
     def shuffle_dataset_from_datafile(self):
