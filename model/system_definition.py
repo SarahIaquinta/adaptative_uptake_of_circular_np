@@ -74,7 +74,7 @@ class MechanicalProperties_Adaptation:
             Returns the value of mechanical parameter sigma_bar for a given wrapping degree f
         gamma_bar(self, f, wrapping):
             Returns the value of mechanical parameter gamma_bar for a given wrapping degree f
-        plot_mechanical_parameters(self, wrapping):
+        plot_gamma_bar_variation(self, wrapping):
             Plots the evolution of both mechanical parameters with respect to wrapping degree f
 
     """
@@ -166,7 +166,7 @@ class MechanicalProperties_Adaptation:
             return gamma_bar
         return gamma_bar
 
-    def mechanical_parameters_evolution(self, wrapping):
+    def gamma_bar_variation(self, wrapping):
         """
         Computes the values of the sigma_bar and gamma_bar for all the values of
             wrapping degree f
@@ -186,7 +186,7 @@ class MechanicalProperties_Adaptation:
         gamma_bar_list = [self.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
         return gamma_bar_list
 
-    def plot_mechanical_parameters(self, wrapping, createfigure, savefigure, fonts):
+    def plot_gamma_bar_variation(self, wrapping, createfigure, savefigure, fonts):
         """
         Plots the evolution of gamma_bar and sigma_bar with respect to the
             wrapping degree f
@@ -202,7 +202,7 @@ class MechanicalProperties_Adaptation:
         """
         fig = createfigure.rectangle_figure(pixels=360)
         ax = fig.gca()
-        gamma_bar_list = self.mechanical_parameters_evolution(wrapping)
+        gamma_bar_list = self.gamma_bar_variation(wrapping)
 
         ax.plot(
             wrapping.wrapping_list,
@@ -732,4 +732,4 @@ if __name__ == "__main__":
         sigma_bar=args.sigma_bar_0,
     )
 
-    mechanics.plot_mechanical_parameters(wrapping, createfigure, savefigure, fonts)
+    mechanics.plot_gamma_bar_variation(wrapping, createfigure, savefigure, fonts)
