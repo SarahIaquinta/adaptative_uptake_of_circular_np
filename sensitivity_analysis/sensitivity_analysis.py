@@ -1,13 +1,3 @@
-# adding folders model and metamodel to the system path
-import os
-import sys
-
-path = os.path.dirname(os.path.abspath(__file__))
-
-path_metamodel = path + "/../metamodel"
-sys.path.insert(1, path_metamodel)
-
-
 import openturns as ot
 import openturns.viewer as viewer
 
