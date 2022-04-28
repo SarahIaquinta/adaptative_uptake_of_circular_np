@@ -1,11 +1,7 @@
-"""
-See LICENSE for details on how to use this code
-"""
 import argparse
 import pickle
 import time
 
-# Libraries
 from functools import lru_cache
 from math import exp, pi, sqrt, tan
 
@@ -13,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.integrate
 import scipy.signal
-from system_definition import MechanicalProperties_Adaptation, MembraneGeometry, ParticleGeometry, Wrapping
+from model.system_definition import MechanicalProperties_Adaptation, MembraneGeometry, ParticleGeometry, Wrapping
 
 
 class EnergyComputation:
@@ -352,34 +348,27 @@ if __name__ == "__main__":
 
     mechanics = MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
-        gamma_bar_r=1,
+        gamma_bar_r=args.gamma_bar_r,
         gamma_bar_fs=args.gamma_bar_fs,
         gamma_bar_lambda=args.gamma_bar_lambda,
-        sigma_bar_r=1,
+        sigma_bar_r=args.sigma_bar_r,
         sigma_bar_fs=args.sigma_bar_fs,
         sigma_bar_lambda=args.sigma_bar_lambda,
-        gamma_bar_0=5.25,
-        sigma_bar_0=0.5,
+        gamma_bar_0=args.gamma_bar_0,
+        sigma_bar_0=args.sigma_bar_0,
     )
 
     membrane = MembraneGeometry(particle, sampling_points_membrane=100)
 
     wrapping = Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
-    # wrapping_list1 = np.arange(0.03, 0.18, 0.003125)
-    # wrapping_list2 = np.arange(0.18, 0.22, 0.0001)
-    # wrapping_list_12 = np.concatenate((wrapping_list1, wrapping_list2), axis=None)
-    # wrapping_list3 =  np.arange(0.22, 0.97, 0.003125)
-    # wrapping_list = np.concatenate((wrapping_list_12, wrapping_list3), axis=None)
-    # wrapping = Wrapping(wrapping_list=wrapping_list)
+
     energy_computation = EnergyComputation()
 
     plot_energy(particle, mechanics, membrane, wrapping, energy_computation)
     plt.show()
-    # mechanics.plot_mechanical_parameters(wrapping)
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
     print(f_eq)
     print("wrapping phase at equilibrium: ", wrapping_phase)
-    # profiler(particle, mechanics, membrane, wrapping, energy_computation)
-    # plt.show()
+
