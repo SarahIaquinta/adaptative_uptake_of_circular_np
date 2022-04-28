@@ -1,6 +1,5 @@
-# adding folders model and figure to the system path
 import os
-import sys
+
 
 path = os.path.dirname(os.path.abspath(__file__))
 
