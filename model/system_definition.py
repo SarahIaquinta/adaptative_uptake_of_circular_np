@@ -14,7 +14,7 @@ class Fixed_Mechanical_Properties:
         ----------
         gamma_bar_0: float
             adimensional linear adhesion energy between membrane and the particle, initial value
-        sigma_bar_0: float
+        sigma_bar: float
             adimensional membrane tension, initial value
 
     Methods:
@@ -34,7 +34,7 @@ class Fixed_Mechanical_Properties:
             ----------
             gamma_bar_0: float
                 adimensional linear adhesion energy between membrane and the particle, initial value
-            sigma_bar_0: float
+            sigma_bar: float
                 adimensional membrane tension, initial value
         Returns:
             -------
@@ -59,7 +59,7 @@ class MechanicalProperties_Adaptation:
             adimensional linear adhesion energy between membrane and the particle, inflexion point
         gamma_bar_lambda: float
             adimensional linear adhesion energy between membrane and the particle, smoothness
-        sigma_bar_0: float
+        sigma_bar: float
             adimensional membrane tension, initial value
         sigma_bar_r: float
             adimensional membrane tension, ratio between final and initial value
@@ -86,7 +86,7 @@ class MechanicalProperties_Adaptation:
         gamma_bar_fs,
         gamma_bar_lambda,
         gamma_bar_0,
-        sigma_bar_0,
+        sigma_bar,
     ):
         """
         Constructs all the necessary attributes for the mechanical properties object.
@@ -104,7 +104,7 @@ class MechanicalProperties_Adaptation:
                 adimensional linear adhesion energy between membrane and the particle, inflexion point
             gamma_bar_lambda: float
                 adimensional linear adhesion energy between membrane and the particle, smoothness
-            sigma_bar_0: float
+            sigma_bar: float
                 adimensional membrane tension, initial value
             sigma_bar_r: float
                 adimensional membrane tension, ratio between final and initial value
@@ -122,7 +122,7 @@ class MechanicalProperties_Adaptation:
         self.gamma_bar_r = gamma_bar_r
         self.gamma_bar_fs = gamma_bar_fs
         self.gamma_bar_lambda = gamma_bar_lambda
-        self.sigma_bar_0 = sigma_bar_0
+        self.sigma_bar = sigma_bar
         self.sigma_bar_r = sigma_bar_r
         self.sigma_bar_fs = sigma_bar_fs
         self.sigma_bar_lambda = sigma_bar_lambda
@@ -146,9 +146,9 @@ class MechanicalProperties_Adaptation:
                 adimensional membrane tension
         """
         if self.sigma_bar_r == 1:
-            sigma_bar = self.sigma_bar_0
+            sigma_bar = self.sigma_bar
         else:
-            sigma_bar_final = self.sigma_bar_r * self.sigma_bar_0
+            sigma_bar_final = self.sigma_bar_r * self.sigma_bar
             x_list = np.linspace(-1, 1, len(wrapping.wrapping_list))
             sigma_bar = 0
             for i in range(len(wrapping.wrapping_list)):
@@ -158,10 +158,10 @@ class MechanicalProperties_Adaptation:
                     Sigmoid expression
                     """
                     if self.sigma_bar_lambda > 0:
-                        sigma_additional_term = self.sigma_bar_0
+                        sigma_additional_term = self.sigma_bar
                     else:
                         sigma_additional_term = sigma_bar_final
-                    sigma_bar += (abs(sigma_bar_final - self.sigma_bar_0)) * (
+                    sigma_bar += (abs(sigma_bar_final - self.sigma_bar)) * (
                         1 / (1 + exp(-self.sigma_bar_lambda * (x - self.sigma_bar_fs)))
                     ) + sigma_additional_term
         return sigma_bar
@@ -250,7 +250,7 @@ class MechanicalProperties_Adaptation:
             sigma_bar_list,
             "-k",
             label=r"$\overline{\sigma}_0 = $ ; "
-            + str(self.sigma_bar_0)
+            + str(self.sigma_bar)
             + r"$\overline{\sigma}_{fs} = $ ; "
             + str(self.sigma_bar_fs)
             + r"$\overline{\sigma}_{r} = $ ; "
