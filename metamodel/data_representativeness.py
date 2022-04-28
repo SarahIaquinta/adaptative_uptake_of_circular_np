@@ -5,8 +5,7 @@ import sys
 path = os.path.dirname(os.path.abspath(__file__))
 path_model = path + "/../model"
 sys.path.insert(1, path_model)
-path_figures = path + "/../figures"
-sys.path.insert(1, path_figures)
+
 
 import pickle
 
@@ -15,8 +14,7 @@ import openturns as ot
 
 ot.Log.Show(ot.Log.NONE)
 
-import utils_metamodel
-from utils_figures import CreateFigure, Fonts, SaveFigure
+from figures.utils import CreateFigure, Fonts, SaveFigure
 
 
 class SampleRepresentativeness:
