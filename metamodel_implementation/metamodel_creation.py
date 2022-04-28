@@ -86,7 +86,7 @@ class DataPreSetting:
         """
         datasize, _ = np.shape(shuffled_sample)
         datasize = 1000
-        shuffled_training_input_sample = ot.Sample(shuffled_sample[: int(self.training_amount * datasize), 0:6])
+        shuffled_training_input_sample = ot.Sample(shuffled_sample[: int(self.training_amount * datasize), 0:3])
         shuffled_training_output_sample = ot.Sample(shuffled_sample[: int(self.training_amount * datasize), -1:])
         return shuffled_training_input_sample, shuffled_training_output_sample
 
@@ -110,7 +110,7 @@ class DataPreSetting:
         datasize, _ = np.shape(shuffled_sample)
         datasize = 1000
         shuffled_testing_input_sample = ot.Sample(
-            shuffled_sample[int(self.training_amount * datasize + 1) : datasize, 0:6]
+            shuffled_sample[int(self.training_amount * datasize + 1) : datasize, 0:3]
         )
         shuffled_testing_output_sample = ot.Sample(
             shuffled_sample[int(self.training_amount * datasize + 1) : datasize, -1:]
