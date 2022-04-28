@@ -1,13 +1,3 @@
-# adding folders model and sensitivity_analysis to the system path
-import os
-import sys
-
-path = os.path.dirname(os.path.abspath(__file__))
-path_model = path + "/../model"
-sys.path.insert(1, path_model)
-path_sensitivity_analysis = path + "/../sensitivity_analysis"
-sys.path.insert(1, path_sensitivity_analysis)
-
 import openturns as ot
 import openturns.viewer as viewer
 
