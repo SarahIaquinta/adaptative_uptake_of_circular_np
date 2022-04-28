@@ -1,23 +1,15 @@
-# adding folders model and sensitivity_analysis to the system path
 import os
-import sys
-from os import listdir
-from os.path import isfile, join
+
 
 path = os.path.dirname(os.path.abspath(__file__))
-path_model = path + "/../model"
-existing_filenames = {f for f in listdir(path_model) if isfile(join(path, f))}
-sys.path.insert(1, path_model)
-path_sensitivity_analysis = path + "/../sensitivity_analysis"
-sys.path.insert(1, path_sensitivity_analysis)
+
 
 
 import numpy as np
 import openturns as ot
 
 ot.Log.Show(ot.Log.NONE)
-
-import utils_metamodel
+import metamodel.utils
 
 
 class DataPreSetting:
@@ -293,8 +285,8 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     kri = metamodelcreation.create_kriging_algorithm()
     metamodelposttreatment.run_algorithm(kri)
     results_from_kri = metamodelposttreatment.extract_results_from_algorithm(kri)
-    complete_pkl_filename_Kriging = utils_metamodel.create_pkl_name("Kriging", datapresetting.training_amount)
-    utils_metamodel.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
+    complete_pkl_filename_Kriging = metamodel.utils.create_pkl_name("Kriging", datapresetting.training_amount)
+    metamodel.utils.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
 
 
 if __name__ == "__main__":
