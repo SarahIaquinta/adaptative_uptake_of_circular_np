@@ -200,62 +200,6 @@ def plot_energy(
     savefigure.save_as_png(fig, "DeltaE_vs_f")
 
 
-def plot_energy_contributions(
-    f_list,
-    total_energy,
-    bending_energy2,
-    bending_energy3,
-    adhesion_energy,
-    tension_energy,
-    createfigure,
-    colors,
-    fonts,
-    savefigure,
-    xticks,
-    xticklabels,
-    pixels,
-):
-    (
-        _,
-        color_hls_rouge,
-        color_hls_moutarde,
-        color_hls_lime,
-        color_hls_vert,
-        color_hls_cyan,
-        color_hls_blue,
-        color_hls_purple,
-        color_hls_pink,
-    ) = colors.hls_palette()
-    palette_paired = colors.paired_palette()
-
-    fig = createfigure.square_figure_7(pixels)
-    ax = fig.gca()
-    kwargs = {"linewidth": 6}
-    ax.plot(f_list, tension_energy, color=color_hls_pink, label=r"$\overline{\Delta E}_{\sigma}$", **kwargs)
-    ax.plot(f_list, bending_energy2, color=color_hls_cyan, label=r"$\overline{\Delta E}_{b2}$", **kwargs)
-    ax.plot(f_list, bending_energy3, color=color_hls_blue, label=r"$\overline{\Delta E}_{b3}$", **kwargs)
-    ax.plot(f_list, adhesion_energy, color=color_hls_vert, label=r"$\overline{\Delta E}_{\gamma}$", **kwargs)
-    ax.plot(f_list, total_energy, color="k", label=r"$\overline{\Delta E}_{tot}$", **kwargs)
-    ax.set_xticks(xticks.energy_plots())
-    ax.set_xticklabels(
-        xticklabels.energy_plots(),
-        font=fonts.serif(),
-        fontsize=fonts.axis_legend_size(),
-    )
-    ax.set_yticks([-15, -10, -5, 0, 5])
-    ax.set_yticklabels(
-        ["-15", "-10", "-5", "0", "5"],
-        font=fonts.serif(),
-        fontsize=fonts.axis_legend_size(),
-    )
-    ax.legend(prop=fonts.serif(), loc="lower left", framealpha=0.9)
-    ax.set_xlabel(r"$f$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
-    ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
-
-    savefigure.save_as_png(fig, "energycontributions" + str(pixels))
-    savefigure.save_as_tiff(fig, "energycontributions" + str(pixels))
-
-
 def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_computation):
     pickle.dumps(energy_computation.compute_total_adimensional_energy_during_wrapping)
     pickle.dumps(membrane.compute_r2r_r2l_z2r_z2l_from_analytic_expression)
@@ -463,5 +407,5 @@ if __name__ == "__main__":
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
-    print(f_eq)
+    print('wrapping degree at equilibrium = ', f_eq)
     print("wrapping phase at equilibrium: ", wrapping_phase)
