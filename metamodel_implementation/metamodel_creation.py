@@ -9,7 +9,7 @@ import numpy as np
 import openturns as ot
 
 ot.Log.Show(ot.Log.NONE)
-import metamodel.utils
+import metamodel_implementation.utils
 
 
 class DataPreSetting:
@@ -285,8 +285,8 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     kri = metamodelcreation.create_kriging_algorithm()
     metamodelposttreatment.run_algorithm(kri)
     results_from_kri = metamodelposttreatment.extract_results_from_algorithm(kri)
-    complete_pkl_filename_Kriging = metamodel.utils.create_pkl_name("Kriging", datapresetting.training_amount)
-    metamodel.utils.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
+    complete_pkl_filename_Kriging = metamodel_implementation.utils.create_pkl_name("Kriging", datapresetting.training_amount)
+    metamodel_implementation.utils.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
 
 
 if __name__ == "__main__":
