@@ -1,5 +1,5 @@
-import os
 import pickle
+from pathlib import Path
 
 
 def create_pkl_name(type_of_metamodel, training_amount, folder=""):
@@ -24,10 +24,9 @@ def create_pkl_name(type_of_metamodel, training_amount, folder=""):
             name of the .pkl file
 
     """
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = path + "\\" + folder + "\\"
+    path = Path.cwd() /  folder
     pkl_name = "metamodel_" + type_of_metamodel + "_trainingamount_" + str(training_amount) + ".pkl"
-    complete_filename = path + pkl_name
+    complete_filename = path  / pkl_name
     return complete_filename
 
 
@@ -66,8 +65,7 @@ def create_pkl_name_sensitivityalgo(
             name of the .pkl file
 
     """
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = path + "\\..\\" + folder + "\\"
+    path = Path.cwd() /  folder
     pkl_name = (
         "sensitivityalgo="
         + sobol_implementation
@@ -79,13 +77,13 @@ def create_pkl_name_sensitivityalgo(
         + str(training_amount)
         + ".pkl"
     )
-    complete_filename = path + pkl_name
+    complete_filename = path / pkl_name
     return complete_filename
 
 
 def extract_metamodel_and_data_from_pkl(complete_filename):
     """
-    Extracts the objetcs that have been stored with the metamodel .pkl
+    Extracts the objects that have been stored with the metamodel .pkl
 
     Parameters:
         ----------
@@ -131,9 +129,9 @@ def export_metamodel_and_data_to_pkl(sample, results_from_algo, complete_filenam
         )
 
 
-def export_sensivity_algo_to_pkl(sensitivity_algo, complete_filename):
+def export_sensitivity_algo_to_pkl(sensitivity_algo, complete_filename):
     """
-    Exports the objetcs to the sensitivity .pkl
+    Exports the objects to the sensitivity .pkl
 
     Parameters:
         ----------
@@ -156,7 +154,7 @@ def export_sensivity_algo_to_pkl(sensitivity_algo, complete_filename):
 
 def extract_sensitivity_algo_from_pkl(complete_filename):
     """
-    Extracts the objetcs from the sensitivity .pkl
+    Extracts the objects from the sensitivity .pkl
 
     Parameters:
         ----------
