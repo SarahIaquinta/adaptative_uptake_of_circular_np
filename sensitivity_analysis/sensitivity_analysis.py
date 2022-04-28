@@ -16,7 +16,7 @@ ot.Log.Show(ot.Log.NONE)
 
 import metamodel_implementation.utils
 from metamodel_implementation.metamodel_validation import MetamodelPostTreatment
-from utils_figures import Colors, CreateFigure, Fonts, SaveFigure
+from figures.utils import Colors, CreateFigure, Fonts, SaveFigure
 
 
 class Distribution:
@@ -398,9 +398,9 @@ def plot_results_sensitivity_analysis(
             type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
             sensitivity algorithm is stored.
         createfigure: class
-            class from the utils_figures.py script that provides a predefined figure layout
+            class from the figures.utils.py script that provides a predefined figure layout
         colors: class
-            class from the utils_figures.py script that provides a predefined set of colors
+            class from the figures.utils.py script that provides a predefined set of colors
         pixels: str
             number of points per pixel in the figures Recommended: 360
 
