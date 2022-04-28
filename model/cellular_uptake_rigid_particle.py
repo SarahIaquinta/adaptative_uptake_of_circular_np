@@ -9,6 +9,7 @@ import numpy as np
 import scipy.integrate
 import scipy.signal
 
+import figures.utils
 import model.system_definition
 
 
@@ -39,7 +40,7 @@ class EnergyComputation:
         a = particle.get_alpha_angle(f)
         t = tan(0.25 * a)
         t2 = t ** 2
-        b = sqrt(mechanics.sigma_bar/ 2)
+        b = sqrt(mechanics.sigma_bar / 2)
         energy = (
             -8
             * b
@@ -75,9 +76,7 @@ class EnergyComputation:
 
     def compute_adimensional_tension_energy(self, f, particle, mechanics, wrapping, membrane, l3, r_2r, r_2l):
         adimensional_tension_energy = (
-            mechanics.sigma_bar            * (l3 + 2 * membrane.l2 - (r_2r[-1] - r_2l[-1]))
-            * 0.25
-            / particle.effective_radius
+            mechanics.sigma_bar * (l3 + 2 * membrane.l2 - (r_2r[-1] - r_2l[-1])) * 0.25 / particle.effective_radius
         )
         return adimensional_tension_energy
 
@@ -133,7 +132,9 @@ class EnergyComputation:
         return adimensional_total_energy_variation_list, energy_variation_computation_time_list
 
 
-def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
+def plot_energy(
+    particle, mechanics, membrane, wrapping, energy_computation, createfigure, fonts, xticks, xticklabels, savefigure
+):
     """
     Plots the evolution of the adimensional variation of energy_computation during wrapping
 
@@ -145,6 +146,18 @@ def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
             model.system_definition.MechanicalProperties_Adaptation class
         membrane: class
             model.system_definition.MembraneGeometry class
+        wrapping: class
+            model.system_definition.Wrapping class
+        createfigure: class
+            figures.utils.CreateFigure class
+        fonts: class
+            figures.utils.Fonts class
+        xticks: class
+            figures.utils.XTicks class
+        xticklabels: class
+            figures.utils.XTickLabels class
+        savefigure: class
+            figures.utils.SaveFigure class
 
     Returns:
         -------
@@ -154,8 +167,9 @@ def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
     energy_list, _ = energy_computation.compute_total_adimensional_energy_during_wrapping(
         particle, mechanics, wrapping, membrane
     )
-    plt.figure()
-    plt.plot(
+    fig = createfigure.square_figure_7(pixels=360)
+    ax = fig.gca()
+    ax.plot(
         wrapping.wrapping_list,
         energy_list,
         "-k",
@@ -165,13 +179,81 @@ def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
         + str(mechanics.gamma_bar_0)
         + r" ; $\overline{\sigma} = $"
         + str(mechanics.sigma_bar),
+        linewidth=4
     )
-    plt.xlabel("wrapping degree f [-]")
-    plt.ylabel(r"$\Delta E [-]$")
-    plt.title(r"$\Delta E(f)$")
-    plt.legend()
-    plt.xlim((0, 1))
-    plt.ylim((-10, 5))
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([-15, -10, -5, 0, 5])
+    ax.set_yticklabels(
+        ["-15", "-10", "-5", "0", "5"],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.legend(prop=fonts.serif(), loc="lower left", framealpha=0.9)
+    ax.set_xlabel(r"$f$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+
+    savefigure.save_as_png(fig, "DeltaE_vs_f")
+
+
+def plot_energy_contributions(
+    f_list,
+    total_energy,
+    bending_energy2,
+    bending_energy3,
+    adhesion_energy,
+    tension_energy,
+    createfigure,
+    colors,
+    fonts,
+    savefigure,
+    xticks,
+    xticklabels,
+    pixels,
+):
+    (
+        _,
+        color_hls_rouge,
+        color_hls_moutarde,
+        color_hls_lime,
+        color_hls_vert,
+        color_hls_cyan,
+        color_hls_blue,
+        color_hls_purple,
+        color_hls_pink,
+    ) = colors.hls_palette()
+    palette_paired = colors.paired_palette()
+
+    fig = createfigure.square_figure_7(pixels)
+    ax = fig.gca()
+    kwargs = {"linewidth": 6}
+    ax.plot(f_list, tension_energy, color=color_hls_pink, label=r"$\overline{\Delta E}_{\sigma}$", **kwargs)
+    ax.plot(f_list, bending_energy2, color=color_hls_cyan, label=r"$\overline{\Delta E}_{b2}$", **kwargs)
+    ax.plot(f_list, bending_energy3, color=color_hls_blue, label=r"$\overline{\Delta E}_{b3}$", **kwargs)
+    ax.plot(f_list, adhesion_energy, color=color_hls_vert, label=r"$\overline{\Delta E}_{\gamma}$", **kwargs)
+    ax.plot(f_list, total_energy, color="k", label=r"$\overline{\Delta E}_{tot}$", **kwargs)
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([-15, -10, -5, 0, 5])
+    ax.set_yticklabels(
+        ["-15", "-10", "-5", "0", "5"],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.legend(prop=fonts.serif(), loc="lower left", framealpha=0.9)
+    ax.set_xlabel(r"$f$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+
+    savefigure.save_as_png(fig, "energycontributions" + str(pixels))
+    savefigure.save_as_tiff(fig, "energycontributions" + str(pixels))
 
 
 def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_computation):
@@ -231,7 +313,7 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
         wrapping_phase_number = 3 if intersection_membrane < 0 else 2
         wrapping_phase = "full wrapping" if intersection_membrane < 0 else "partial wrapping"
     return (f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list)
-    
+
 
 def parse_arguments():
     """
@@ -342,8 +424,14 @@ def profiler(particle, mechanics, membrane, wrapping, energy_computation):
 
 if __name__ == "__main__":
     args = parse_arguments()
-
-    particle = model.system_definition.ParticleGeometry(r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300)
+    createfigure = figures.utils.CreateFigure()
+    fonts = figures.utils.Fonts()
+    savefigure = figures.utils.SaveFigure()
+    xticks = figures.utils.XTicks()
+    xticklabels = figures.utils.XTickLabels()
+    particle = model.system_definition.ParticleGeometry(
+        r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300
+    )
 
     mechanics = model.system_definition.MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
@@ -360,8 +448,18 @@ if __name__ == "__main__":
 
     energy_computation = EnergyComputation()
 
-    plot_energy(particle, mechanics, membrane, wrapping, energy_computation)
-    plt.show()
+    plot_energy(
+        particle,
+        mechanics,
+        membrane,
+        wrapping,
+        energy_computation,
+        createfigure,
+        fonts,
+        xticks,
+        xticklabels,
+        savefigure,
+    )
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
