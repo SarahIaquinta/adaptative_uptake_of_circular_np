@@ -1,6 +1,6 @@
 import os
+from pathlib import Path
 
-path = os.path.dirname(os.path.abspath(__file__))
 
 
 import pickle
@@ -38,7 +38,7 @@ class SampleRepresentativeness:
             None
         """
 
-        self.filename = path + "/" + filename
+        self.filename = Path.cwd() / 'metamodel_implementation' / filename
         self.training_amount = training_amount
         self.pixels = pixels
         self.nb_of_shuffled_samples = nb_of_shuffled_samples
@@ -57,7 +57,7 @@ class SampleRepresentativeness:
                 self.nb_of_shuffled_samples times shuffled phase 3
 
         """
-        sample = ot.Sample.ImportFromTextFile(self.filename, "\t", 0)
+        sample = ot.Sample.ImportFromTextFile(self.filename.as_posix(), "\t", 0)
         phase3 = sample[:, -1]
         all_shuffled_phase3 = np.zeros((len(phase3), self.nb_of_shuffled_samples))
         for i in range(self.nb_of_shuffled_samples):
