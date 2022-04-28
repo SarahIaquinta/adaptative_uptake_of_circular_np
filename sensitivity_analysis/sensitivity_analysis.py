@@ -5,7 +5,7 @@ ot.Log.Show(ot.Log.NONE)
 
 
 import metamodel_implementation.utils
-from figures.utils import Colors, CreateFigure, Fonts, SaveFigure
+from figures.utils import CreateFigure, Fonts, SaveFigure
 from metamodel_implementation.metamodel_validation import MetamodelPostTreatment
 
 
@@ -23,12 +23,6 @@ class Distribution:
             None
         """
 
-        self.sigma_bar_r_min = 0.167
-        self.sigma_bar_r_max = 1
-        self.sigma_bar_fs_min = -0.45
-        self.sigma_bar_fs_max = 0.45
-        self.sigma_bar_lambda_min = -50.01
-        self.sigma_bar_lambda_max = -49.99
         self.gamma_bar_r_min = 1
         self.gamma_bar_r_max = 6
         self.gamma_bar_fs_min = -0.45
@@ -38,7 +32,7 @@ class Distribution:
 
     def uniform(self):
         """
-        creates a uniform distribution of the 6 input parameters
+        creates a uniform distribution of the 3 input parameters
 
         Parameters:
             ----------
@@ -47,7 +41,7 @@ class Distribution:
         Returns:
             -------
             distribution: ot class
-                uniform distribution of the 6 input parameters, computed wth Openturns.
+                uniform distribution of the 3 input parameters, computed wth Openturns.
                 gamma_bar_lambda and sigma_bar_lambda could have been computed as constant values
                 but we chose to generate them as uniform distribution with close bounds to match
                 the architecture of the openturns library
@@ -55,9 +49,6 @@ class Distribution:
         """
         distribution = ot.ComposedDistribution(
             [
-                ot.Uniform(self.sigma_bar_r_min, self.sigma_bar_r_max),
-                ot.Uniform(self.sigma_bar_fs_min, self.sigma_bar_fs_max),
-                ot.Uniform(self.sigma_bar_lambda_min, self.sigma_bar_lambda_max),
                 ot.Uniform(self.gamma_bar_r_min, self.gamma_bar_r_max),
                 ot.Uniform(self.gamma_bar_fs_min, self.gamma_bar_fs_max),
                 ot.Uniform(self.gamma_bar_lambda_min, self.gamma_bar_lambda_max),
@@ -383,7 +374,6 @@ def plot_results_sensitivity_analysis(
     sensitivity_experiment_size,
     type_of_Sobol_sensitivity_implementation,
     createfigure,
-    colors,
     pixels,
 ):
     """
@@ -422,8 +412,8 @@ def plot_results_sensitivity_analysis(
     )
     first_order_indices_all_variables = sensitivity_algo.getFirstOrderIndices()
     total_order_indices_all_variables = sensitivity_algo.getTotalOrderIndices()
-    first_order_indices_influent_variables = [first_order_indices_all_variables[k] for k in [0, 1, 3, 4]]
-    total_order_indices_influent_variables = [total_order_indices_all_variables[k] for k in [0, 1, 3, 4]]
+    first_order_indices_influent_variables = [first_order_indices_all_variables[k] for k in [0, 1]]
+    total_order_indices_influent_variables = [total_order_indices_all_variables[k] for k in [0, 1]]
     fig = createfigure.square_figure_7(pixels=pixels)
     ax = fig.gca()
     ax.plot(
@@ -431,20 +421,21 @@ def plot_results_sensitivity_analysis(
         label="First order indice",
         color="k",
         marker="v",
-        markersize=8,
+        markersize=12,
         linestyle="None",
     )
     ax.plot(
         total_order_indices_influent_variables,
         label="Total indices",
-        color=colors.hls_palette[6],
+        color="m",
         marker="D",
-        markersize=8,
+        markersize=12,
         linestyle="None",
     )
-    ax.set_xticks([0, 1, 2, 3])
+    ax.set_xlim((-0.2, 1.2))
+    ax.set_xticks([0, 1])
     ax.set_xticklabels(
-        [r"$\overline{\sigma}_r$", r"$\overline{\sigma}_{fs}$", r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$"],
+        [r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$"],
         font=fonts.serif(),
         fontsize=fonts.axis_legend_size(),
     )
@@ -480,7 +471,6 @@ if __name__ == "__main__":
     metamodelposttreatment = MetamodelPostTreatment()
     distribution = Distribution()
     createfigure = CreateFigure()
-    colors = Colors()
     fonts = Fonts()
     savefigure = SaveFigure()
 
@@ -504,6 +494,5 @@ if __name__ == "__main__":
                 sensitivity_experiment_size,
                 type_of_Sobol_sensitivity_implementation,
                 createfigure,
-                colors,
                 pixels=360,
             )
