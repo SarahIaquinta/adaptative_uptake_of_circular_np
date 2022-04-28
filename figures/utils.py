@@ -3,7 +3,6 @@ from io import BytesIO
 import matplotlib.font_manager as font_manager
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from PIL import Image
 
 
