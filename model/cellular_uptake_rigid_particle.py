@@ -9,7 +9,7 @@ import numpy as np
 import scipy.integrate
 import scipy.signal
 
-from model.system_definition import MechanicalProperties_Adaptation, MembraneGeometry, ParticleGeometry, Wrapping
+import model.system_definition
 
 
 class EnergyComputation:
@@ -39,7 +39,7 @@ class EnergyComputation:
         a = particle.get_alpha_angle(f)
         t = tan(0.25 * a)
         t2 = t ** 2
-        b = sqrt(mechanics.sigma_bar(f, wrapping) / 2)
+        b = sqrt(mechanics.sigma_bar/ 2)
         energy = (
             -8
             * b
@@ -75,8 +75,7 @@ class EnergyComputation:
 
     def compute_adimensional_tension_energy(self, f, particle, mechanics, wrapping, membrane, l3, r_2r, r_2l):
         adimensional_tension_energy = (
-            mechanics.sigma_bar(f, wrapping)
-            * (l3 + 2 * membrane.l2 - (r_2r[-1] - r_2l[-1]))
+            mechanics.sigma_bar            * (l3 + 2 * membrane.l2 - (r_2r[-1] - r_2l[-1]))
             * 0.25
             / particle.effective_radius
         )
@@ -141,11 +140,11 @@ def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
     Parameters:
         ----------
         particle: class
-            ParticleGeometry class
+            model.system_definition.ParticleGeometry class
         mechanics: class
-            MechanicalProperties_Adaptation class
+            model.system_definition.MechanicalProperties_Adaptation class
         membrane: class
-            MembraneGeometry class
+            model.system_definition.MembraneGeometry class
 
     Returns:
         -------
@@ -164,8 +163,8 @@ def plot_energy(particle, mechanics, membrane, wrapping, energy_computation):
         + str(np.round(particle.r_bar, 2))
         + r" ; $\overline{\gamma}_0 = $"
         + str(mechanics.gamma_bar_0)
-        + r" ; $\overline{\sigma}_0 = $"
-        + str(mechanics.sigma_bar_0),
+        + r" ; $\overline{\sigma} = $"
+        + str(mechanics.sigma_bar),
     )
     plt.xlabel("wrapping degree f [-]")
     plt.ylabel(r"$\Delta E [-]$")
@@ -205,11 +204,11 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
     Parameters:
         ----------
         particle: class
-            ParticleGeometry object
+            model.system_definition.ParticleGeometry object
         mechanics: class
-            MechanicalProperties_Adaptation object
+            model.system_definition.MechanicalProperties_Adaptation object
         membrane: class
-            MembraneGeometry object
+            model.system_definition.MembraneGeometry object
 
     Returns:
         -------
@@ -232,7 +231,7 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
         wrapping_phase_number = 3 if intersection_membrane < 0 else 2
         wrapping_phase = "full wrapping" if intersection_membrane < 0 else "partial wrapping"
     return (f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list)
-
+    
 
 def parse_arguments():
     """
@@ -344,23 +343,20 @@ def profiler(particle, mechanics, membrane, wrapping, energy_computation):
 if __name__ == "__main__":
     args = parse_arguments()
 
-    particle = ParticleGeometry(r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300)
+    particle = model.system_definition.ParticleGeometry(r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300)
 
-    mechanics = MechanicalProperties_Adaptation(
+    mechanics = model.system_definition.MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
         gamma_bar_r=args.gamma_bar_r,
         gamma_bar_fs=args.gamma_bar_fs,
         gamma_bar_lambda=args.gamma_bar_lambda,
-        sigma_bar_r=args.sigma_bar_r,
-        sigma_bar_fs=args.sigma_bar_fs,
-        sigma_bar_lambda=args.sigma_bar_lambda,
         gamma_bar_0=args.gamma_bar_0,
-        sigma_bar_0=args.sigma_bar_0,
+        sigma_bar=args.sigma_bar_0,
     )
 
-    membrane = MembraneGeometry(particle, sampling_points_membrane=100)
+    membrane = model.system_definition.MembraneGeometry(particle, sampling_points_membrane=100)
 
-    wrapping = Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
+    wrapping = model.system_definition.Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
 
     energy_computation = EnergyComputation()
 

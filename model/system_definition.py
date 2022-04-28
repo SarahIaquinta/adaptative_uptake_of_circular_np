@@ -6,6 +6,7 @@ import numpy as np
 from mpmath import coth, csch
 from figures.utils import CreateFigure, Fonts, SaveFigure
 import model.cellular_uptake_rigid_particle
+
 class Fixed_Mechanical_Properties:
     """
     A class to represent the mechanical properties of the cell membrane and the particle.
@@ -670,13 +671,13 @@ class MembraneGeometry:
         z2r_0 = particle.compute_z_coordinate(f, theta_list_region3[-1])
         r2r = np.zeros_like(self.S2)
         z2r = np.zeros_like(self.S2)
-        sigma = mechanics.sigma_bar(f, wrapping)
+        sigma_bar = mechanics.sigma_bar
 
         for i in range(1, len(self.S2)):
             s = self.S2[i]
-            r = r2r_0 + s - sqrt(2 / sigma) * (1 - cos(alpha)) / (coth(s * sqrt(0.5 * sigma)) + cos(alpha * 0.5))
-            z = z2r_0 + sqrt(8 / sigma) * sin(0.5 * alpha) * (
-                1 - (csch(s * sqrt(0.5 * sigma))) / (coth(s * sqrt(0.5 * sigma)) + cos(0.5 * alpha))
+            r = r2r_0 + s - sqrt(2 / sigma_bar) * (1 - cos(alpha)) / (coth(s * sqrt(0.5 * sigma_bar)) + cos(alpha * 0.5))
+            z = z2r_0 + sqrt(8 / sigma_bar) * sin(0.5 * alpha) * (
+                1 - (csch(s * sqrt(0.5 * sigma_bar))) / (coth(s * sqrt(0.5 * sigma_bar)) + cos(0.5 * alpha))
             )
             r2r[i] = r
             z2r[i] = z
