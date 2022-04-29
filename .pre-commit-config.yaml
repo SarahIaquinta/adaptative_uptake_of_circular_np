@@ -38,10 +38,11 @@ repos:
         - flake8-bugbear
         - flake8-implicit-str-concat
         - flake8-annotations
-      args: ["--max-line-length=120","--ignore=ANN001,ANN201,ANN101,ANN102,ANN002,F841,ANN204, ANN003,E203,E402, E401, F401, W503"]
+      args: ["--max-line-length=120","--ignore=ANN001,ANN201,ANN101,ANN102,ANN002,F841,ANN204, ANN003,E203,E402, E401, F401, W503, E731"]
       # we ignore errors
       # -ANN101: "Missing type annotation for self in method"
       # -ANN102 "Missing type annotation for cls in classmethod"
       # -ANN002 "Missing type annotation for *args"
       # -ANN003 "Missing type annotation for *kwargs"
       # -E203 "whitespace before ':' because pep8 is wrong here. See https://github.com/psf/black/issues/315"
+      # -E731  "do not assign a lambda expression, use a def"
