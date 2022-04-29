@@ -1,6 +1,7 @@
 scipy==1.7.0
 numpy==1.19.4
 mpmath==1.1.0
-matplotplib==3.3.3
+matplotplib==3.5.1
 argparse==1.1
 openturns==1.18
+pre-commit
