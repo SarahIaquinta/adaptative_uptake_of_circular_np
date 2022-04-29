@@ -6,7 +6,7 @@ import openturns as ot
 
 ot.Log.Show(ot.Log.NONE)
 
-from figures.utils import CreateFigure, Fonts, SaveFigure
+from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 
 
 class SampleRepresentativeness:
