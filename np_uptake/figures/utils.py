@@ -59,24 +59,3 @@ class XTickLabels:
     def energy_plots(self):
         xticklabels = ["0", "0.2", "0.4", "0.6", "0.8", "1"]
         return xticklabels
-
-
-if __name__ == "__main__":
-    colors = Colors()
-    [
-        hls_palette,
-        color_hls_rouge,
-        color_hls_moutarde,
-        color_hls_lime,
-        color_hls_vert,
-        color_hls_cyan,
-        color_hls_blue,
-        color_hls_purple,
-        color_hls_pink,
-    ] = colors.hls_palette()
-    plt.figure()
-    x_list = np.linspace(0, 1, 100)
-    for i in range(len(hls_palette)):
-        y_list = [np.cos(x + i) for x in x_list]
-        plt.plot(x_list, y_list, color=hls_palette[i])
-    plt.show()
