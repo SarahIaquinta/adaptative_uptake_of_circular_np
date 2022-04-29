@@ -26,7 +26,7 @@ python3 setup.py develop --user
 ## Tutorial
 This repository is divided into 4 folders:
 - *model*: contains the code used to compute the total variation of energy of the interface between a circular NP and a membrane by accounting for the mechanical accommodation of the latter. This folder also contains the routine to determine the final wrapping phase of the system. A part of this code was already shared in the repository associated to [2];
-- *metamodel*: contains a script to check for the representativeness of the dataset used to create a metamodel, a script to create a Kriging metamodel using the Openturns [3] opensource library, and a routine to validate the metamodel that has just been created;
+- *metamodel_implementation*: contains a script to check for the representativeness of the dataset used to create a metamodel, a script to create a Kriging metamodel using the Openturns [3] opensource library, and a routine to validate the metamodel that has just been created;
 - *sensitivity_analysis*: contains a script that allows to create samples based on the metamodels that have been created and exported as .pkl files in the metamodel folder. These samples are then used to the  apply sensitivity algorithms. The user can choose among the various sensitivity algorithms provided by Openturns.
 - *figures*: contains a utils script to display the graphs and save them as PNG files with consistency.
 
@@ -39,11 +39,9 @@ The data that is provided in this repository, in the *dataset_for_metamodel_crea
 
 
 
-| <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_r"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_{fs}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\sigma}_{\lambda}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_r"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{fs}"> | <img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{\lambda}"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_1"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_2"> | <img src="https://render.githubusercontent.com/render/math?math=\psi_3"> |
-|:---------------------:|:------------------------:|:-----------------------------:|:---------------------:|:------------------------:|:-----------------------------:|:--------:|:--------:|:--------:|
-|                       |                          |                               |                       |                          |                               |          |          |          |
-
-
+| **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_r">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{fs}">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{\lambda}">** | **<img src="https://render.githubusercontent.com/render/math?math=\psi_3">** |
+|:-----------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------:|
+|                                                                                           |                                                                                              |                                                                                                   |
 
 The notations introduced in the table above are the same as the ones introduced in [1].
 If the user wants to use different data, it is recommended that they make a copy of the actual .txt file and that they paste their data in this .txt file. We spotted an error with the type of textfile that is given as an input to create the metamodels (Suggestions to address this issue are more than welcome!)
