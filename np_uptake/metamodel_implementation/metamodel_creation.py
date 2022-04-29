@@ -4,7 +4,7 @@ import numpy as np
 import openturns as ot
 
 ot.Log.Show(ot.Log.NONE)
-import metamodel_implementation.utils
+import np_uptake.metamodel_implementation.utils as miu
 
 
 class DataPreSetting:
@@ -280,10 +280,10 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     kri = metamodelcreation.create_kriging_algorithm()
     metamodelposttreatment.run_algorithm(kri)
     results_from_kri = metamodelposttreatment.extract_results_from_algorithm(kri)
-    complete_pkl_filename_Kriging = metamodel_implementation.utils.create_pkl_name(
+    complete_pkl_filename_Kriging = miu.create_pkl_name(
         "Kriging", datapresetting.training_amount
     )
-    metamodel_implementation.utils.export_metamodel_and_data_to_pkl(
+    miu.export_metamodel_and_data_to_pkl(
         shuffled_sample, results_from_kri, complete_pkl_filename_Kriging
     )
 
