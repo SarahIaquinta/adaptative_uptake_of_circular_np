@@ -178,7 +178,7 @@ def plot_energy(
         + str(mechanics.gamma_bar_0)
         + r" ; $\overline{\sigma} = $"
         + str(mechanics.sigma_bar),
-        linewidth=4
+        linewidth=4,
     )
     ax.set_xticks(xticks.energy_plots())
     ax.set_xticklabels(
@@ -372,9 +372,7 @@ if __name__ == "__main__":
     savefigure = fiu.SaveFigure()
     xticks = fiu.XTicks()
     xticklabels = fiu.XTickLabels()
-    particle = sysdef.ParticleGeometry(
-        r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300
-    )
+    particle = sysdef.ParticleGeometry(r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300)
 
     mechanics = sysdef.MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
@@ -406,5 +404,5 @@ if __name__ == "__main__":
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
-    print('wrapping degree at equilibrium = ', np.round(f_eq, 2))
+    print("wrapping degree at equilibrium = ", np.round(f_eq, 2))
     print("wrapping phase at equilibrium: ", wrapping_phase)

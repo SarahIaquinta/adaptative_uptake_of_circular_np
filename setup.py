@@ -6,8 +6,8 @@ setup(
     author="Sarah Iaquinta",
     author_email="sarah.r.iaquinta@gmail.com",
     packages=find_packages(),
-    url="",  # TODO add github repo url
-    description="",  # TODO add description
+    url="https://github.com/SarahIaquinta/adaptative_uptake_of_circular_np",
+    description="package to create and validate Kriging surrogate model and to compute Sobol's sensitivity indices",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
