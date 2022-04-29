@@ -1,12 +1,11 @@
 from functools import lru_cache
 from math import atan, cos, exp, pi, sin, sqrt
 
-import matplotlib.pyplot as plt
 import numpy as np
 from mpmath import coth, csch
 
-import model.cellular_uptake_rigid_particle
-from figures.utils import CreateFigure, Fonts, SaveFigure
+import np_uptake.model.cellular_uptake_rigid_particle as cellupt
+from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 
 
 class Fixed_Mechanical_Properties:
@@ -724,7 +723,7 @@ if __name__ == "__main__":
     createfigure = CreateFigure()
     fonts = Fonts()
     savefigure = SaveFigure()
-    args = model.cellular_uptake_rigid_particle.parse_arguments()
+    args = cellupt.parse_arguments()
 
     mechanics = MechanicalProperties_Adaptation(
         testcase="test-classimplementation",

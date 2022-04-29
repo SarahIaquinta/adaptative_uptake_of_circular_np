@@ -4,13 +4,12 @@ import time
 from functools import lru_cache
 from math import exp, pi, sqrt, tan
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy.integrate
 import scipy.signal
 
-import figures.utils
-import model.system_definition
+import np_uptake.figures.utils as fiu
+import np_uptake.model.system_definition as sysdef
 
 
 class EnergyComputation:
@@ -368,16 +367,16 @@ def profiler(particle, mechanics, membrane, wrapping, energy_computation):
 
 if __name__ == "__main__":
     args = parse_arguments()
-    createfigure = figures.utils.CreateFigure()
-    fonts = figures.utils.Fonts()
-    savefigure = figures.utils.SaveFigure()
-    xticks = figures.utils.XTicks()
-    xticklabels = figures.utils.XTickLabels()
-    particle = model.system_definition.ParticleGeometry(
+    createfigure = fiu.CreateFigure()
+    fonts = fiu.Fonts()
+    savefigure = fiu.SaveFigure()
+    xticks = fiu.XTicks()
+    xticklabels = fiu.XTickLabels()
+    particle = sysdef.ParticleGeometry(
         r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300
     )
 
-    mechanics = model.system_definition.MechanicalProperties_Adaptation(
+    mechanics = sysdef.MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
         gamma_bar_r=args.gamma_bar_r,
         gamma_bar_fs=args.gamma_bar_fs,
@@ -386,9 +385,9 @@ if __name__ == "__main__":
         sigma_bar=args.sigma_bar_0,
     )
 
-    membrane = model.system_definition.MembraneGeometry(particle, sampling_points_membrane=100)
+    membrane = sysdef.MembraneGeometry(particle, sampling_points_membrane=100)
 
-    wrapping = model.system_definition.Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
+    wrapping = sysdef.Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
 
     energy_computation = EnergyComputation()
 
@@ -407,5 +406,5 @@ if __name__ == "__main__":
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
-    print('wrapping degree at equilibrium = ', f_eq)
+    print('wrapping degree at equilibrium = ', np.round(f_eq, 2))
     print("wrapping phase at equilibrium: ", wrapping_phase)
