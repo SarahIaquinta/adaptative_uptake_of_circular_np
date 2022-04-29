@@ -4,9 +4,9 @@ import openturns.viewer as viewer
 ot.Log.Show(ot.Log.NONE)
 
 
-import metamodel_implementation.utils
-from figures.utils import CreateFigure, Fonts, SaveFigure
-from metamodel_implementation.metamodel_validation import MetamodelPostTreatment
+import np_uptake.metamodel_implementation.utils as miu
+from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
+from np_uptake.metamodel_implementation.metamodel_validation import MetamodelPostTreatment
 
 
 class Distribution:
@@ -119,16 +119,16 @@ def compute_and_export_sensitivity_algo_Saltelli(
         None
 
     """
-    complete_pkl_filename_metamodel = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    _, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+    complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
+    _, results_from_algo = miu.extract_metamodel_and_data_from_pkl(
         complete_pkl_filename_metamodel
     )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     sensitivity_algo_Saltelli = compute_sensitivity_algo_Saltelli(distribution, metamodel, sensitivity_experiment_size)
-    complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
+    complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
+    miu.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Saltelli, complete_pkl_filename_sensitivy_algo
     )
 
@@ -196,16 +196,16 @@ def compute_and_export_sensitivity_algo_Jansen(
 
     """
 
-    complete_pkl_filename_metamodel = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    _, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+    complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
+    _, results_from_algo = miu.extract_metamodel_and_data_from_pkl(
         complete_pkl_filename_metamodel
     )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     sensitivity_algo_Jansen = compute_sensitivity_algo_Jansen(distribution, metamodel, sensitivity_experiment_size)
-    complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
+    complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
+    miu.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Jansen, complete_pkl_filename_sensitivy_algo
     )
 
@@ -273,18 +273,18 @@ def compute_and_export_sensitivity_algo_MauntzKucherenko(
 
     """
 
-    complete_pkl_filename_metamodel = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    _, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+    complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
+    _, results_from_algo = miu.extract_metamodel_and_data_from_pkl(
         complete_pkl_filename_metamodel
     )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     sensitivity_algo_MauntzKucherenko = compute_sensitivity_algo_MauntzKucherenko(
         distribution, metamodel, sensitivity_experiment_size
     )
-    complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
+    complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
+    miu.export_sensitivity_algo_to_pkl(
         sensitivity_algo_MauntzKucherenko, complete_pkl_filename_sensitivy_algo
     )
 
@@ -353,16 +353,16 @@ def compute_and_export_sensitivity_algo_Martinez(
 
     """
 
-    complete_pkl_filename_metamodel = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    _, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+    complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
+    _, results_from_algo = miu.extract_metamodel_and_data_from_pkl(
         complete_pkl_filename_metamodel
     )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     sensitivity_algo_Martinez = compute_sensitivity_algo_Martinez(distribution, metamodel, sensitivity_experiment_size)
-    complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
+    complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    metamodel_implementation.utils.export_sensitivity_algo_to_pkl(
+    miu.export_sensitivity_algo_to_pkl(
         sensitivity_algo_Martinez, complete_pkl_filename_sensitivy_algo
     )
 
@@ -404,10 +404,10 @@ def plot_results_sensitivity_analysis(
 
     """
 
-    complete_pkl_filename_sensitivy_algo = metamodel_implementation.utils.create_pkl_name_sensitivityalgo(
+    complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
-    sensitivity_algo = metamodel_implementation.utils.extract_sensitivity_algo_from_pkl(
+    sensitivity_algo = miu.extract_sensitivity_algo_from_pkl(
         complete_pkl_filename_sensitivy_algo
     )
     first_order_indices_all_variables = sensitivity_algo.getFirstOrderIndices()
