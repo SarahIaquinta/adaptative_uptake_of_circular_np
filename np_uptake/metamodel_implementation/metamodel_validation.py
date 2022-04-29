@@ -5,8 +5,8 @@ ot.Log.Show(ot.Log.NONE)
 
 from matplotlib import pylab as plt
 
-import metamodel_implementation.utils
-from metamodel_implementation.metamodel_creation import DataPreSetting, MetamodelPostTreatment
+import np_uptake.metamodel_implementation.utils as miu
+from np_uptake.metamodel_implementation.metamodel_creation import DataPreSetting, MetamodelPostTreatment
 
 
 class MetamodelValidation:
@@ -120,8 +120,8 @@ def metamodel_validation_routine(
         Nothing
 
     """
-    complete_pkl_filename = metamodel_implementation.utils.create_pkl_name(type_of_metamodel, training_amount)
-    shuffled_sample, results_from_algo = metamodel_implementation.utils.extract_metamodel_and_data_from_pkl(
+    complete_pkl_filename = miu.create_pkl_name(type_of_metamodel, training_amount)
+    shuffled_sample, results_from_algo = miu.extract_metamodel_and_data_from_pkl(
         complete_pkl_filename
     )
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
