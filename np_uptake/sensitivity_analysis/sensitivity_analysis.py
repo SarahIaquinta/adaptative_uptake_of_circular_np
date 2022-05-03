@@ -27,8 +27,8 @@ class Distribution:
         self.gamma_bar_r_max = 6
         self.gamma_bar_fs_min = -0.45
         self.gamma_bar_fs_max = 0.45
-        self.gamma_bar_lambda_min = 49.99
-        self.gamma_bar_lambda_max = 50.01
+        self.gamma_bar_lambda_min = 10
+        self.gamma_bar_lambda_max = 100
 
     def uniform(self):
         """
@@ -394,8 +394,8 @@ def plot_results_sensitivity_analysis(
     sensitivity_algo = miu.extract_sensitivity_algo_from_pkl(complete_pkl_filename_sensitivy_algo)
     first_order_indices_all_variables = sensitivity_algo.getFirstOrderIndices()
     total_order_indices_all_variables = sensitivity_algo.getTotalOrderIndices()
-    first_order_indices_influent_variables = [first_order_indices_all_variables[k] for k in [0, 1]]
-    total_order_indices_influent_variables = [total_order_indices_all_variables[k] for k in [0, 1]]
+    first_order_indices_influent_variables = [first_order_indices_all_variables[k] for k in [0, 1, 2]]
+    total_order_indices_influent_variables = [total_order_indices_all_variables[k] for k in [0, 1, 2]]
     fig = createfigure.square_figure_7(pixels=pixels)
     ax = fig.gca()
     ax.plot(
@@ -414,10 +414,10 @@ def plot_results_sensitivity_analysis(
         markersize=12,
         linestyle="None",
     )
-    ax.set_xlim((-0.2, 1.2))
-    ax.set_xticks([0, 1])
+    ax.set_xlim((-0.2, 2.2))
+    ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(
-        [r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$"],
+        [r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$", r"$\overline{\gamma}_{\lambda}$"],
         font=fonts.serif(),
         fontsize=fonts.axis_legend_size(),
     )
