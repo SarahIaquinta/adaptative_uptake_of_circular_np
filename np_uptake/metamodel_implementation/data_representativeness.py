@@ -180,10 +180,10 @@ class SampleRepresentativeness:
             font=fonts.serif(),
             fontsize=fonts.axis_legend_size(),
         )
-        ax.set_ylim(-0.02, 0.55)
-        ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5])
+        ax.set_ylim(-0.02, 0.42)
+        ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4])
         ax.set_yticklabels(
-            [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+            [0, 0.1, 0.2, 0.3, 0.4],
             font=fonts.serif(),
             fontsize=fonts.axis_legend_size(),
         )
@@ -231,10 +231,10 @@ class SampleRepresentativeness:
             font=fonts.serif(),
             fontsize=fonts.axis_legend_size(),
         )
-        ax.set_ylim(0, 0.2)
-        ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2])
+        ax.set_ylim(0, 0.26)
+        ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2, 0.25])
         ax.set_yticklabels(
-            [0, 0.05, 0.1, 0.15, 0.2],
+            [0, 0.05, 0.1, 0.15, 0.2, 0.25],
             font=fonts.serif(),
             fontsize=fonts.axis_legend_size(),
         )
@@ -272,6 +272,8 @@ class SampleRepresentativeness:
             for k in range(len(mean_of_cumulative_means) - 1)
         ]
         ax.plot(sample_size[0:-1], gradient, "-k")
+        ax.plot(sample_size[0:-1], [1e-2] * len(sample_size[0:-1]), "--r")
+
         ax.set_xticks([1, 250, 500, 750, 1000])
         ax.set_xticklabels(
             [1, 250, 500, 750, 1000],
@@ -317,7 +319,7 @@ class SampleRepresentativeness:
         ax = fig.gca()
         gradient = [np.abs(np.diff(cumulative_std)[k]) / cumulative_std[k] for k in range(2, len(cumulative_std) - 1)]
         ax.plot(sample_size[2:-1], gradient, "-k")
-
+        ax.plot(sample_size[2:-1], [1e-2] * len(sample_size[2:-1]), "--r")
         ax.set_xticks([1, 250, 500, 750, 1000])
         ax.set_xticklabels(
             [1, 250, 500, 750, 1000],
@@ -349,7 +351,7 @@ if __name__ == "__main__":
         filename_qMC_Sobol, training_amount=0.8, nb_of_shuffled_samples=200, pixels=360
     )
 
-    samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
+    # samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
 
     samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
 
