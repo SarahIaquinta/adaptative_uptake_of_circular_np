@@ -4,6 +4,8 @@ import openturns.viewer as viewer
 ot.Log.Show(ot.Log.NONE)
 
 
+import numpy as np
+
 import np_uptake.metamodel_implementation.utils as miu
 from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 from np_uptake.metamodel_implementation.metamodel_validation import MetamodelPostTreatment
@@ -392,22 +394,54 @@ def plot_results_sensitivity_analysis(
         type_of_metamodel, training_amount, sensitivity_experiment_size, type_of_Sobol_sensitivity_implementation
     )
     sensitivity_algo = miu.extract_sensitivity_algo_from_pkl(complete_pkl_filename_sensitivy_algo)
-    first_order_indices_all_variables = sensitivity_algo.getFirstOrderIndices()
-    total_order_indices_all_variables = sensitivity_algo.getTotalOrderIndices()
-    first_order_indices_influent_variables = [first_order_indices_all_variables[k] for k in [0, 1, 2]]
-    total_order_indices_influent_variables = [total_order_indices_all_variables[k] for k in [0, 1, 2]]
+    first_order_indices = sensitivity_algo.getFirstOrderIndices()
+    first_order_indices_confidence_interval = sensitivity_algo.getFirstOrderIndicesInterval()
+    first_order_indices_confidence_lowerbounds = [
+        first_order_indices_confidence_interval.getLowerBound()[k] for k in [0, 1, 2]
+    ]
+    first_order_indices_confidence_upperbounds = [
+        first_order_indices_confidence_interval.getUpperBound()[k] for k in [0, 1, 2]
+    ]
+    total_order_indices = sensitivity_algo.getTotalOrderIndices()
+    total_order_indices_confidence_interval = sensitivity_algo.getTotalOrderIndicesInterval()
+    total_order_indices_confidence_lowerbounds = [
+        total_order_indices_confidence_interval.getLowerBound()[k] for k in [0, 1, 2]
+    ]
+    total_order_indices_confidence_upperbounds = [
+        total_order_indices_confidence_interval.getUpperBound()[k] for k in [0, 1, 2]
+    ]
+    first_order_indices_confidence_errorbar = np.zeros((2, 3))
+    total_order_indices_confidence_errorbar = np.zeros((2, 3))
+    for k in range(2):
+        first_order_indices_confidence_errorbar[0, k] = (
+            first_order_indices[k] - first_order_indices_confidence_lowerbounds[k]
+        )
+        first_order_indices_confidence_errorbar[1, :] = (
+            first_order_indices_confidence_upperbounds[k] - first_order_indices[k]
+        )
+        total_order_indices_confidence_errorbar[0, :] = (
+            total_order_indices[k] - total_order_indices_confidence_lowerbounds[k]
+        )
+        total_order_indices_confidence_errorbar[1, :] = (
+            total_order_indices_confidence_upperbounds[k] - total_order_indices[k]
+        )
+
     fig = createfigure.square_figure_7(pixels=pixels)
     ax = fig.gca()
-    ax.plot(
-        first_order_indices_influent_variables,
+    ax.errorbar(
+        [0, 1, 2],
+        first_order_indices,
+        yerr=first_order_indices_confidence_errorbar,
         label="First order indice",
         color="k",
         marker="v",
         markersize=12,
         linestyle="None",
     )
-    ax.plot(
-        total_order_indices_influent_variables,
+    ax.errorbar(
+        [0, 1, 2],
+        total_order_indices,
+        yerr=total_order_indices_confidence_errorbar,
         label="Total indices",
         color="m",
         marker="D",
@@ -415,6 +449,7 @@ def plot_results_sensitivity_analysis(
         linestyle="None",
     )
     ax.set_xlim((-0.2, 2.2))
+    ax.set_ylim((-0.05, 1.05))
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(
         [r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$", r"$\overline{\gamma}_{\lambda}$"],
@@ -447,7 +482,24 @@ def plot_results_sensitivity_analysis(
 if __name__ == "__main__":
     type_of_metamodel = "Kriging"
     training_amount = 0.7
-    sensitivity_experiment_size_list = [20000]
+    sensitivity_experiment_size_list = [
+        50,
+        100,
+        150,
+        200,
+        500,
+        1000,
+        1500,
+        2000,
+        3000,
+        4000,
+        5000,
+        6000,
+        7000,
+        8000,
+        9000,
+        10000,
+    ]
     type_of_Sobol_sensitivity_implementation_list = ["Saltelli", "Jansen", "MauntzKucherenko", "Martinez"]
 
     metamodelposttreatment = MetamodelPostTreatment()
