@@ -363,7 +363,7 @@ def plot_results_sensitivity_analysis(
     pixels,
 ):
     """
-    Plots the first and total Sobol indices
+    Plots the first and total Sobol indice
 
     Parameters:
         ----------
@@ -442,7 +442,7 @@ def plot_results_sensitivity_analysis(
         [0, 1, 2],
         total_order_indices,
         yerr=total_order_indices_confidence_errorbar,
-        label="Total indices",
+        label="Total indice",
         color="m",
         marker="D",
         markersize=12,
@@ -452,7 +452,7 @@ def plot_results_sensitivity_analysis(
     ax.set_ylim((-0.05, 1.05))
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(
-        [r"$\overline{\gamma}_r$", r"$\overline{\gamma}_{fs}$", r"$\overline{\gamma}_{\lambda}$"],
+        [r"$\overline{\gamma}_A$", r"$\overline{\gamma}_D$", r"$\overline{\gamma}_R$"],
         font=fonts.serif(),
         fontsize=fonts.axis_legend_size(),
     )
@@ -463,7 +463,7 @@ def plot_results_sensitivity_analysis(
         fontsize=fonts.axis_legend_size(),
     )
     ax.set_xlabel("Variable", font=fonts.serif(), fontsize=fonts.axis_label_size())
-    ax.set_ylabel("Sobol indices [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel("Sobol indice [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
     ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
     filename = (
         "sobolindices_algo="
