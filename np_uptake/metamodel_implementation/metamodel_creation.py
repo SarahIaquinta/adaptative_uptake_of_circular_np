@@ -159,6 +159,26 @@ class MetamodelCreation:
         kriging_algorithm = ot.KrigingAlgorithm(self.input_sample_training, self.output_sample_training, cov, basis)
         return kriging_algorithm
 
+    def create_pce_algorithm(self):
+        """
+        computes the pce Algorithm of the Openturns library
+
+        Parameters:
+            ----------
+            None
+
+
+        Returns:
+            -------
+            pce_algorithm: ot class
+                pce algorithm from the Openturns library
+
+        """
+        basis = ot.Basis(0)
+        cov = ot.SphericalModel(self.dimension)
+        pce_algorithm = ot.FunctionalChaosAlgorithm(self.input_sample_training, self.output_sample_training)
+        return pce_algorithm
+
 
 class MetamodelPostTreatment:
     def __init__(self):
@@ -284,9 +304,38 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     miu.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
 
 
+def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample):
+    """
+    Runs the routine to create a metamodel:
+        1 - imports the data that will be used to create the metamodel 2 - creates the metamodel 3
+        - exports the metamodel in a .pkl file
+
+    Parameters:
+        ----------
+        datapresetting: class
+            A class that performs the presets on the dataset to compute the metamodel
+        metamodelcreation: class
+            A class that contains the routines to create a metamodel
+        metamodelposttreatment: class
+            A class that contains the routines to extract the algorithms from the metamodel
+        shuffled_sample: ot class
+            sample that was used to create the metamodel
+
+    Returns:
+        -------
+        Nothing
+
+    """
+    pce = metamodelcreation.create_pce_algorithm()
+    metamodelposttreatment.run_algorithm(pce)
+    results_from_pce = metamodelposttreatment.extract_results_from_algorithm(pce)
+    complete_pkl_filename_pce = miu.create_pkl_name("PCE", datapresetting.training_amount)
+    miu.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_pce, complete_pkl_filename_pce)
+
+
 if __name__ == "__main__":
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
-    training_amount_list = [0.7]  # , 0.75, 0.8, 0.85, 0.9, 0.95]
+    training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
     metamodelposttreatment = MetamodelPostTreatment()
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
@@ -295,4 +344,5 @@ if __name__ == "__main__":
             shuffled_sample
         )
         metamodelcreation = MetamodelCreation(input_sample_training, output_sample_training)
-        metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
+        # metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
+        metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)

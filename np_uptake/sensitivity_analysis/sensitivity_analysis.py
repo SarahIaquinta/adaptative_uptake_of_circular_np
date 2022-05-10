@@ -480,7 +480,7 @@ def plot_results_sensitivity_analysis(
 
 
 if __name__ == "__main__":
-    type_of_metamodel = "Kriging"
+    type_of_metamodel = "PCE"
     training_amount = 0.7
     sensitivity_experiment_size_list = [
         50,

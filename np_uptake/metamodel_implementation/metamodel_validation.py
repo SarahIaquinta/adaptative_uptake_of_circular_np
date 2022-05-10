@@ -132,9 +132,12 @@ if __name__ == "__main__":
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
     metamodelposttreatment = MetamodelPostTreatment()
     metamodelvalidation = MetamodelValidation()
-    training_amount_list = [0.7]  # , 0.75, 0.8, 0.85, 0.9, 0.95]
+    training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
+        # metamodel_validation_routine(
+        #     datapresetting, metamodelposttreatment, metamodelvalidation, "Kriging", training_amount
+        # )
         metamodel_validation_routine(
-            datapresetting, metamodelposttreatment, metamodelvalidation, "Kriging", training_amount
+            datapresetting, metamodelposttreatment, metamodelvalidation, "PCE", training_amount
         )
