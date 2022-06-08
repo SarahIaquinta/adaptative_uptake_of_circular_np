@@ -26,6 +26,8 @@ class DataPreSetting:
         extract_training_data_from_shuffled_dataset(self, shuffled_sample):
             extracts a proportion (training_amount) of the shuffled_data to generate the training
             dataset
+        extract_testing_data(self, shuffled_sample):
+            extracts the remaining data after the extraction of the training dataset for testing
 
     """
 
