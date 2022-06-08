@@ -10,6 +10,44 @@ from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 
 
 class SampleRepresentativeness:
+    """
+    A class that investigates the representativeness of the dataset
+
+    Attributes:
+        ----------
+        filename: string
+            name of the .txt file from which the data will be extracted
+        training_amount: float
+            proportion (between 0 and 1) of the initial data used for training (the remaining data
+            are used for testing)
+        nb_of_shuffled_samples: float
+            number of shuffled samples of the dataset, used to evaluate the standard deviation of
+            the cumulative mean of a sample
+        pixels: string
+            number of points per pixel in the figures. Recommended: 360
+
+    Methods:
+        -------
+        generate_shuffled_samples(self):
+            Shuffles the dataset output (phase 3) self.nb_of_shuffled_samples times
+        compute_cumulative_mean_std(self, vector):
+            Computes the cumulative mean and standard deviation (std) of a vector
+        compute_means_stds_of_shuffled_samples_and_export_to_pkl(self):
+            Computes the cumulative mean and standard deviation (std) for the
+            self.nb_of_shuffled_samples shuffled samples that have been generated Exports them into
+            a .pkl file
+        plot_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
+            Plots the cumulative mean of a sample with the std (computed from the
+            self.nb_of_shuffled_samples shuffled samples)
+        plot_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
+            Plots the cumulative std of a sample with the std (computed from the
+            self.nb_of_shuffled_samples shuffled samples)
+        plot_gradient_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
+            Plots the absolute gradient of the cumulative mean of a sample
+        plot_gradient_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
+            Plots the absolute gradient of the cumulative std of a sample
+    """
+
     def __init__(self, filename, training_amount, nb_of_shuffled_samples, pixels):
         """
         Constructs all the necessary attributes for the SampleRepresentativeness object.
@@ -145,9 +183,8 @@ class SampleRepresentativeness:
         fonts,
     ):
         """
-        Plots the cumulative mean of a sample with the
-            std (computed from the self.nb_of_shuffled_samples shuffled
-                samples)
+        Plots the cumulative mean of a sample with the std (computed from the
+        self.nb_of_shuffled_samples shuffled samples)
 
         Parameters:
             ----------
@@ -341,7 +378,6 @@ class SampleRepresentativeness:
 if __name__ == "__main__":
 
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
-
     createfigure = CreateFigure()
     fonts = Fonts()
     savefigure = SaveFigure()
