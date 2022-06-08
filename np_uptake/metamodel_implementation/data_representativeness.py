@@ -12,7 +12,7 @@ from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 class SampleRepresentativeness:
     def __init__(self, filename, training_amount, nb_of_shuffled_samples, pixels):
         """
-        Constructs all the necessary attributes for the DataPreSetting object.
+        Constructs all the necessary attributes for the SampleRepresentativeness object.
 
         Parameters:
             ----------
@@ -22,12 +22,10 @@ class SampleRepresentativeness:
                 proportion (between 0 and 1) of the initial data used for training (the remaining
                 data are used for testing)
             nb_of_shuffled_samples: float
-                number of shuffled samples of the dataset, used to evaluate the standard
-                deviation of the cumulative mean of a sample
+                number of shuffled samples of the dataset, used to evaluate the standard deviation
+                of the cumulative mean of a sample
             pixels: string
-                number of points per pixel in the figures
-                Recommended: 360
-
+                number of points per pixel in the figures. Recommended: 360
 
         Returns:
             -------
@@ -351,7 +349,7 @@ if __name__ == "__main__":
         filename_qMC_Sobol, training_amount=0.8, nb_of_shuffled_samples=200, pixels=360
     )
 
-    # samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
+    samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
 
     samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
 
