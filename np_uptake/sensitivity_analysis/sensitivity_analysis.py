@@ -353,6 +353,16 @@ def compute_and_export_sensitivity_algo_Martinez(
     miu.export_sensitivity_algo_to_pkl(sensitivity_algo_Martinez, complete_pkl_filename_sensitivy_algo)
 
 
+# Sobol indices from PCE#
+def compute_sensitivity_indices_PCE(training_amount):
+    complete_filename = miu.create_pkl_name("PCE", training_amount, folder="")
+    [_, results_from_algo] = miu.extract_metamodel_and_data_from_pkl(complete_filename)
+    chaosSI = ot.FunctionalChaosSobolIndices(results_from_algo)
+    first_order_indices = [chaosSI.getSobolIndex(k) for k in range(3)]
+    total_order_indices = [chaosSI.getSobolTotalIndex(k) for k in range(3)]
+    return first_order_indices, total_order_indices
+
+
 # PLOTS#
 def plot_results_sensitivity_analysis(
     type_of_metamodel,
@@ -368,7 +378,7 @@ def plot_results_sensitivity_analysis(
     Parameters:
         ----------
         type_of_metamodel: str
-            type of metamodel that has been computed. Possible value: "Kriging"
+            type of metamodel that has been computed. Possible values: "Kriging", "PCE"
         training_amount: float
             proportion (between 0 and 1) of the initial data used for training (the remaining data
             are used for testing)
@@ -479,6 +489,75 @@ def plot_results_sensitivity_analysis(
     savefigure.save_as_png(fig, filename + str(pixels) + "p")
 
 
+def plot_sensitivity_indices_PCE(
+    training_amount,
+    createfigure,
+    pixels,
+):
+    """
+    Plots the first and total Sobol indice obtained from PCE metamodel
+
+    Parameters:
+        ----------
+        training_amount: float
+            proportion (between 0 and 1) of the initial data used for training (the remaining data
+            are used for testing)
+        createfigure: class
+            class from the figures.utils.py script that provides a predefined figure layout
+        colors: class
+            class from the figures.utils.py script that provides a predefined set of colors
+        pixels: str
+            number of points per pixel in the figures Recommended: 360
+
+    Returns:
+        -------
+        None
+
+    """
+
+    first_order_indices, total_order_indices = compute_sensitivity_indices_PCE(training_amount)
+
+    fig = createfigure.square_figure_7(pixels=pixels)
+    ax = fig.gca()
+    ax.plot(
+        [0, 1, 2],
+        first_order_indices,
+        label="First order indice",
+        color="k",
+        marker="v",
+        markersize=12,
+        linestyle="None",
+    )
+    ax.plot(
+        [0, 1, 2],
+        total_order_indices,
+        label="Total indice",
+        color="m",
+        marker="D",
+        markersize=12,
+        linestyle="None",
+    )
+    ax.set_xlim((-0.2, 2.2))
+    ax.set_ylim((-0.05, 1.05))
+    ax.set_xticks([0, 1, 2])
+    ax.set_xticklabels(
+        [r"$\overline{\gamma}_A$", r"$\overline{\gamma}_D$", r"$\overline{\gamma}_R$"],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1])
+    ax.set_yticklabels(
+        ["0", "0.25", "0.5", "0.75", "1"],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_xlabel("Variable", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel("Sobol indice [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
+    filename = "sobolindices_analyticalfromPCE_trainingamount=" + str(training_amount) + "_"
+    savefigure.save_as_png(fig, filename + str(pixels) + "p")
+
+
 if __name__ == "__main__":
     type_of_metamodel = "PCE"
     training_amount = 0.7
@@ -507,26 +586,28 @@ if __name__ == "__main__":
     createfigure = CreateFigure()
     fonts = Fonts()
     savefigure = SaveFigure()
-
-    for sensitivity_experiment_size in sensitivity_experiment_size_list:
-        compute_and_export_sensitivity_algo_Saltelli(
-            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-        )
-        compute_and_export_sensitivity_algo_Jansen(
-            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-        )
-        compute_and_export_sensitivity_algo_MauntzKucherenko(
-            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-        )
-        compute_and_export_sensitivity_algo_Martinez(
-            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-        )
-        for type_of_Sobol_sensitivity_implementation in type_of_Sobol_sensitivity_implementation_list:
-            plot_results_sensitivity_analysis(
-                type_of_metamodel,
-                training_amount,
-                sensitivity_experiment_size,
-                type_of_Sobol_sensitivity_implementation,
-                createfigure,
-                pixels=360,
-            )
+    training_amount_list = [0.7, 0.8, 0.9]
+    for training_amount in training_amount_list:
+        plot_sensitivity_indices_PCE(training_amount, createfigure, pixels=360)
+    # for sensitivity_experiment_size in sensitivity_experiment_size_list:
+    #     compute_and_export_sensitivity_algo_Saltelli(
+    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+    #     )
+    #     compute_and_export_sensitivity_algo_Jansen(
+    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+    #     )
+    #     compute_and_export_sensitivity_algo_MauntzKucherenko(
+    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+    #     )
+    #     compute_and_export_sensitivity_algo_Martinez(
+    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+    #     )
+    #     for type_of_Sobol_sensitivity_implementation in type_of_Sobol_sensitivity_implementation_list:
+    #         plot_results_sensitivity_analysis(
+    #             type_of_metamodel,
+    #             training_amount,
+    #             sensitivity_experiment_size,
+    #             type_of_Sobol_sensitivity_implementation,
+    #             createfigure,
+    #             pixels=360,
+    #         )

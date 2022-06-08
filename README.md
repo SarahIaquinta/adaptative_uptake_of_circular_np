@@ -7,7 +7,7 @@
 
 
 ## Associated paper
-The present code is the supplemental material associated to the paper ![1](https://doi.org/10.1002/cnm.3598).
+The present code is the supplemental material associated to the paper [1].
 Please feel free to contact the authors if you have any question or if you wish to go more into details for some points.
 
 ## Dependencies
@@ -64,19 +64,19 @@ A [GPL](https://tldrlegal.com/license/bsd-3-clause-license-(revised)) license is
         with the membrane’s mechano-adaptation : validation with
         sensitivity analysis},
         author={Iaquinta, Sarah and Khazaie, Shahram and Ishow, {\'E}l{\'e}na and Blanquart, Christophe and Fr{\'e}our, Sylvain and Jacquemin, Fr{\'e}d{\'e}ric},
-        journal={International Journal for Numerical Methods in Biomedical Engineering},
-        pages={e3598},
-        year={2022},
-        publisher={Wiley Online Library}
+        journal={},
+        pages={},
+        year={},
+        publisher={}
         }
 
 [2] @article{
         title={Influence of the mechanical and geometrical parameters on the cellular uptake of nanoparticles: a stochastic approach},
         author={Iaquinta, Sarah and Khazaie, Shahram and Ishow, {\'E}l{\'e}na and Blanquart, Christophe and Fr{\'e}our, Sylvain and Jacquemin, Fr{\'e}d{\'e}ric},
-        journal={},
-        pages={},
-        year={},
-        publisher={}
+        journal={International Journal for Numerical Methods in Biomedical Engineering},
+        pages={e3598},
+        year={2022},
+        publisher={Wiley Online Library}
         }
 
 [3] @misc{,
