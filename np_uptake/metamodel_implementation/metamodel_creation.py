@@ -121,6 +121,26 @@ class DataPreSetting:
 
 
 class MetamodelCreation:
+    """
+    A class that builds the metamodel
+
+    Attributes:
+        ----------
+        input_sample_training: ot class (array)
+            sample of input parameters for training, generated in the DataPreSetting class
+        output_sample_training: ot class (array)
+            sample of output parameters for training, generated in the DataPreSetting class
+
+    Methods:
+        -------
+        create_kriging_algorithm(self):
+            computes the Kriging (Gaussian Process) metamodel algorithm of the Openturns library
+        create_pce_algorithm(self, degree):
+            computes the Polynomial Chaos Expansion (Functional Chaos) metamodel algorithm of the
+            Openturns library
+
+    """
+
     def __init__(self, input_sample_training, output_sample_training):
         """
         Constructs all the necessary attributes for the MetamodelCreation object.
@@ -143,7 +163,7 @@ class MetamodelCreation:
 
     def create_kriging_algorithm(self):
         """
-        computes the Kriging Algorithm of the Openturns library
+        computes the Kriging (Gaussian Process) metamodel algorithm of the Openturns library
 
         Parameters:
             ----------
@@ -163,7 +183,8 @@ class MetamodelCreation:
 
     def create_pce_algorithm(self, degree):
         """
-        computes the pce Algorithm of the Openturns library
+        computes the Polynomial Chaos Expansion (Functional Chaos) metamodel algorithm of the
+        Openturns library
 
         Parameters:
             ----------
@@ -208,6 +229,26 @@ class MetamodelCreation:
 
 
 class MetamodelPostTreatment:
+    """
+    A class that extracts and exports the features of the metamodel
+
+    Attributes:
+        ----------
+        None
+
+    Methods:
+        -------
+        run_algorithm(self, algorithm):
+            runs the algorithm
+        extract_results_from_algorithm(self, algorithm):
+            gets the results from the algorithm
+        get_metamodel_from_results_algo(self, results_from_algo):
+            gets the metamodel from the algorithm's results
+        get_errors_from_metamodel(self, results_from_algo):
+            gets the errors from the metamodel (obtained according to the results_from_algo)
+
+    """
+
     def __init__(self):
         """
         Constructs all the necessary attributes for the MetamodelPostTreatment object.
@@ -228,7 +269,7 @@ class MetamodelPostTreatment:
         Parameters:
             ----------
             algorithm: ot class
-                algorithm (kriging), output of the methods which creates the respective algorithm
+                algorithm (kriging or pce), output of the methods which creates the respective algorithm
 
 
         Returns:
@@ -245,7 +286,7 @@ class MetamodelPostTreatment:
         Parameters:
             ----------
             algorithm: ot class
-                algorithm (kriging), output of the methods which creates the respective algorithm
+                algorithm (kriging or pce), output of the methods which creates the respective algorithm
 
 
         Returns:
@@ -305,8 +346,9 @@ class MetamodelPostTreatment:
 def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample):
     """
     Runs the routine to create a metamodel:
-        1 - imports the data that will be used to create the metamodel 2 - creates the metamodel 3
-        - exports the metamodel in a .pkl file
+        1 - imports the data that will be used to create the metamodel
+        2 - creates the metamodel
+        3 - exports the metamodel in a .pkl file
 
     Parameters:
         ----------
@@ -334,8 +376,9 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
 def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree):
     """
     Runs the routine to create a metamodel:
-        1 - imports the data that will be used to create the metamodel 2 - creates the metamodel 3
-        - exports the metamodel in a .pkl file
+        1 - imports the data that will be used to create the metamodel
+        2 - creates the metamodel
+        3 - exports the metamodel in a .pkl file
 
     Parameters:
         ----------
@@ -374,7 +417,7 @@ if __name__ == "__main__":
             shuffled_sample
         )
         metamodelcreation = MetamodelCreation(input_sample_training, output_sample_training)
-        # metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
+        metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
         metamodel_creation_routine_pce(
             datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree
         )
