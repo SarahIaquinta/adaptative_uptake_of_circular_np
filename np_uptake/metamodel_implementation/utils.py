@@ -11,7 +11,7 @@ def create_pkl_name(type_of_metamodel, training_amount, folder=""):
         type_of_metamodel: string
             name of the metamodel that has been computed.
             Possible values :
-                "Kriging"
+                "Kriging", "PCE"
         training_amount: float (between 0 and 1)
             amount of the data that is used to train the metamodel
         folder: string
@@ -46,7 +46,7 @@ def create_pkl_name_sensitivityalgo(
         type_of_metamodel: string
             name of the metamodel that has been computed.
             Possible values :
-                "Kriging"
+                "Kriging", "PCE"
         training_amount: float (between 0 and 1)
             amount of the data that is used to train the metamodel
         experiment_size: float
@@ -93,11 +93,9 @@ def extract_metamodel_and_data_from_pkl(complete_filename):
     Returns:
         -------
         sample: ot.class
-            inut dataset used to create the metamodel
+            input dataset used to create the metamodel
         results_from_algo: ot.class
             class which possesses all the information relative to the metamodel that has been generated
-
-
 
     """
     with open(complete_filename, "rb") as f:
@@ -107,7 +105,7 @@ def extract_metamodel_and_data_from_pkl(complete_filename):
 
 def export_metamodel_and_data_to_pkl(sample, results_from_algo, complete_filename):
     """
-    Exports the objetcs to the metamodel .pkl
+    Exports the objects to the metamodel .pkl
 
     Parameters:
         ----------
@@ -122,6 +120,7 @@ def export_metamodel_and_data_to_pkl(sample, results_from_algo, complete_filenam
         -------
         None
     """
+
     with open(complete_filename, "wb") as f:
         pickle.dump(
             [sample, results_from_algo],
@@ -166,6 +165,7 @@ def extract_sensitivity_algo_from_pkl(complete_filename):
         sensitivity_algo: ot.class
             sensitivity algorithm
     """
+
     with open(complete_filename, "rb") as f:
         [sensitivity_algo] = pickle.load(f)
     return sensitivity_algo
