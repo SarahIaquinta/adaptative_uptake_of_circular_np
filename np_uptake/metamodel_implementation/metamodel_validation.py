@@ -10,6 +10,24 @@ from np_uptake.metamodel_implementation.metamodel_creation import DataPreSetting
 
 
 class MetamodelValidation:
+    """
+    A class that contains the methods to validate a metamodel
+
+    Attributes:
+        ----------
+        None
+
+    Methods:
+        -------
+        validate_metamodel_with_test(self, inputTest, outputTest, metamodel):
+            Constructs a metamodel validator class (from the Openturns library)
+        compute_Q2(self, metamodel_validator):
+            Computes the predictivity factor of the metamodel.
+        plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
+            Plots the prediction (from metamodel) vs true value (of the model).
+
+    """
+
     def __init__(self):
         """
         Constructs all the necessary attributes for the MetamodelValidation object.
@@ -28,14 +46,14 @@ class MetamodelValidation:
 
         Parameters:
             ----------
-            metamodel: class
-                metamodel object (from the OpenTurns library)
             inputTest: class (array)
                 part of the dataset (input variables of the model) that will be used to validate
                 the metamodel
             outputTest: class (array)
                 part of the dataset (output variables of the model) that will be used to validate
                 the metamodel
+            metamodel: class
+                metamodel object (from the OpenTurns library)
 
         Returns:
             -------
@@ -47,7 +65,7 @@ class MetamodelValidation:
 
     def compute_Q2(self, metamodel_validator):
         """
-        Computes the predictivity factor of the model.
+        Computes the predictivity factor of the metamodel.
 
         Parameters:
             ----------
@@ -73,7 +91,10 @@ class MetamodelValidation:
                 tool from the Openturns library used to validate a metamodel
             type_of_metamodel: string
                 name of the metamodel that has been computed. Possible values :
-                    "Kriging"
+                    "Kriging", "PCE"
+            training_amount: float
+                proportion (between 0 and 1) of the initial data used for training (the remaining
+                data are used for testing)
 
         Returns:
             -------
@@ -100,18 +121,20 @@ def metamodel_validation_routine(
 ):
     """
     Runs the routine to validate a metamodel:
-        1 - imports the metamodel from a .pkl file 2 - compares the true vs predicted value of the
-        metamodel
+        1 - imports the metamodel from a .pkl file
+        2 - compares the true vs predicted value of the metamodel
 
     Parameters:
         ----------
         datapresetting: class
             A class that performs the presets on the dataset to compute the metamodel
-        metamodel_validator: class
+        metamodelposttreatment: class from the metamodel_creation.py script
+            A class that extracts and exports the features of the metamodel
+        metamodelvalidation: class
             tool from the Openturns library used to validate a metamodel
         type_of_metamodel: string
             name of the metamodel that has been computed. Possible values :
-                "Kriging"
+                "Kriging", "PCE"
         training_amount: float (between 0 and 1)
             amount of the data that is used to train the metamodel
 
@@ -135,9 +158,9 @@ if __name__ == "__main__":
     training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
-        # metamodel_validation_routine(
-        #     datapresetting, metamodelposttreatment, metamodelvalidation, "Kriging", training_amount
-        # )
+        metamodel_validation_routine(
+            datapresetting, metamodelposttreatment, metamodelvalidation, "Kriging", training_amount
+        )
         metamodel_validation_routine(
             datapresetting, metamodelposttreatment, metamodelvalidation, "PCE", training_amount
         )
