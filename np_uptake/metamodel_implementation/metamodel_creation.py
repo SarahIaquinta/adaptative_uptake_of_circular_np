@@ -159,7 +159,7 @@ class MetamodelCreation:
         kriging_algorithm = ot.KrigingAlgorithm(self.input_sample_training, self.output_sample_training, cov, basis)
         return kriging_algorithm
 
-    def create_pce_algorithm(self):
+    def create_pce_algorithm(self, degree):
         """
         computes the pce Algorithm of the Openturns library
 
@@ -174,9 +174,34 @@ class MetamodelCreation:
                 pce algorithm from the Openturns library
 
         """
-        basis = ot.Basis(0)
-        cov = ot.SphericalModel(self.dimension)
-        pce_algorithm = ot.FunctionalChaosAlgorithm(self.input_sample_training, self.output_sample_training)
+        distribution = ot.ComposedDistribution([ot.Uniform(-1, 1), ot.Uniform(-1, 1), ot.Uniform(-1, 1)])
+
+        gamma_bar_r_list_rescaled = miu.rescale_sample(self.input_sample_training[:, 0])
+        gamma_bar_fs_bar_list_rescaled = miu.rescale_sample(self.input_sample_training[:, 1])
+        gamma_bar_lambda_list_rescaled = miu.rescale_sample(self.input_sample_training[:, 2])
+        input_sample_training_rescaled = ot.Sample(len(gamma_bar_r_list_rescaled), 3)
+        for k in range(len(gamma_bar_r_list_rescaled)):
+            input_sample_training_rescaled[k, 0] = gamma_bar_r_list_rescaled[k]
+            input_sample_training_rescaled[k, 1] = gamma_bar_fs_bar_list_rescaled[k]
+            input_sample_training_rescaled[k, 2] = gamma_bar_lambda_list_rescaled[k]
+        enumerateFunction = ot.HyperbolicAnisotropicEnumerateFunction(3)
+        productBasis = ot.OrthogonalBasis(
+            ot.OrthogonalProductPolynomialFactory(
+                [ot.LegendreFactory(), ot.LegendreFactory(), ot.LegendreFactory()], enumerateFunction
+            )
+        )
+        indexMax = enumerateFunction.getStrataCumulatedCardinal(int(degree))
+        adaptiveStrategy = ot.SequentialStrategy(productBasis, indexMax)
+        sampling_size = 300
+        experiment = ot.MonteCarloExperiment(sampling_size)
+        projectionStrategy = ot.ProjectionStrategy(ot.LeastSquaresStrategy(experiment))
+        pce_algorithm = ot.FunctionalChaosAlgorithm(
+            input_sample_training_rescaled,
+            self.output_sample_training,
+            distribution,
+            adaptiveStrategy,
+            projectionStrategy,
+        )
         return pce_algorithm
 
 
@@ -304,7 +329,7 @@ def metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamo
     miu.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_kri, complete_pkl_filename_Kriging)
 
 
-def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample):
+def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree):
     """
     Runs the routine to create a metamodel:
         1 - imports the data that will be used to create the metamodel 2 - creates the metamodel 3
@@ -320,13 +345,15 @@ def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelp
             A class that contains the routines to extract the algorithms from the metamodel
         shuffled_sample: ot class
             sample that was used to create the metamodel
+        degree: int
+            dimension of the basis of polynoms
 
     Returns:
         -------
         Nothing
 
     """
-    pce = metamodelcreation.create_pce_algorithm()
+    pce = metamodelcreation.create_pce_algorithm(degree)
     metamodelposttreatment.run_algorithm(pce)
     results_from_pce = metamodelposttreatment.extract_results_from_algorithm(pce)
     complete_pkl_filename_pce = miu.create_pkl_name("PCE", datapresetting.training_amount)
@@ -337,6 +364,7 @@ if __name__ == "__main__":
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
     training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
     metamodelposttreatment = MetamodelPostTreatment()
+    degree = 30
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
         shuffled_sample = datapresetting.shuffle_dataset_from_datafile()
@@ -345,4 +373,6 @@ if __name__ == "__main__":
         )
         metamodelcreation = MetamodelCreation(input_sample_training, output_sample_training)
         # metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
-        metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
+        metamodel_creation_routine_pce(
+            datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree
+        )
