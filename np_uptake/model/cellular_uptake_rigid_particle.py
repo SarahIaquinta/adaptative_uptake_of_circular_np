@@ -13,29 +13,89 @@ import np_uptake.model.system_definition as sysdef
 
 
 class EnergyComputation:
+    """A class that computes the total energy of the system
+
+    Attributes:
+    ----------
+    None
+
+    Methods:
+    -------
+    compute_bending_energy_zone_3(self, f, particle, s_list_region3):
+        Computes the variation of bending energy in region 3
+    compute_bending_energy_zone_2r(self, f, particle, mechanics, wrapping, membrane):
+        Computes the variation of bending energy in region 2r
+    compute_bending_energy_zone_2l(self, f, particle, mechanics, wrapping, membrane):
+        Computes the variation of bending energy in region 2l
+    sum_adimensional_bending_energy_contributions(self, adimensional_bending_energy_2r,
+            adimensional_bending_energy_2l, adimensional_bending_energy_3):
+        Computes the variation of bending energy in regions 2r, 2l and 3
+    compute_adimensional_adhesion_energy(self, f, particle, mechanics, wrapping, l3):
+        Computes the variation of adhesion energy
+    compute_adimensional_tension_energy(self, f, particle, mechanics, wrapping, membrane, l3, r_2r,
+            r_2l):
+        Computes the variation of tension energy
+    sum_adimensional_energy_contributions(self, total_adimensional_bending_energy,
+            adimensional_adhesion_energy, adimensional_tension_energy):
+        Computes the total variation of adimensional energy
+    compute_total_adimensional_energy_for_a_given_wrapping_degree(self, f, particle, mechanics,
+            wrapping, membrane):
+        Computes the total variation of energy by executing the intermediate functions that have
+            been introduced above
+    compute_total_adimensional_energy_during_wrapping(self, particle, mechanics, wrapping,
+            membrane):
+        Computes the total variation of energy for all the wrapping degrees defined in the method
+            Wrapping.wrapping_list by executing the intermediate functions that have been introduced
+        above
+    """
+
     def compute_bending_energy_zone_3(self, f, particle, s_list_region3):
-        """
-        Args:
-            f: wrapping degree
-            particle: Parameters class
+        """Computes the variation of bending energy in region 3
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            Parameters class which defines the geometry of the particle
+        s_list_region3: array
+            Discretization of the arclength in region 3
+
         Returns:
-            float - the variation of the bending energy in the region 3 (bending of the membrane)
-            between the state at wrapping f and the initial state: E(f) - E(0)
+        ----------
+        adimensionalized_energy: float
+            The variation of the bending energy in the region 3 (bending of the membrane) between
+            the state at wrapping f and the initial state: E(f) - E(0)
         """
+
         dpsi3_list_region3 = particle.get_squared_dpsi_region3(f)
         energy = scipy.integrate.simps(dpsi3_list_region3, s_list_region3[0:-1])
         adimensionalized_energy = 0.25 * particle.effective_radius * energy
         return adimensionalized_energy
 
     def compute_bending_energy_zone_2r(self, f, particle, mechanics, wrapping, membrane):
-        """
-        Args:
-            f: wrapping degree
-            particle: Parameters class
+        """Computes the variation of bending energy in region 2r
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        membrane: class
+            model.system_definition.MembraneGeometry class
+
         Returns:
-            float - the variation of the bending energy in the region 2d (free membrane)
+        ----------
+        adimensionalized_energy: float
+            The variation of the bending energy in the region 2r (bending of the free membrane)
             between the state at wrapping f and the initial state: E(f) - E(0)
         """
+
         a = particle.get_alpha_angle(f)
         t = tan(0.25 * a)
         t2 = t ** 2
@@ -52,6 +112,28 @@ class EnergyComputation:
 
     @lru_cache(maxsize=10)
     def compute_bending_energy_zone_2l(self, f, particle, mechanics, wrapping, membrane):
+        """Computes the variation of bending energy in region 2l
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        membrane: class
+            model.system_definition.MembraneGeometry class
+
+        Returns:
+        ----------
+        adimensionalized_energy: float
+            The variation of the bending energy in the region 2l (bending of the free membrane)
+            between the state at wrapping f and the initial state: E(f) - E(0)
+        """
+
         adimensionalized_energy_2r = self.compute_bending_energy_zone_2r(f, particle, mechanics, wrapping, membrane)
         adimensionalized_energy_2l = adimensionalized_energy_2r
         return adimensionalized_energy_2l
@@ -63,6 +145,27 @@ class EnergyComputation:
         adimensional_bending_energy_2l,
         adimensional_bending_energy_3,
     ):
+        """Computes the variation of bending energy in regions 2r, 2l and 3
+
+        Parameters:
+        ----------
+        adimensional_bending_energy_2r: float
+            The variation of the bending energy in the region 2r (bending of the membrane) between
+            the state at wrapping f and the initial state: E(f) - E(0)
+        adimensional_bending_energy_2l: float
+            The variation of the bending energy in the region 2l (bending of the membrane) between
+            the state at wrapping f and the initial state: E(f) - E(0)
+        adimensional_bending_energy_3: float
+            The variation of the bending energy in the region 3 (bending of the membrane) between
+            the state at wrapping f and the initial state: E(f) - E(0)
+
+        Returns:
+        ----------
+        total_adimensional_bending_energy: float
+            The variation of the bending energy in regions 2r, 2l and 3 between the state at
+            wrapping f and the initial state: E(f) - E(0)
+        """
+
         total_adimensional_bending_energy = (
             adimensional_bending_energy_2r + adimensional_bending_energy_2l + adimensional_bending_energy_3
         )
@@ -70,10 +173,60 @@ class EnergyComputation:
 
     @lru_cache(maxsize=10)
     def compute_adimensional_adhesion_energy(self, f, particle, mechanics, wrapping, l3):
+        """Computes the variation of adhesion energy
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        l3: float
+            total arclength of region 3
+
+        Returns:
+        ----------
+        adimensional_adhesion_energy: float
+            The variation of the adhesion energy
+            between the state at wrapping f and the initial state: E(f) - E(0)
+        """
+
         adimensional_adhesion_energy = -mechanics.gamma_bar(f, wrapping) * l3 * 0.25 / particle.effective_radius
         return adimensional_adhesion_energy
 
     def compute_adimensional_tension_energy(self, f, particle, mechanics, wrapping, membrane, l3, r_2r, r_2l):
+        """Computes the variation of tension energy
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        membrane: class
+            model.system_definition.MembraneGeometry class
+        l3: float
+            total arclength of region 3
+        r2r: array
+            r abscises in region 2r
+        r2l: array
+            r abscises in region 2l
+
+        Returns:
+        ----------
+        adimensional_tension_energy: float
+            The variation of the tension energy
+            between the state at wrapping f and the initial state: E(f) - E(0)
+        """
+
         adimensional_tension_energy = (
             mechanics.sigma_bar * (l3 + 2 * membrane.l2 - (r_2r[-1] - r_2l[-1])) * 0.25 / particle.effective_radius
         )
@@ -83,6 +236,26 @@ class EnergyComputation:
     def sum_adimensional_energy_contributions(
         self, total_adimensional_bending_energy, adimensional_adhesion_energy, adimensional_tension_energy
     ):
+        """Computes the total variation of adimensional energy
+
+        Parameters:
+        ----------
+        adimensional_bending_energy: float
+            The variation of the bending energy
+            between the state at wrapping f and the initial state: E(f) - E(0)
+        adimensional_adhesion_energy: float
+            The variation of the adhesion energy
+            between the state at wrapping f and the initial state: E(f) - E(0)
+        adimensional_tension_energy: float
+            The variation of the tension energy
+            between the state at wrapping f and the initial state: E(f) - E(0)
+
+        Returns:
+        ----------
+        total_adimensional_energy: float
+            The sum of the contributions of energy
+        """
+
         total_adimensional_energy = (
             total_adimensional_bending_energy + adimensional_adhesion_energy + adimensional_tension_energy
         )
@@ -90,6 +263,27 @@ class EnergyComputation:
 
     @lru_cache(maxsize=10)
     def compute_total_adimensional_energy_for_a_given_wrapping_degree(self, f, particle, mechanics, wrapping, membrane):
+        """Computes the total variation of energy by executing the intermediate functions that have
+            been introduced above
+
+        Parameters:
+        ----------
+        f: float
+            Wrapping degree
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        membrane: class
+            model.system_definition.MembraneGeometry class
+
+        Returns:
+        ----------
+        total_adimensional_energy: float
+            The variation of the total adimensional energy
+        """
         _, _, _, _, s_list_region3, l3, _, _ = particle.define_particle_geometry_variables(f)
         r_2r, _, r_2l, _ = membrane.compute_r2r_r2l_z2r_z2l_from_analytic_expression(f, particle, mechanics, wrapping)
         adimensional_bending_energy_2r = self.compute_bending_energy_zone_2r(f, particle, mechanics, wrapping, membrane)
@@ -113,6 +307,29 @@ class EnergyComputation:
         return total_adimensional_energy
 
     def compute_total_adimensional_energy_during_wrapping(self, particle, mechanics, wrapping, membrane):
+        """Computes the total variation of energy for all the wrapping degrees defined in the
+            method Wrapping.wrapping_list by executing the intermediate functions that have been
+            introduced above
+
+        Parameters:
+        ----------
+        particle: class
+            model.system_definition.ParticleGeometry class
+        mechanics: class
+            model.system_definition.MechanicalProperties_Adaptation class
+        wrapping: class
+            model.system_definition.Wrapping class
+        membrane: class
+            model.system_definition.MembraneGeometry class
+
+        Returns:
+        ----------
+        adimensional_total_energy_variation_list: array
+            The variation of the total adimensional energy for the wrapping degrees defined in
+            Wrapping.wrapping_list
+        energy_variation_computation_time_list: array
+            Computation time compute each element of adimensional_total_energy_variation_list
+        """
 
         adimensional_total_energy_variation_list = np.zeros_like(wrapping.wrapping_list)
         energy_variation_computation_time_list = np.zeros_like(adimensional_total_energy_variation_list)
@@ -134,33 +351,32 @@ class EnergyComputation:
 def plot_energy(
     particle, mechanics, membrane, wrapping, energy_computation, createfigure, fonts, xticks, xticklabels, savefigure
 ):
-    """
-    Plots the evolution of the adimensional variation of energy_computation during wrapping
+    """Plots the evolution of the adimensional variation of energy_computation during wrapping
 
     Parameters:
-        ----------
-        particle: class
-            model.system_definition.ParticleGeometry class
-        mechanics: class
-            model.system_definition.MechanicalProperties_Adaptation class
-        membrane: class
-            model.system_definition.MembraneGeometry class
-        wrapping: class
-            model.system_definition.Wrapping class
-        createfigure: class
-            figures.utils.CreateFigure class
-        fonts: class
-            figures.utils.Fonts class
-        xticks: class
-            figures.utils.XTicks class
-        xticklabels: class
-            figures.utils.XTickLabels class
-        savefigure: class
-            figures.utils.SaveFigure class
+    ----------
+    particle: class
+        model.system_definition.ParticleGeometry class
+    mechanics: class
+        model.system_definition.MechanicalProperties_Adaptation class
+    membrane: class
+        model.system_definition.MembraneGeometry class
+    wrapping: class
+        model.system_definition.Wrapping class
+    createfigure: class
+        figures.utils.CreateFigure class
+    fonts: class
+        figures.utils.Fonts class
+    xticks: class
+        figures.utils.XTicks class
+    xticklabels: class
+        figures.utils.XTickLabels class
+    savefigure: class
+        figures.utils.SaveFigure class
 
     Returns:
-        -------
-        None
+    -------
+    None
     """
 
     energy_list, _ = energy_computation.compute_total_adimensional_energy_during_wrapping(
@@ -200,6 +416,36 @@ def plot_energy(
 
 
 def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_computation):
+    """Identifies the wrapping phase following the process introduced in [1]
+
+    Parameters:
+    ----------
+    particle: class
+        model.system_definition.ParticleGeometry object
+    mechanics: class
+        model.system_definition.MechanicalProperties_Adaptation object
+    membrane: class
+        model.system_definition.MembraneGeometry object
+    energy_computation: class
+        model.system_definition.EnergyComputation object
+
+    Returns:
+    -------
+    f_eq: float
+        Wrapping degree at equilibrium
+    wrapping_phase_number: float
+        Phase number (1, 2 or 3)
+    wrapping_phase: str
+        The wrapping phase as an intelligible string
+    energy_list: array
+        The variation of the total adimensional energy for the wrapping degrees defined in
+        Wrapping.wrapping_list
+        Output from function EnergyComputation.compute_total_adimensional_energy_during_wrapping
+    time_list: array
+        Computation time compute each element of adimensional_total_energy_variation_list
+        Output from function EnergyComputation.compute_total_adimensional_energy_during_wrapping
+    """
+
     pickle.dumps(energy_computation.compute_total_adimensional_energy_during_wrapping)
     pickle.dumps(membrane.compute_r2r_r2l_z2r_z2l_from_analytic_expression)
     energy_list, time_list = energy_computation.compute_total_adimensional_energy_during_wrapping(
@@ -223,26 +469,6 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
         min_energy_list = min_energy_list[0]
         f_min_energy_list = f_min_energy_list[0]
 
-    """
-    Identifies the wrapping phase following the process introduced in [1]
-
-    Parameters:
-        ----------
-        particle: class
-            model.system_definition.ParticleGeometry object
-        mechanics: class
-            model.system_definition.MechanicalProperties_Adaptation object
-        membrane: class
-            model.system_definition.MembraneGeometry object
-
-    Returns:
-        -------
-        wrapping_phase_number: float
-            phase number (1, 2 or 3)
-        wrapping_phase: str
-            the wrapping phase as an intelligible string
-    """
-
     f_eq = f_min_energy_list[0]
     wrapping_phase_number = 0
     wrapping_phase = "0"
@@ -259,18 +485,18 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
 
 
 def parse_arguments():
-    """
-    Parses arguments to run the code in terminal
+    """Parses arguments to run the code in terminal
 
     Parameters:
-        ----------
-        None
+    ----------
+    None
 
     Returns:
-        -------
-        args: class
-            #TODO complete here
+    -------
+    args: class
+        Parse of the arguments of the code
     """
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-g0",
@@ -352,19 +578,6 @@ def parse_arguments():
     return args
 
 
-def profiler(particle, mechanics, membrane, wrapping, energy_computation):
-    import cProfile
-    import pstats
-
-    with cProfile.Profile() as pr:
-        energy_computation.compute_total_adimensional_energy_during_wrapping(particle, mechanics, wrapping, membrane)
-
-    stats = pstats.Stats(pr)
-    stats.sort_stats(pstats.SortKey.TIME)
-    stats.print_stats()
-    stats.dump_stats(filename="needs_profiling_prof")
-
-
 if __name__ == "__main__":
     args = parse_arguments()
     createfigure = fiu.CreateFigure()
@@ -372,10 +585,10 @@ if __name__ == "__main__":
     savefigure = fiu.SaveFigure()
     xticks = fiu.XTicks()
     xticklabels = fiu.XTickLabels()
-    particle = sysdef.ParticleGeometry(r_bar=1.94, particle_perimeter=2 * pi, sampling_points_circle=300)
+    particle = sysdef.ParticleGeometry(r_bar=1, particle_perimeter=2 * pi, sampling_points_circle=300)
 
     mechanics = sysdef.MechanicalProperties_Adaptation(
-        testcase="test-classimplementation",
+        testcase="testcase",
         gamma_bar_r=args.gamma_bar_r,
         gamma_bar_fs=args.gamma_bar_fs,
         gamma_bar_lambda=args.gamma_bar_lambda,

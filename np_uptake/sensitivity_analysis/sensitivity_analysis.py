@@ -13,16 +13,15 @@ from np_uptake.metamodel_implementation.metamodel_validation import MetamodelPos
 
 class Distribution:
     def __init__(self):
-        """
-        Constructs all the necessary attributes for the Distribution object.
+        """Constructs all the necessary attributes for the Distribution object.
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
+        -------
+        None
         """
 
         self.gamma_bar_r_min = 1

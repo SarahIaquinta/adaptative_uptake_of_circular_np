@@ -3,27 +3,26 @@ from pathlib import Path
 
 
 def create_pkl_name(type_of_metamodel, training_amount, folder=""):
-    """
-    Creates the name of the .pkl file in which the metamodel will be stored
+    """Creates the name of the .pkl file in which the metamodel will be stored
 
     Parameters:
-        ----------
-        type_of_metamodel: string
-            name of the metamodel that has been computed.
-            Possible values :
-                "Kriging", "PCE"
-        training_amount: float (between 0 and 1)
-            amount of the data that is used to train the metamodel
-        folder: string
-            the name of the folder in which the .pkl will be created and saved
-            default value: ""
+    ----------
+    type_of_metamodel: string
+        Name of the metamodel that has been computed.
+        Possible values :
+            "Kriging", "PCE"
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
+    folder: string
+        The name of the folder in which the .pkl will be created and saved
+        default value: ""
 
     Returns:
-        -------
-        complete_filename: str
-            name of the .pkl file
-
+    -------
+    complete_filename: str
+        Name of the .pkl file
     """
+
     path = Path.cwd() / folder
     pkl_name = "metamodel_" + type_of_metamodel + "_trainingamount_" + str(training_amount) + ".pkl"
     complete_filename = path / pkl_name
@@ -37,32 +36,28 @@ def create_pkl_name_sensitivityalgo(
     sobol_implementation,
     folder="sensitivity_analysis",
 ):
-    """
-    Creates the name of the .pkl file in which the sensitivity
-        algorithm will be stored
+    """Creates the name of the .pkl file in which the sensitivity algorithm will be stored
 
     Parameters:
-        ----------
-        type_of_metamodel: string
-            name of the metamodel that has been computed.
-            Possible values :
-                "Kriging", "PCE"
-        training_amount: float (between 0 and 1)
-            amount of the data that is used to train the metamodel
-        experiment_size: float
-            number of simulations used to compute the sensitivity algorithm
-        sobol_implementation: string
-            name of the Sobol algorithm implemented
-            Possible values :
-                "Jansen", "Martinez", "MauntzKucherenko", "Saltelli"
-        folder: string
-            the name of the folder in which the .pkl will be created and saved
-            default value: "sensitivity_analysis"
+    ----------
+    type_of_metamodel: string
+        Name of the metamodel that has been computed. Possible values :
+            "Kriging", "PCE"
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
+    experiment_size: float
+        Number of simulations used to compute the sensitivity algorithm
+    sobol_implementation: string
+        Name of the Sobol algorithm implemented Possible values :
+            "Jansen", "Martinez", "MauntzKucherenko", "Saltelli"
+    folder: string
+        The name of the folder in which the .pkl will be created and saved default value:
+        "sensitivity_analysis"
 
     Returns:
-        -------
-        complete_filename: str
-            name of the .pkl file
+    -------
+    complete_filename: str
+        Name of the .pkl file
 
     """
     path = Path.cwd() / folder
@@ -82,43 +77,41 @@ def create_pkl_name_sensitivityalgo(
 
 
 def extract_metamodel_and_data_from_pkl(complete_filename):
-    """
-    Extracts the objects that have been stored with the metamodel .pkl
+    """Extracts the objects that have been stored with the metamodel .pkl
 
     Parameters:
-        ----------
-        complete_filename: str
-            name of the .pkl file
+    ----------
+    complete_filename: str
+        Name of the .pkl file
 
     Returns:
-        -------
-        sample: ot.class
-            input dataset used to create the metamodel
-        results_from_algo: ot.class
-            class which possesses all the information relative to the metamodel that has been generated
-
+    -------
+    sample: ot.class
+        Input dataset used to create the metamodel
+    results_from_algo: ot.class
+        Class which possesses all the information relative to the metamodel that has been generated
     """
+
     with open(complete_filename, "rb") as f:
         [sample, results_from_algo] = pickle.load(f)
     return sample, results_from_algo
 
 
 def export_metamodel_and_data_to_pkl(sample, results_from_algo, complete_filename):
-    """
-    Exports the objects to the metamodel .pkl
+    """Exports the objects to the metamodel .pkl
 
     Parameters:
-        ----------
-        sample: ot.class
-            inut dataset used to create the metamodel
-        results_from_algo: ot.class
-            class which possesses all the information relative to the metamodel that has been generated
-        complete_filename: str
-            name of the .pkl file
+    ----------
+    sample: ot.class
+        Input dataset used to create the metamodel
+    results_from_algo: ot.class
+        Class which possesses all the information relative to the metamodel that has been generated
+    complete_filename: str
+        Name of the .pkl file
 
     Returns:
-        -------
-        None
+    -------
+    None
     """
 
     with open(complete_filename, "wb") as f:
@@ -129,19 +122,18 @@ def export_metamodel_and_data_to_pkl(sample, results_from_algo, complete_filenam
 
 
 def export_sensitivity_algo_to_pkl(sensitivity_algo, complete_filename):
-    """
-    Exports the objects to the sensitivity .pkl
+    """Exports the objects to the sensitivity .pkl
 
     Parameters:
-        ----------
-        sensitivity_algo: ot.class
-            sensitivity algorithm
-        complete_filename: str
-            name of the .pkl file
+    ----------
+    sensitivity_algo: ot.class
+        Sensitivity algorithm
+    complete_filename: str
+        Name of the .pkl file
 
     Returns:
-        -------
-        None
+    -------
+    None
     """
 
     with open(complete_filename, "wb") as f:
@@ -152,18 +144,17 @@ def export_sensitivity_algo_to_pkl(sensitivity_algo, complete_filename):
 
 
 def extract_sensitivity_algo_from_pkl(complete_filename):
-    """
-    Extracts the objects from the sensitivity .pkl
+    """Extracts the objects from the sensitivity .pkl
 
     Parameters:
-        ----------
-        complete_filename: str
-            name of the .pkl file
+    ----------
+    complete_filename: str
+        Name of the .pkl file
 
     Returns:
-        -------
-        sensitivity_algo: ot.class
-            sensitivity algorithm
+    -------
+    sensitivity_algo: ot.class
+        Sensitivity algorithm
     """
 
     with open(complete_filename, "rb") as f:

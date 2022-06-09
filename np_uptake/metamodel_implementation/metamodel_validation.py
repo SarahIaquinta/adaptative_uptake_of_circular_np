@@ -10,97 +10,93 @@ from np_uptake.metamodel_implementation.metamodel_creation import DataPreSetting
 
 
 class MetamodelValidation:
-    """
-    A class that contains the methods to validate a metamodel
+    """A class that contains the methods to validate a metamodel
 
     Attributes:
-        ----------
-        None
+    ----------
+    None
 
     Methods:
-        -------
-        validate_metamodel_with_test(self, inputTest, outputTest, metamodel):
-            Constructs a metamodel validator class (from the Openturns library)
-        compute_Q2(self, metamodel_validator):
-            Computes the predictivity factor of the metamodel.
-        plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
-            Plots the prediction (from metamodel) vs true value (of the model).
-
+    -------
+    validate_metamodel_with_test(self, inputTest, outputTest, metamodel):
+        Constructs a metamodel validator class (from the Openturns library)
+    compute_Q2(self, metamodel_validator):
+        Computes the predictivity factor of the metamodel.
+    plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
+        Plots the prediction (from metamodel) vs true value (of the model).
     """
 
     def __init__(self):
-        """
-        Constructs all the necessary attributes for the MetamodelValidation object.
+        """Constructs all the necessary attributes for the MetamodelValidation object.
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
+
         Returns:
-            -------
-            None
+        -------
+        None
         """
 
     def validate_metamodel_with_test(self, inputTest, outputTest, metamodel):
-        """
-        Constructs a metamodel validator class (from the Openturns library).
+        """Constructs a metamodel validator class (from the Openturns library).
 
         Parameters:
-            ----------
-            inputTest: class (array)
-                part of the dataset (input variables of the model) that will be used to validate
-                the metamodel
-            outputTest: class (array)
-                part of the dataset (output variables of the model) that will be used to validate
-                the metamodel
-            metamodel: class
-                metamodel object (from the OpenTurns library)
+        ----------
+        inputTest: class (array)
+            Part of the dataset (input variables of the model) that will be used to validate
+            the metamodel
+        outputTest: class (array)
+            Part of the dataset (output variables of the model) that will be used to validate
+            the metamodel
+        metamodel: class
+            metamodel object (from the OpenTurns library)
 
         Returns:
-            -------
-            metamodel_validator: class
-                tool from the Openturns library used to validate a metamodel
+        -------
+        metamodel_validator: OT class
+            Tool from the Openturns library used to validate a metamodel
         """
+
         metamodel_validator = ot.MetaModelValidation(inputTest, outputTest, metamodel)
         return metamodel_validator
 
     def compute_Q2(self, metamodel_validator):
-        """
-        Computes the predictivity factor of the metamodel.
+        """Computes the predictivity factor of the metamodel.
 
         Parameters:
-            ----------
-            metamodel_validator: class
-                tool from the Openturns library used to validate a metamodel
+        ----------
+        metamodel_validator: class
+            Tool from the Openturns library used to validate a metamodel
 
         Returns:
-            -------
-            Q2: class (array)
-                predictivity factor
+        -------
+        Q2: class (array)
+            Predictivity factor
         """
 
         Q2 = metamodel_validator.computePredictivityFactor()
         return Q2
 
     def plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
-        """
-        Plots the prediction (from metamodel) vs true value (of the model).
+        """Plots the prediction (from metamodel) vs true value (of the model).
 
         Parameters:
-            ----------
-            metamodel_validator: class
-                tool from the Openturns library used to validate a metamodel
-            type_of_metamodel: string
-                name of the metamodel that has been computed. Possible values :
-                    "Kriging", "PCE"
-            training_amount: float
-                proportion (between 0 and 1) of the initial data used for training (the remaining
-                data are used for testing)
+        ----------
+        metamodel_validator: class
+            Tool from the Openturns library used to validate a metamodel
+        type_of_metamodel: string
+            Name of the metamodel that has been computed. Possible values :
+                "Kriging", "PCE"
+        training_amount: float
+            Proportion (between 0 and 1) of the initial data used for training (the remaining
+            data are used for testing)
 
         Returns:
-            -------
-            Nothing
-
+        -------
+        None
         """
+
         graph = metamodel_validator.drawValidation()
         Q2 = metamodel_validator.computePredictivityFactor()
         graph.setTitle(
@@ -119,30 +115,29 @@ class MetamodelValidation:
 def metamodel_validation_routine(
     datapresetting, metamodelposttreatment, metamodelvalidation, type_of_metamodel, training_amount
 ):
-    """
-    Runs the routine to validate a metamodel:
+    """Runs the routine to validate a metamodel:
         1 - imports the metamodel from a .pkl file
         2 - compares the true vs predicted value of the metamodel
 
     Parameters:
-        ----------
-        datapresetting: class
-            A class that performs the presets on the dataset to compute the metamodel
-        metamodelposttreatment: class from the metamodel_creation.py script
-            A class that extracts and exports the features of the metamodel
-        metamodelvalidation: class
-            tool from the Openturns library used to validate a metamodel
-        type_of_metamodel: string
-            name of the metamodel that has been computed. Possible values :
-                "Kriging", "PCE"
-        training_amount: float (between 0 and 1)
-            amount of the data that is used to train the metamodel
+    ----------
+    datapresetting: class
+        A class that performs the presets on the dataset to compute the metamodel
+    metamodelposttreatment: class from the metamodel_creation.py script
+        A class that extracts and exports the features of the metamodel
+    metamodelvalidation: class
+        Tool from the Openturns library used to validate a metamodel
+    type_of_metamodel: string
+        Name of the metamodel that has been computed. Possible values :
+            "Kriging", "PCE"
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
 
     Returns:
-        -------
-        Nothing
-
+    -------
+    None
     """
+
     complete_pkl_filename = miu.create_pkl_name(type_of_metamodel, training_amount)
     shuffled_sample, results_from_algo = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename)
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)

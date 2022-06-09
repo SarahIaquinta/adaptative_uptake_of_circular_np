@@ -10,64 +10,62 @@ from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 
 
 class SampleRepresentativeness:
-    """
-    A class that investigates the representativeness of the dataset
+    """A class that investigates the representativeness of the dataset
 
     Attributes:
-        ----------
-        filename: string
-            name of the .txt file from which the data will be extracted
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        nb_of_shuffled_samples: float
-            number of shuffled samples of the dataset, used to evaluate the standard deviation of
-            the cumulative mean of a sample
-        pixels: string
-            number of points per pixel in the figures. Recommended: 360
+    ----------
+    filename: string
+        Name of the .txt file from which the data will be extracted
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    nb_of_shuffled_samples: float
+        Number of shuffled samples of the dataset, used to evaluate the standard deviation of
+        the cumulative mean of a sample
+    pixels: string
+        Number of points per pixel in the figures. Recommended: 360
 
     Methods:
-        -------
-        generate_shuffled_samples(self):
-            Shuffles the dataset output (phase 3) self.nb_of_shuffled_samples times
-        compute_cumulative_mean_std(self, vector):
-            Computes the cumulative mean and standard deviation (std) of a vector
-        compute_means_stds_of_shuffled_samples_and_export_to_pkl(self):
-            Computes the cumulative mean and standard deviation (std) for the
-            self.nb_of_shuffled_samples shuffled samples that have been generated Exports them into
-            a .pkl file
-        plot_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
-            Plots the cumulative mean of a sample with the std (computed from the
-            self.nb_of_shuffled_samples shuffled samples)
-        plot_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
-            Plots the cumulative std of a sample with the std (computed from the
-            self.nb_of_shuffled_samples shuffled samples)
-        plot_gradient_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
-            Plots the absolute gradient of the cumulative mean of a sample
-        plot_gradient_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
-            Plots the absolute gradient of the cumulative std of a sample
+    -------
+    generate_shuffled_samples(self):
+        Shuffles the dataset output (phase 3) self.nb_of_shuffled_samples times
+    compute_cumulative_mean_std(self, vector):
+        Computes the cumulative mean and standard deviation (std) of a vector
+    compute_means_stds_of_shuffled_samples_and_export_to_pkl(self):
+        Computes the cumulative mean and standard deviation (std) for the
+        self.nb_of_shuffled_samples shuffled samples that have been generated Exports them into
+        a .pkl file
+    plot_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
+        Plots the cumulative mean of a sample with the std (computed from the
+        self.nb_of_shuffled_samples shuffled samples)
+    plot_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
+        Plots the cumulative std of a sample with the std (computed from the
+        self.nb_of_shuffled_samples shuffled samples)
+    plot_gradient_cumulative_mean_vs_sample_size(self, createfigure, savefigure, fonts):
+        Plots the absolute gradient of the cumulative mean of a sample
+    plot_gradient_cumulative_std_vs_sample_size(self, createfigure, savefigure, fonts):
+        Plots the absolute gradient of the cumulative std of a sample
     """
 
     def __init__(self, filename, training_amount, nb_of_shuffled_samples, pixels):
-        """
-        Constructs all the necessary attributes for the SampleRepresentativeness object.
+        """Constructs all the necessary attributes for the SampleRepresentativeness object.
 
         Parameters:
-            ----------
-            filename: string
-                name of the .txt file from which the data will be extracted
-            training_amount: float
-                proportion (between 0 and 1) of the initial data used for training (the remaining
-                data are used for testing)
-            nb_of_shuffled_samples: float
-                number of shuffled samples of the dataset, used to evaluate the standard deviation
-                of the cumulative mean of a sample
-            pixels: string
-                number of points per pixel in the figures. Recommended: 360
+        ----------
+        filename: string
+            Name of the .txt file from which the data will be extracted
+        training_amount: float
+            Proportion (between 0 and 1) of the initial data used for training (the remaining
+            data are used for testing)
+        nb_of_shuffled_samples: float
+            Number of shuffled samples of the dataset, used to evaluate the standard deviation
+            of the cumulative mean of a sample
+        pixels: string
+            Number of points per pixel in the figures. Recommended: 360
 
         Returns:
-            -------
-            None
+        -------
+        None
         """
 
         self.filename = Path.cwd() / "metamodel_implementation" / filename
@@ -76,19 +74,18 @@ class SampleRepresentativeness:
         self.nb_of_shuffled_samples = nb_of_shuffled_samples
 
     def generate_shuffled_samples(self):
-        """
-        Shuffles the dataset output (phase 3) self.nb_of_shuffled_samples times
+        """Shuffles the dataset output (phase 3) self.nb_of_shuffled_samples times
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            all_shuffled_phase3: array of shape ((len(sample) , self.nb_of_shuffled_samples))
-                self.nb_of_shuffled_samples times shuffled phase 3
-
+        -------
+        all_shuffled_phase3: array of shape ((len(sample) , self.nb_of_shuffled_samples))
+            self.nb_of_shuffled_samples times shuffled phase 3
         """
+
         sample = ot.Sample.ImportFromTextFile(self.filename.as_posix(), "\t", 0)
         phase3 = sample[:, -1]
         all_shuffled_phase3 = np.zeros((len(phase3), self.nb_of_shuffled_samples))
@@ -99,22 +96,21 @@ class SampleRepresentativeness:
         return all_shuffled_phase3
 
     def compute_cumulative_mean_std(self, vector):
-        """
-        Computes the cumulative mean and standard deviation (std) of a vector
+        """Computes the cumulative mean and standard deviation (std) of a vector
 
         Parameters:
-            ----------
-            vector: array
-                vector of which the cumulative mean and std will be computed
+        ----------
+        vector: array
+            Vector of which the cumulative mean and std will be computed
 
         Returns:
-            -------
-            cumulative_mean: array, same shape as vector
-                cumulative mean of the vector
-            cumulative_std: array, same shape as vector
-                cumulative std of the vector
-
+        -------
+        cumulative_mean: array, same shape as vector
+            Cumulative mean of the vector
+        cumulative_std: array, same shape as vector
+            Cumulative std of the vector
         """
+
         cumulative_mean = np.zeros(len(vector))
         cumulative_std = np.zeros_like(cumulative_mean)
         for i in range(len(vector)):
@@ -123,37 +119,33 @@ class SampleRepresentativeness:
         return cumulative_mean, cumulative_std
 
     def compute_means_stds_of_shuffled_samples_and_export_to_pkl(self):
-        """
-        Computes the cumulative mean and standard deviation (std) for the
-            self.nb_of_shuffled_samples shuffled samples that
-            have been generated
-        Exports them into a .pkl file
+        """Computes the cumulative mean and standard deviation (std) for the
+            self.nb_of_shuffled_samples shuffled samples that have been generated.
+            Exports them into a .pkl file named "data_representativeness.pkl"
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
+        -------
+        None
 
         Exports:
-            -------
-            cumulative_mean: array
-                cumulative mean of one shuffled sample
-            std_of_cumulative_means: array
-                std of the cumulative_mean of all the shuffled samples
-            cumulative_std: array
-                cumulative std of one shuffled sample
-            std_of_cumulative_stds: array
-                std of the cumulative_std of all the shuffled samples
-            all_shuffled_phase3: array
-                shuffled samples used in this method.
-                output of the self.generate_shuffled_samples() method
-
-            These objects are exported in a .pkl file named "data_representativeness.pkl"
-
+        -------
+        cumulative_mean: array
+            Cumulative mean of one shuffled sample
+        std_of_cumulative_means: array
+            Std of the cumulative_mean of all the shuffled samples
+        cumulative_std: array
+            Cumulative std of one shuffled sample
+        std_of_cumulative_stds: array
+            Std of the cumulative_std of all the shuffled samples
+        all_shuffled_phase3: array
+            Shuffled samples used in this method.
+            Output of the self.generate_shuffled_samples() method
         """
+
         all_shuffled_phase3 = self.generate_shuffled_samples()
         cumulative_means_for_all_samples = np.zeros_like(all_shuffled_phase3)
         cumulative_stds_for_all_samples = np.zeros_like(all_shuffled_phase3)
@@ -182,19 +174,18 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
-        """
-        Plots the cumulative mean of a sample with the std (computed from the
-        self.nb_of_shuffled_samples shuffled samples)
+        """Plots the cumulative mean of a sample with the std (computed from the
+            self.nb_of_shuffled_samples shuffled samples)
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
-
+        -------
+        None
         """
+
         with open("data_representativeness.pkl", "rb") as f:
             [cumulative_mean, std_of_cumulative_means, _, _, all_shuffled_phase3] = pickle.load(f)
 
@@ -233,19 +224,16 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
-        """
-        Plots the cumulative std of a sample with the
-            std (computed from the self.nb_of_shuffled_samples shuffled
-                samples)
+        """Plots the cumulative std of a sample with the std (computed from the
+           self.nb_of_shuffled_samples shuffled samples)
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
-
+        -------
+        None
         """
         with open("data_representativeness.pkl", "rb") as f:
             [_, _, cumulative_std, std_of_cumulative_stds, all_shuffled_phase3] = pickle.load(f)
@@ -284,18 +272,17 @@ class SampleRepresentativeness:
         savefigure,
         fonts,
     ):
-        """
-        Plots the absolute gradient of the cumulative mean of a sample
+        """Plots the absolute gradient of the cumulative mean of a sample
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
-
+        -------
+        None
         """
+
         with open("data_representativeness.pkl", "rb") as f:
             [mean_of_cumulative_means, _, _, _, _] = pickle.load(f)
 
@@ -338,14 +325,14 @@ class SampleRepresentativeness:
         Plots the absolute gradient of the cumulative std of a sample
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            None
-
+        -------
+        None
         """
+
         with open("data_representativeness.pkl", "rb") as f:
             [_, _, cumulative_std, _, _] = pickle.load(f)
 
