@@ -12,6 +12,18 @@ from np_uptake.metamodel_implementation.metamodel_validation import MetamodelPos
 
 
 class Distribution:
+    """A class that gathers the distributions of the input variables
+
+    Attributes:
+    ----------
+    None
+
+    Methods:
+    -------
+    uniform(self):
+        Creates a uniform distribution of the 3 input parameters
+    """
+
     def __init__(self):
         """Constructs all the necessary attributes for the Distribution object.
 
@@ -32,22 +44,21 @@ class Distribution:
         self.gamma_bar_lambda_max = 100
 
     def uniform(self):
-        """
-        creates a uniform distribution of the 3 input parameters
+        """Creates a uniform distribution of the 3 input parameters
 
         Parameters:
-            ----------
-            None
+        ----------
+        None
 
         Returns:
-            -------
-            distribution: ot class
-                uniform distribution of the 3 input parameters, computed wth Openturns.
-                gamma_bar_lambda and sigma_bar_lambda could have been computed as constant values
-                but we chose to generate them as uniform distribution with close bounds to match
-                the architecture of the openturns library
-
+        -------
+        distribution: ot class
+            Uniform distribution of the 3 input parameters, computed wth Openturns.
+            gamma_bar_lambda could have been computed as constant values
+            but we chose to generate it as uniform distribution with close bounds to match
+            the architecture of the Openturns library
         """
+
         distribution = ot.ComposedDistribution(
             [
                 ot.Uniform(self.gamma_bar_r_min, self.gamma_bar_r_max),
@@ -60,26 +71,25 @@ class Distribution:
 
 # Saltelli#
 def compute_sensitivity_algo_Saltelli(distribution, metamodel, sensitivity_experiment_size):
-    """
-    computes the sensitivity algorithms computed after the Saltelli method
+    """Computes the sensitivity algorithms computed after the Saltelli method
 
     Parameters:
-        ----------
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        metamodel: ot class
-            metamodel (Kriging) computed in the metamodel_creation.py script and stored in a .pkl
-            file
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
+    ----------
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    metamodel: ot class
+        Metamodel (Kriging or PCE) computed in the metamodel_creation.py script and stored in a .pkl
+        file
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
 
     Returns:
-        -------
-        sensitivityAnalysis: ot class
-            sensitivity algorithm computed with the openturns class
-
+    -------
+    sensitivityAnalysis: ot class
+        Sensitivity algorithm computed with the Openturns class
     """
+
     uniform_distribution = distribution.uniform()
     myExperiment = ot.LowDiscrepancyExperiment(
         ot.SobolSequence(), uniform_distribution, sensitivity_experiment_size, True
@@ -95,31 +105,30 @@ def compute_and_export_sensitivity_algo_Saltelli(
     sensitivity_experiment_size,
     type_of_Sobol_sensitivity_implementation="Saltelli",
 ):
-    """
-    computes the sensitivity algorithms computed after the Saltelli method and exports it to a .pkl
-    file
+    """Computes the sensitivity algorithms computed after the Saltelli method and exports it to a
+    .pkl file
 
     Parameters:
-        ----------
-        type_of_metamodel: str
-            type of metamodel that has been computed. Possible value: "Kriging"
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
-        type_of_Sobol_sensitivity_implementation: str
-            type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
-            sensitivity algorithm is stored.
+    ----------
+    type_of_metamodel: str
+        Type of metamodel that has been computed. Possible values: "Kriging", "PCE"
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
+    type_of_Sobol_sensitivity_implementation: str
+        Type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
+        sensitivity algorithm is stored.
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
+
     complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
     _, results_from_algo = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename_metamodel)
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
@@ -132,26 +141,25 @@ def compute_and_export_sensitivity_algo_Saltelli(
 
 # Jansen#
 def compute_sensitivity_algo_Jansen(distribution, metamodel, sensitivity_experiment_size):
-    """
-    computes the sensitivity algorithms computed after the Jansen method
+    """Computes the sensitivity algorithms computed after the Jansen method
 
     Parameters:
-        ----------
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        metamodel: ot class
-            metamodel (Kriging) computed in the metamodel_creation.py script and stored in a .pkl
-            file
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
+    ----------
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    metamodel: ot class
+        Metamodel (Kriging or PCE) computed in the metamodel_creation.py script and stored in a .pkl
+        file
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
 
     Returns:
-        -------
-        sensitivityAnalysis: ot class
-            sensitivity algorithm computed with the openturns class
-
+    -------
+    sensitivityAnalysis: ot class
+        Sensitivity algorithm computed with the Openturns class
     """
+
     uniform_distribution = distribution.uniform()
     myExperiment = ot.LowDiscrepancyExperiment(
         ot.SobolSequence(), uniform_distribution, sensitivity_experiment_size, True
@@ -167,30 +175,28 @@ def compute_and_export_sensitivity_algo_Jansen(
     sensitivity_experiment_size,
     type_of_Sobol_sensitivity_implementation="Jansen",
 ):
-    """
-    computes the sensitivity algorithms computed after the Jansen method and exports it to a .pkl
-    file
+    """Computes the sensitivity algorithms computed after the Jansen method and exports it to a
+    .pkl file
 
     Parameters:
-        ----------
-        type_of_metamodel: str
-            type of metamodel that has been computed. Possible value: "Kriging"
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
-        type_of_Sobol_sensitivity_implementation: str
-            type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
-            sensitivity algorithm is stored.
+    ----------
+    type_of_metamodel: str
+        Type of metamodel that has been computed. Possible values: "Kriging", "PCE"
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
+    type_of_Sobol_sensitivity_implementation: str
+        Type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
+        sensitivity algorithm is stored.
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
 
     complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
@@ -205,26 +211,25 @@ def compute_and_export_sensitivity_algo_Jansen(
 
 # MauntzKucherenko#
 def compute_sensitivity_algo_MauntzKucherenko(distribution, metamodel, sensitivity_experiment_size):
-    """
-    computes the sensitivity algorithms computed after the MauntzKucherenko method
+    """Computes the sensitivity algorithms computed after the MauntzKucherenko method
 
     Parameters:
-        ----------
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        metamodel: ot class
-            metamodel (Kriging) computed in the metamodel_creation.py script and stored in a .pkl
-            file
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
+    ----------
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    metamodel: ot class
+        Metamodel (Kriging or PCE) computed in the metamodel_creation.py script and stored in a .pkl
+        file
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
 
     Returns:
-        -------
-        sensitivityAnalysis: ot class
-            sensitivity algorithm computed with the openturns class
-
+    -------
+    sensitivityAnalysis: ot class
+        Sensitivity algorithm computed with the Openturns class
     """
+
     uniform_distribution = distribution.uniform()
     myExperiment = ot.LowDiscrepancyExperiment(
         ot.SobolSequence(), uniform_distribution, sensitivity_experiment_size, True
@@ -240,30 +245,28 @@ def compute_and_export_sensitivity_algo_MauntzKucherenko(
     sensitivity_experiment_size,
     type_of_Sobol_sensitivity_implementation="MauntzKucherenko",
 ):
-    """
-    computes the sensitivity algorithms computed after the MauntzKucherenko method and exports it
-    to a .pkl file
+    """Computes the sensitivity algorithms computed after the Mauntz-Kucherenko method and exports
+    it to a .pkl file
 
     Parameters:
-        ----------
-        type_of_metamodel: str
-            type of metamodel that has been computed. Possible value: "Kriging"
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
-        type_of_Sobol_sensitivity_implementation: str
-            type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
-            sensitivity algorithm is stored.
+    ----------
+    type_of_metamodel: str
+        Type of metamodel that has been computed. Possible values: "Kriging", "PCE"
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data are
+        used for testing)
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested in
+        the sensitivity analysis
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
+    type_of_Sobol_sensitivity_implementation: str
+        Type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
+        sensitivity algorithm is stored.
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
 
     complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
@@ -280,25 +283,23 @@ def compute_and_export_sensitivity_algo_MauntzKucherenko(
 
 # Martinez#
 def compute_sensitivity_algo_Martinez(distribution, metamodel, sensitivity_experiment_size):
-    """
-    computes the sensitivity algorithms computed after the Martinez method
+    """Computes the sensitivity algorithms computed after the Martinez method
 
     Parameters:
-        ----------
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        metamodel: ot class
-            metamodel (Kriging) computed in the metamodel_creation.py script and stored in a .pkl
-            file
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
+    ----------
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    metamodel: ot class
+        Metamodel (Kriging or PCE) computed in the metamodel_creation.py script and stored in a .pkl
+        file
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
 
     Returns:
-        -------
-        sensitivityAnalysis: ot class
-            sensitivity algorithm computed with the openturns class
-
+    -------
+    sensitivityAnalysis: ot class
+        Sensitivity algorithm computed with the Openturns class
     """
 
     uniform_distribution = distribution.uniform()
@@ -316,30 +317,28 @@ def compute_and_export_sensitivity_algo_Martinez(
     sensitivity_experiment_size,
     type_of_Sobol_sensitivity_implementation="Martinez",
 ):
-    """
-    computes the sensitivity algorithms computed after the Martinez method and exports it to a .pkl
-    file
+    """Computes the sensitivity algorithms computed after the Martinez method and exports it to a
+    .pkl file
 
     Parameters:
-        ----------
-        type_of_metamodel: str
-            type of metamodel that has been computed. Possible value: "Kriging"
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        distribution: class
-            class that defines the distribution of the input parameters whose influence is tested
-            in the sensitivity analysis
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
-        type_of_Sobol_sensitivity_implementation: str
-            type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
-            sensitivity algorithm is stored.
+    ----------
+    type_of_metamodel: str
+        Type of metamodel that has been computed. Possible values: "Kriging", "PCE"
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    distribution: class
+        Class that defines the distribution of the input parameters whose influence is tested
+        in the sensitivity analysis
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
+    type_of_Sobol_sensitivity_implementation: str
+        Type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
+        sensitivity algorithm is stored.
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
 
     complete_pkl_filename_metamodel = miu.create_pkl_name(type_of_metamodel, training_amount)
@@ -354,6 +353,24 @@ def compute_and_export_sensitivity_algo_Martinez(
 
 # Sobol indices from PCE#
 def compute_sensitivity_indices_PCE(training_amount):
+    """Computes the sensitivity algorithms directly from the coefficients of the PCE metamodel
+
+    Parameters:
+    ----------
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data are
+        used for testing)
+
+    Returns:
+    -------
+    first_order_indices: list
+        First order Sobol indices. Position in the list follows the position in the datafile:
+        gamma_bar_r, gamma_bar_fs, gamma_bar_lambda
+    total_order_indices: list
+        Total order Sobol indices. Position in the list follows the position in the datafile:
+        gamma_bar_r, gamma_bar_fs, gamma_bar_lambda
+    """
+
     complete_filename = miu.create_pkl_name("PCE", training_amount, folder="")
     [_, results_from_algo] = miu.extract_metamodel_and_data_from_pkl(complete_filename)
     chaosSI = ot.FunctionalChaosSobolIndices(results_from_algo)
@@ -371,32 +388,30 @@ def plot_results_sensitivity_analysis(
     createfigure,
     pixels,
 ):
-    """
-    Plots the first and total Sobol indice
+    """Plots the first and total Sobol indices
 
     Parameters:
-        ----------
-        type_of_metamodel: str
-            type of metamodel that has been computed. Possible values: "Kriging", "PCE"
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        sensitivity_experiment_size: float (int)
-            amount of estimations of the metamodel to evaluate the sensitivity
-        type_of_Sobol_sensitivity_implementation: str
-            type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
-            sensitivity algorithm is stored.
-        createfigure: class
-            class from the figures.utils.py script that provides a predefined figure layout
-        colors: class
-            class from the figures.utils.py script that provides a predefined set of colors
-        pixels: str
-            number of points per pixel in the figures Recommended: 360
+    ----------
+    type_of_metamodel: str
+        Type of metamodel that has been computed. Possible values: "Kriging", "PCE"
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    sensitivity_experiment_size: float (int)
+        Amount of estimations of the metamodel to evaluate the sensitivity
+    type_of_Sobol_sensitivity_implementation: str
+        Type of Sobol algorithm. Used only to generate the name of the .pkl file in which the
+        sensitivity algorithm is stored.
+    createfigure: class
+        Class from the figures.utils.py script that provides a predefined figure layout
+    colors: class
+        Class from the figures.utils.py script that provides a predefined set of colors
+    pixels: str
+        Number of points per pixel in the figures Recommended: 360
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
 
     complete_pkl_filename_sensitivy_algo = miu.create_pkl_name_sensitivityalgo(
@@ -493,29 +508,26 @@ def plot_sensitivity_indices_PCE(
     createfigure,
     pixels,
 ):
-    """
-    Plots the first and total Sobol indice obtained from PCE metamodel
+    """Plots the first and total Sobol indice obtained from PCE metamodel
 
     Parameters:
-        ----------
-        training_amount: float
-            proportion (between 0 and 1) of the initial data used for training (the remaining data
-            are used for testing)
-        createfigure: class
-            class from the figures.utils.py script that provides a predefined figure layout
-        colors: class
-            class from the figures.utils.py script that provides a predefined set of colors
-        pixels: str
-            number of points per pixel in the figures Recommended: 360
+    ----------
+    training_amount: float
+        Proportion (between 0 and 1) of the initial data used for training (the remaining data
+        are used for testing)
+    createfigure: class
+        Class from the figures.utils.py script that provides a predefined figure layout
+    colors: class
+        Class from the figures.utils.py script that provides a predefined set of colors
+    pixels: str
+        Number of points per pixel in the figures Recommended: 360
 
     Returns:
-        -------
-        None
-
+    -------
+    None
     """
 
     first_order_indices, total_order_indices = compute_sensitivity_indices_PCE(training_amount)
-
     fig = createfigure.square_figure_7(pixels=pixels)
     ax = fig.gca()
     ax.plot(
@@ -560,26 +572,8 @@ def plot_sensitivity_indices_PCE(
 if __name__ == "__main__":
     type_of_metamodel = "PCE"
     training_amount = 0.7
-    sensitivity_experiment_size_list = [
-        50,
-        100,
-        150,
-        200,
-        500,
-        1000,
-        1500,
-        2000,
-        3000,
-        4000,
-        5000,
-        6000,
-        7000,
-        8000,
-        9000,
-        10000,
-    ]
+    sensitivity_experiment_size_list = [10000]
     type_of_Sobol_sensitivity_implementation_list = ["Saltelli", "Jansen", "MauntzKucherenko", "Martinez"]
-
     metamodelposttreatment = MetamodelPostTreatment()
     distribution = Distribution()
     createfigure = CreateFigure()
