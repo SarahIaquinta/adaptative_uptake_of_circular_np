@@ -1,11 +1,14 @@
+import numpy as np
 import openturns as ot
 import openturns.viewer as viewer
 
 ot.Log.Show(ot.Log.NONE)
 
+import seaborn as sns
 from matplotlib import pylab as plt
 
 import np_uptake.metamodel_implementation.utils as miu
+from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure, XTickLabels, XTicks
 from np_uptake.metamodel_implementation.metamodel_creation import DataPreSetting, MetamodelPostTreatment
 
 
@@ -22,8 +25,6 @@ class MetamodelValidation:
         Constructs a metamodel validator class (from the Openturns library)
     compute_Q2(self, metamodel_validator):
         Computes the predictivity factor of the metamodel.
-    plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
-        Plots the prediction (from metamodel) vs true value (of the model).
     """
 
     def __init__(self):
@@ -78,42 +79,46 @@ class MetamodelValidation:
         Q2 = metamodel_validator.computePredictivityFactor()
         return Q2
 
-    def plot_prediction_vs_true_value(self, metamodel_validator, type_of_metamodel, training_amount):
-        """Plots the prediction (from metamodel) vs true value (of the model).
-
-        Parameters:
-        ----------
-        metamodel_validator: class
-            Tool from the Openturns library used to validate a metamodel
-        type_of_metamodel: string
-            Name of the metamodel that has been computed. Possible values :
-                "Kriging", "PCE"
-        training_amount: float
-            Proportion (between 0 and 1) of the initial data used for training (the remaining
-            data are used for testing)
-
-        Returns:
-        -------
-        None
-        """
-
-        graph = metamodel_validator.drawValidation()
-        Q2 = metamodel_validator.computePredictivityFactor()
-        graph.setTitle(
-            type_of_metamodel
-            + " metamodel validation (training amount = "
-            + str(training_amount)
-            + ") ; \n Q2 = "
-            + str(Q2)
+    def plot_prediction_vs_true_value_manual(
+        self, type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+    ):
+        predicted_output = metamodel(inputTest)
+        fig = createfigure.square_figure_7(pixels=pixels)
+        ax = fig.gca()
+        palette = sns.color_palette("Set2")
+        vert = palette[0]
+        ax.plot([0.05, 0.8], [0.05, 0.8], "-k", linewidth=2)
+        ax.plot(outputTest, predicted_output, "o", color=vert)
+        ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+        ax.set_xticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
         )
-        view = viewer.View(graph)
-        plt.xlabel(r"true value of $\tilde{f}$ (from model)")
-        plt.ylabel(r"predicted value of $\tilde{f}$ (from metamodel)")
-        plt.show()
+        ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+        ax.set_yticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_xlim((0, 0.83))
+        ax.set_ylim((0, 0.83))
+        ax.set_xlabel(r"true values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"predicted values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        savefigure.save_as_png(fig, type_of_metamodel + "_circular_" + str(pixels))
 
 
-def metamodel_validation_routine(
-    datapresetting, metamodelposttreatment, metamodelvalidation, type_of_metamodel, training_amount
+def metamodel_validation_routine_pce(
+    datapresetting,
+    metamodelposttreatment,
+    metamodelvalidation,
+    type_of_metamodel,
+    training_amount,
+    degree,
+    createfigure,
+    savefigure,
+    xticks,
+    pixels,
 ):
     """Runs the routine to validate a metamodel:
         1 - imports the metamodel from a .pkl file
@@ -128,8 +133,67 @@ def metamodel_validation_routine(
     metamodelvalidation: class
         Tool from the Openturns library used to validate a metamodel
     type_of_metamodel: string
-        Name of the metamodel that has been computed. Possible values :
-            "Kriging", "PCE"
+        Name of the metamodel that has been computed. Possible value:
+            "PCE"
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
+
+    Returns:
+    -------
+    None
+    """
+
+    complete_pkl_filename = miu.create_pkl_name(type_of_metamodel + str(degree), training_amount)
+    shuffled_sample, results_from_algo = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename)
+    metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
+    inputTest, outputTest = datapresetting.extract_testing_data(shuffled_sample)
+
+    gamma_bar_r_list_rescaled = miu.rescale_sample(inputTest[:, 0])
+    gamma_bar_fs_bar_list_rescaled = miu.rescale_sample(inputTest[:, 1])
+    gamma_bar_lambda_list_rescaled = miu.rescale_sample(inputTest[:, 2])
+    input_sample_Test_rescaled = ot.Sample(len(gamma_bar_r_list_rescaled), 3)
+    for k in range(len(gamma_bar_r_list_rescaled)):
+        input_sample_Test_rescaled[k, 0] = gamma_bar_r_list_rescaled[k]
+        input_sample_Test_rescaled[k, 1] = gamma_bar_fs_bar_list_rescaled[k]
+        input_sample_Test_rescaled[k, 2] = gamma_bar_lambda_list_rescaled[k]
+
+    metamodel_validator = metamodelvalidation.validate_metamodel_with_test(
+        input_sample_Test_rescaled, outputTest, metamodel
+    )
+    metamodelvalidation.plot_prediction_vs_true_value_manual(
+        type_of_metamodel, input_sample_Test_rescaled, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+    )
+    Q2 = metamodel_validator.computePredictivityFactor()
+    residual, relative_error = metamodelposttreatment.get_errors_from_metamodel(results_from_algo)
+    return Q2, residual, relative_error
+
+
+def metamodel_validation_routine_kriging(
+    datapresetting,
+    metamodelposttreatment,
+    metamodelvalidation,
+    type_of_metamodel,
+    training_amount,
+    createfigure,
+    savefigure,
+    xticks,
+    pixels,
+):
+    """Runs the routine to validate a metamodel:
+        1 - imports the metamodel from a .pkl file
+        2 - compares the true vs predicted value of the metamodel
+
+    Parameters:
+    ----------
+    datapresetting: class
+        A class that performs the presets on the dataset to compute the metamodel
+    metamodelposttreatment: class from the metamodel_creation.py script
+        A class that extracts and exports the features of the metamodel
+    metamodelvalidation: class
+        Tool from the Openturns library used to validate a metamodel
+    type_of_metamodel: string
+        Name of the metamodel that has been computed. Possible value:
+            "Kriging"
     training_amount: float (between 0 and 1)
         Amount of the data that is used to train the metamodel
 
@@ -142,20 +206,163 @@ def metamodel_validation_routine(
     shuffled_sample, results_from_algo = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename)
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     inputTest, outputTest = datapresetting.extract_testing_data(shuffled_sample)
-    metamodel_validator = metamodelvalidation.validate_metamodel_with_test(inputTest, outputTest, metamodel)
-    metamodelvalidation.plot_prediction_vs_true_value(metamodel_validator, type_of_metamodel, training_amount)
+
+    metamodelvalidation.plot_prediction_vs_true_value_manual(
+        type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+    )
+
+
+def plot_error_vs_degree_pce(
+    degree_list, Q2_list, relativeerror_list, createfigure, savefigure, fonts, xticks, xticklabels, pixels
+):
+    """Plots the LOO error and the predictivity factor of the PCE with respect to its
+        truncature degree
+
+    Parameters:
+    ----------
+    degree_list: list
+        List of the truncature degrees to be investigated
+    Q2_list: list
+        List of the predictivity factors obtained for each degree from degree_list
+    relativeerror_list: list
+        List of the LOO errors obtained for each degree from degree_list
+
+    Returns:
+    -------
+    None
+    """
+
+    palette = sns.color_palette("Set2")
+    vert_clair, orange = palette[0], palette[1]
+    fig = createfigure.square_figure_7(pixels=pixels)
+    ax = fig.gca()
+    ax.plot(degree_list, Q2_list, color=vert_clair, label="$Q_2$", linewidth=3)
+    ax.plot(degree_list, relativeerror_list, color=orange, label=r"$\epsilon_{LOO}$", linewidth=3)
+    max_Q2 = max(Q2_list)
+    max_Q2_index = Q2_list.index(max_Q2)
+    plt.plot(degree_list[max_Q2_index], max_Q2, "o", color="k", markersize=15, mfc="none")
+    min_relativeerror = min(relativeerror_list)
+    min_relativeerror_index = relativeerror_list.index(min_relativeerror)
+    plt.plot(degree_list[min_relativeerror_index], min_relativeerror, "o", color="k", markersize=15, mfc="none")
+    ax.set_xticks([1, 10, 20, 30, 40, 50])
+    ax.set_xticklabels(
+        [1, 10, 20, 30, 40, 50],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+    ax.set_yticklabels(
+        [0, 0.2, 0.4, 0.6, 0.8, 1],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
+    ax.set_xlim((0, 51))
+    ax.set_ylim((-0.05, 1.05))
+    ax.set_xlabel("degree $p$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$Q_2$ [ - ], $\epsilon_{LOO}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    savefigure.save_as_png(fig, "convergence_PCE_" + str(pixels))
+
+
+def optimize_degree_pce(
+    datapresetting,
+    metamodelposttreatment,
+    metamodelvalidation,
+    degree_list,
+    training_amount,
+    createfigure,
+    savefigure,
+    xticks,
+    pixels,
+):
+    """Determines the truncature degree of the PCE that maximizes the predictivity factor
+
+    Parameters:
+    ----------
+    datapresetting: class
+        A class that performs the presets on the dataset to compute the metamodel
+    metamodelposttreatment: class from the metamodel_creation.py script
+        A class that extracts and exports the features of the metamodel
+    metamodelvalidation: class
+        Tool from the Openturns library used to validate a metamodel
+    degree_list: list
+        List of the truncature degrees to be investigated
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
+
+    Returns:
+    -------
+    None
+    """
+
+    Q2_list = []
+    residual_list = []
+    relativeerror_list = []
+    for degree in degree_list:
+        Q2, residual, relative_error = metamodel_validation_routine_pce(
+            datapresetting,
+            metamodelposttreatment,
+            metamodelvalidation,
+            "PCE",
+            training_amount,
+            degree,
+            createfigure,
+            savefigure,
+            xticks,
+            pixels,
+        )
+        Q2_list.append(Q2[0])
+        residual_list.append(residual[0])
+        relativeerror_list.append(relative_error[0])
+
+    plot_error_vs_degree_pce(
+        degree_list, Q2_list, relativeerror_list, createfigure, savefigure, fonts, xticks, xticklabels, pixels
+    )
+
+    max_Q2 = max(Q2_list)
+    max_Q2_index = Q2_list.index(max_Q2)
+    optimal_degree = degree_list[max_Q2_index]
+    print("Optimal degree for PCE: ", int(optimal_degree))
 
 
 if __name__ == "__main__":
+
+    createfigure = CreateFigure()
+    fonts = Fonts()
+    savefigure = SaveFigure()
+    xticks = XTicks()
+    xticklabels = XTickLabels()
+    pixels = 360
+
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
     metamodelposttreatment = MetamodelPostTreatment()
     metamodelvalidation = MetamodelValidation()
-    training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+    training_amount_list = [0.8]
+
+    degree_list = np.arange(1, 13)
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
-        metamodel_validation_routine(
-            datapresetting, metamodelposttreatment, metamodelvalidation, "Kriging", training_amount
-        )
-        metamodel_validation_routine(
-            datapresetting, metamodelposttreatment, metamodelvalidation, "PCE", training_amount
-        )
+
+    optimize_degree_pce(
+        datapresetting,
+        metamodelposttreatment,
+        metamodelvalidation,
+        degree_list,
+        training_amount,
+        createfigure,
+        savefigure,
+        xticks,
+        pixels,
+    )
+
+    metamodel_validation_routine_kriging(
+        datapresetting,
+        metamodelposttreatment,
+        metamodelvalidation,
+        "Kriging",
+        training_amount,
+        createfigure,
+        savefigure,
+        xticks,
+        pixels,
+    )
