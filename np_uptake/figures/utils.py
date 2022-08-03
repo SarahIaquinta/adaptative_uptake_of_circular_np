@@ -35,6 +35,10 @@ class Fonts:
         font = font_manager.FontProperties(family="serif", weight="normal", style="normal", size=18)
         return font
 
+    def serif_3horizontal(self):
+        font = font_manager.FontProperties(family="serif", weight="normal", style="normal", size=40)
+        return font
+
     def axis_legend_size(self):
         """Defines the size of the text in the axis legend of the figures
 

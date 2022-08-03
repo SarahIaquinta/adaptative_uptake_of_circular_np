@@ -1,6 +1,9 @@
+from tkinter import S
+
 import numpy as np
 import openturns as ot
 import openturns.viewer as viewer
+from scipy.interpolate import UnivariateSpline
 
 ot.Log.Show(ot.Log.NONE)
 
@@ -85,10 +88,14 @@ class MetamodelValidation:
         predicted_output = metamodel(inputTest)
         fig = createfigure.square_figure_7(pixels=pixels)
         ax = fig.gca()
-        palette = sns.color_palette("Set2")
-        vert = palette[0]
+        palette = sns.color_palette("Paired")
+        orange = palette[-5]
+        purple = palette[-3]
+        color_plot = orange
+        if type_of_metamodel == "Kriging":
+            color_plot = purple
         ax.plot([0.05, 0.8], [0.05, 0.8], "-k", linewidth=2)
-        ax.plot(outputTest, predicted_output, "o", color=vert)
+        ax.plot(outputTest, predicted_output, "o", color=color_plot)
         ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
         ax.set_xticklabels(
             [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
@@ -137,6 +144,9 @@ def metamodel_validation_routine_pce(
             "PCE"
     training_amount: float (between 0 and 1)
         Amount of the data that is used to train the metamodel
+    degree: int
+        Dimension of the basis of polynoms
+
 
     Returns:
     -------
@@ -325,6 +335,80 @@ def optimize_degree_pce(
     print("Optimal degree for PCE: ", int(optimal_degree))
 
 
+def plot_PDF_pce_kriging(metamodelposttreatment, degree, training_amount):
+    """Plots the Probability Density Functions (PDFs) of the metamodel outputs and original data
+
+    Parameters:
+    ----------
+    metamodelposttreatment: class from the metamodel_creation.py script
+        A class that extracts and exports the features of the metamodel
+    degree: int
+        Dimension of the basis of polynoms
+    training_amount: float (between 0 and 1)
+        Amount of the data that is used to train the metamodel
+
+    Returns:
+    -------
+    None
+    """
+
+    complete_pkl_filename_pce = miu.create_pkl_name("PCE" + str(degree), training_amount)
+    shuffled_sample, results_from_algo_pce = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename_pce)
+    metamodel_pce = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo_pce)
+    complete_pkl_filename_kriging = miu.create_pkl_name("Kriging", training_amount)
+    _, results_from_algo_kriging = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename_kriging)
+    metamodel_kriging = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo_kriging)
+    gamma_bar_r_list_rescaled = miu.rescale_sample(shuffled_sample[:, 0])
+    gamma_bar_fs_bar_list_rescaled = miu.rescale_sample(shuffled_sample[:, 1])
+    gamma_bar_lambda_list_rescaled = miu.rescale_sample(shuffled_sample[:, 2])
+    input_sample_rescaled = ot.Sample(len(gamma_bar_r_list_rescaled), 3)
+    for k in range(len(gamma_bar_r_list_rescaled)):
+        input_sample_rescaled[k, 0] = gamma_bar_r_list_rescaled[k]
+        input_sample_rescaled[k, 1] = gamma_bar_fs_bar_list_rescaled[k]
+        input_sample_rescaled[k, 2] = gamma_bar_lambda_list_rescaled[k]
+    input_sample = ot.Sample(shuffled_sample[:, 0:3])
+    output_model = shuffled_sample[:, -1]
+    output_pce = metamodel_pce(input_sample_rescaled)
+    output_kriging = metamodel_kriging(input_sample)
+
+    def get_data_for_pdf(n, s):
+        p, x = np.histogram(s, bins=n)  # bin it into n = N//10 bins
+        x = x[:-1] + (x[1] - x[0]) / 2  # convert bin edges to centers
+        f = UnivariateSpline(x, p, s=n)
+        return x, f
+
+    n_pdf = int(1e5)
+    x_model, f_model = get_data_for_pdf(n_pdf, output_model)
+    x_pce, f_pce = get_data_for_pdf(n_pdf, output_pce)
+    x_kriging, f_kriging = get_data_for_pdf(n_pdf, output_kriging)
+
+    fig = createfigure.square_figure_7(pixels=pixels)
+    ax = fig.gca()
+    palette = sns.color_palette("Paired")
+    orange = palette[-5]
+    purple = palette[-3]
+    ax.plot(x_model, f_model(x_model), "k", label="model", linewidth=2)
+    ax.plot(x_kriging, f_kriging(x_kriging), color=purple, label="Kriging", linewidth=2)
+    ax.plot(x_pce, f_pce(x_pce), color=orange, label="PCE", linewidth=2)
+    ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+    ax.set_xticklabels(
+        [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([0.005, 0.01, 0.015, 0.02])
+    ax.set_yticklabels(
+        ["0.5", "1.0", "1.5", "2.0"],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_xlim((0, 0.83))
+    ax.set_xlabel(r"$\Psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel("PDF (x $10^{-2})$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
+    savefigure.save_as_png(fig, "PDF_metamodel_circular" + str(pixels))
+
+
 if __name__ == "__main__":
 
     createfigure = CreateFigure()
@@ -339,30 +423,32 @@ if __name__ == "__main__":
     metamodelvalidation = MetamodelValidation()
     training_amount_list = [0.8]
 
-    degree_list = np.arange(1, 13)
-    for training_amount in training_amount_list:
-        datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
+    # degree_list = [10]#np.arange(1, 13)
+    # for training_amount in training_amount_list:
+    #     datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
 
-    optimize_degree_pce(
-        datapresetting,
-        metamodelposttreatment,
-        metamodelvalidation,
-        degree_list,
-        training_amount,
-        createfigure,
-        savefigure,
-        xticks,
-        pixels,
-    )
+    #     optimize_degree_pce(
+    #         datapresetting,
+    #         metamodelposttreatment,
+    #         metamodelvalidation,
+    #         degree_list,
+    #         training_amount,
+    #         createfigure,
+    #         savefigure,
+    #         xticks,
+    #         pixels,
+    #     )
 
-    metamodel_validation_routine_kriging(
-        datapresetting,
-        metamodelposttreatment,
-        metamodelvalidation,
-        "Kriging",
-        training_amount,
-        createfigure,
-        savefigure,
-        xticks,
-        pixels,
-    )
+    #     metamodel_validation_routine_kriging(
+    #         datapresetting,
+    #         metamodelposttreatment,
+    #         metamodelvalidation,
+    #         "Kriging",
+    #         training_amount,
+    #         createfigure,
+    #         savefigure,
+    #         xticks,
+    #         pixels,
+    #     )
+
+    plot_PDF_pce_kriging(metamodelposttreatment, 10, 0.8)
