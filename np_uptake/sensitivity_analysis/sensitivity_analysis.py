@@ -360,6 +360,8 @@ def compute_sensitivity_indices_PCE(training_amount, degree):
     training_amount: float
         Proportion (between 0 and 1) of the initial data used for training (the remaining data are
         used for testing)
+    degree: float
+        truncature degree of the PCE metamodel
 
     Returns:
     -------
@@ -516,6 +518,8 @@ def plot_sensitivity_indices_PCE(
     training_amount: float
         Proportion (between 0 and 1) of the initial data used for training (the remaining data
         are used for testing)
+    degree: float
+        truncature degree of the PCE metamodel
     createfigure: class
         Class from the figures.utils.py script that provides a predefined figure layout
     colors: class
