@@ -202,7 +202,7 @@ class MetamodelCreation:
         )
         indexMax = enumerateFunction.getStrataCumulatedCardinal(int(degree))
         adaptiveStrategy = ot.SequentialStrategy(productBasis, indexMax)
-        sampling_size = 300
+        sampling_size = 800
         experiment = ot.MonteCarloExperiment(sampling_size)
         projectionStrategy = ot.ProjectionStrategy(ot.LeastSquaresStrategy(experiment))
         pce_algorithm = ot.FunctionalChaosAlgorithm(
@@ -375,23 +375,26 @@ def metamodel_creation_routine_pce(datapresetting, metamodelcreation, metamodelp
     pce = metamodelcreation.create_pce_algorithm(degree)
     metamodelposttreatment.run_algorithm(pce)
     results_from_pce = metamodelposttreatment.extract_results_from_algorithm(pce)
-    complete_pkl_filename_pce = miu.create_pkl_name("PCE", datapresetting.training_amount)
+    complete_pkl_filename_pce = miu.create_pkl_name("PCE" + str(degree), datapresetting.training_amount)
     miu.export_metamodel_and_data_to_pkl(shuffled_sample, results_from_pce, complete_pkl_filename_pce)
 
 
 if __name__ == "__main__":
     filename_qMC_Sobol = "dataset_for_metamodel_creation.txt"
-    training_amount_list = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95]
+    training_amount_list = [0.8]
     metamodelposttreatment = MetamodelPostTreatment()
-    degree = 30
-    for training_amount in training_amount_list:
-        datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
-        shuffled_sample = datapresetting.shuffle_dataset_from_datafile()
-        input_sample_training, output_sample_training = datapresetting.extract_training_data_from_shuffled_dataset(
-            shuffled_sample
-        )
-        metamodelcreation = MetamodelCreation(input_sample_training, output_sample_training)
-        metamodel_creation_routine_kriging(datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample)
-        metamodel_creation_routine_pce(
-            datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree
-        )
+    degree_list = np.arange(1, 13)
+    for degree in degree_list:
+        for training_amount in training_amount_list:
+            datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
+            shuffled_sample = datapresetting.shuffle_dataset_from_datafile()
+            input_sample_training, output_sample_training = datapresetting.extract_training_data_from_shuffled_dataset(
+                shuffled_sample
+            )
+            metamodelcreation = MetamodelCreation(input_sample_training, output_sample_training)
+            metamodel_creation_routine_kriging(
+                datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample
+            )
+            metamodel_creation_routine_pce(
+                datapresetting, metamodelcreation, metamodelposttreatment, shuffled_sample, degree
+            )
