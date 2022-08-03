@@ -160,3 +160,23 @@ def extract_sensitivity_algo_from_pkl(complete_filename):
     with open(complete_filename, "rb") as f:
         [sensitivity_algo] = pickle.load(f)
     return sensitivity_algo
+
+
+def rescale_sample(vector):
+    """Rescales a vector between -1 and 1
+
+    Parameters:
+    ----------
+    vector: vector object
+        vector to be rescaled
+
+    Returns:
+    -------
+    vector_normalized: list
+        normalized vector
+    """
+
+    vector_start0 = [k[0] - vector.getMin()[0] for k in vector]
+    vector_end2 = [k * 2 / max(vector_start0) for k in vector_start0]
+    vector_normalized = [k - 1 for k in vector_end2]
+    return vector_normalized
