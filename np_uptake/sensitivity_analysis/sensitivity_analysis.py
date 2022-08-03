@@ -352,7 +352,7 @@ def compute_and_export_sensitivity_algo_Martinez(
 
 
 # Sobol indices from PCE#
-def compute_sensitivity_indices_PCE(training_amount):
+def compute_sensitivity_indices_PCE(training_amount, degree):
     """Computes the sensitivity algorithms directly from the coefficients of the PCE metamodel
 
     Parameters:
@@ -371,7 +371,7 @@ def compute_sensitivity_indices_PCE(training_amount):
         gamma_bar_r, gamma_bar_fs, gamma_bar_lambda
     """
 
-    complete_filename = miu.create_pkl_name("PCE", training_amount, folder="")
+    complete_filename = miu.create_pkl_name("PCE" + str(degree), training_amount, folder="")
     [_, results_from_algo] = miu.extract_metamodel_and_data_from_pkl(complete_filename)
     chaosSI = ot.FunctionalChaosSobolIndices(results_from_algo)
     first_order_indices = [chaosSI.getSobolIndex(k) for k in range(3)]
@@ -505,6 +505,7 @@ def plot_results_sensitivity_analysis(
 
 def plot_sensitivity_indices_PCE(
     training_amount,
+    degree,
     createfigure,
     pixels,
 ):
@@ -527,7 +528,7 @@ def plot_sensitivity_indices_PCE(
     None
     """
 
-    first_order_indices, total_order_indices = compute_sensitivity_indices_PCE(training_amount)
+    first_order_indices, total_order_indices = compute_sensitivity_indices_PCE(training_amount, degree)
     fig = createfigure.square_figure_7(pixels=pixels)
     ax = fig.gca()
     ax.plot(
@@ -579,9 +580,10 @@ if __name__ == "__main__":
     createfigure = CreateFigure()
     fonts = Fonts()
     savefigure = SaveFigure()
-    training_amount_list = [0.7, 0.8, 0.9]
+    training_amount_list = [0.8]
+    degree = 10
     for training_amount in training_amount_list:
-        plot_sensitivity_indices_PCE(training_amount, createfigure, pixels=360)
+        plot_sensitivity_indices_PCE(training_amount, degree, createfigure, pixels=360)
     # for sensitivity_experiment_size in sensitivity_experiment_size_list:
     #     compute_and_export_sensitivity_algo_Saltelli(
     #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
