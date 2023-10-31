@@ -84,10 +84,8 @@ code, presented in the text file LICENSE.md.
 ## References
 ```
 [1] @article{
-        title={Enhancement of the model of the cellular uptake of nanoparticles
-        with the membrane’s mechano-adaptation : validation with
-        sensitivity analysis},
-        author={Iaquinta, Sarah and Khazaie, Shahram and Ishow, {\'E}l{\'e}na and Blanquart, Christophe and Fr{\'e}our, Sylvain and Jacquemin, Fr{\'e}d{\'e}ric},
+        title={Accounting for the mechanical response of the cell membrane during the uptake of random nanoparticles},
+        author={Iaquinta, Sarah and Khazaie, Shahram and Fr{\'e}our, Sylvain and Jacquemin, Fr{\'e}d{\'e}ric},
         journal={},
         pages={},
         year={},
