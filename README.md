@@ -57,8 +57,7 @@ OpenTurns, the document needs to contain only floats, that is why the title of t
 appear in this file. They are the following:
 
 
-
-| **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_r">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{fs}">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{\lambda}">** | **<img src="https://render.githubusercontent.com/render/math?math=\psi_3">** |
+| **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_A">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{D}">** | **<img src="https://render.githubusercontent.com/render/math?math=\overline{\gamma}_{S}">** | **<img src="https://render.githubusercontent.com/render/math?math=\psi_3">** |
 |:-----------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------:|
 |                                                                                           |                                                                                              |                                                                                                   |
 
