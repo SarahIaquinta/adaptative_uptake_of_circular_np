@@ -588,25 +588,25 @@ if __name__ == "__main__":
     degree = 10
     for training_amount in training_amount_list:
         plot_sensitivity_indices_PCE(training_amount, degree, createfigure, pixels=360)
-    # for sensitivity_experiment_size in sensitivity_experiment_size_list:
-    #     compute_and_export_sensitivity_algo_Saltelli(
-    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-    #     )
-    #     compute_and_export_sensitivity_algo_Jansen(
-    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-    #     )
-    #     compute_and_export_sensitivity_algo_MauntzKucherenko(
-    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-    #     )
-    #     compute_and_export_sensitivity_algo_Martinez(
-    #         type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
-    #     )
-    #     for type_of_Sobol_sensitivity_implementation in type_of_Sobol_sensitivity_implementation_list:
-    #         plot_results_sensitivity_analysis(
-    #             type_of_metamodel,
-    #             training_amount,
-    #             sensitivity_experiment_size,
-    #             type_of_Sobol_sensitivity_implementation,
-    #             createfigure,
-    #             pixels=360,
-    #         )
+    for sensitivity_experiment_size in sensitivity_experiment_size_list:
+        compute_and_export_sensitivity_algo_Saltelli(
+            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+        )
+        compute_and_export_sensitivity_algo_Jansen(
+            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+        )
+        compute_and_export_sensitivity_algo_MauntzKucherenko(
+            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+        )
+        compute_and_export_sensitivity_algo_Martinez(
+            type_of_metamodel, training_amount, distribution, sensitivity_experiment_size
+        )
+        for type_of_Sobol_sensitivity_implementation in type_of_Sobol_sensitivity_implementation_list:
+            plot_results_sensitivity_analysis(
+                type_of_metamodel,
+                training_amount,
+                sensitivity_experiment_size,
+                type_of_Sobol_sensitivity_implementation,
+                createfigure,
+                pixels=360,
+            )

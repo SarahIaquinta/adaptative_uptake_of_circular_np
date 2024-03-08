@@ -424,8 +424,8 @@ if __name__ == "__main__":
     training_amount_list = [0.8]
 
     # degree_list = [10]#np.arange(1, 13)
-    # for training_amount in training_amount_list:
-    #     datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
+    for training_amount in training_amount_list:
+        datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
 
     #     optimize_degree_pce(
     #         datapresetting,
@@ -439,16 +439,16 @@ if __name__ == "__main__":
     #         pixels,
     #     )
 
-    #     metamodel_validation_routine_kriging(
-    #         datapresetting,
-    #         metamodelposttreatment,
-    #         metamodelvalidation,
-    #         "Kriging",
-    #         training_amount,
-    #         createfigure,
-    #         savefigure,
-    #         xticks,
-    #         pixels,
-    #     )
+        metamodel_validation_routine_kriging(
+            datapresetting,
+            metamodelposttreatment,
+            metamodelvalidation,
+            "Kriging",
+            training_amount,
+            createfigure,
+            savefigure,
+            xticks,
+            pixels,
+        )
 
     plot_PDF_pce_kriging(metamodelposttreatment, 10, 0.8)
