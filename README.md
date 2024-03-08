@@ -67,7 +67,7 @@ that they paste their data in this .txt file. We spotted an error with the type 
 given as an input to create the metamodels (Suggestions to address this issue are more than
 welcome!)
 
-A script reproduce.sh has been added into the workflow folder. This script contains the commands needed for the generation of the figures presented in [1]
+A script reproduce.sh has been added into the workflow folder. This script contains the commands needed for the generation of the figures presented in [1].
 
 
 ## Contributing
