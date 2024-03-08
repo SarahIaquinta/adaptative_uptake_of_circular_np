@@ -67,6 +67,8 @@ that they paste their data in this .txt file. We spotted an error with the type 
 given as an input to create the metamodels (Suggestions to address this issue are more than
 welcome!)
 
+A script reproduce.sh has been added into the workflow folder. This script contains the commands needed for the generation of the figures presented in [1]
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would
@@ -85,10 +87,10 @@ code, presented in the text file LICENSE.md.
 [1] @article{
         title={Accounting for the mechanical response of the cell membrane during the uptake of random nanoparticles},
         author={Iaquinta, Sarah and Khazaie, Shahram and Fr{\'e}our, Sylvain and Jacquemin, Fr{\'e}d{\'e}ric},
-        journal={},
+        journal={JTCAM},
         pages={},
-        year={},
-        publisher={}
+        year={2024},
+        publisher={Episciences}
         }
 
 [2] @article{
