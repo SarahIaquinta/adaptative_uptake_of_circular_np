@@ -195,11 +195,11 @@ class MechanicalProperties_Adaptation:
             "-k",
             label=r"$\overline{\gamma}_0 = $ ; "
             + str(self.gamma_bar_0)
-            + r" ; $\overline{\gamma}_{fs} = $ ; "
+            + r" ; $\overline{\gamma}_{D} = $ ; "
             + str(self.gamma_bar_fs)
-            + r" ; $\overline{\gamma}_{r} = $ ; "
+            + r" ; $\overline{\gamma}_{A} = $ ; "
             + str(self.gamma_bar_r)
-            + r" ; $\overline{\gamma}_{\lambda} = $ ; "
+            + r" ; $\overline{\gamma}_{S} = $ ; "
             + str(self.gamma_bar_lambda),
         )
         ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])

@@ -402,9 +402,9 @@ def plot_energy(
         font=fonts.serif(),
         fontsize=fonts.axis_legend_size(),
     )
-    ax.set_yticks([-15, -10, -5, 0, 5])
+
     ax.set_yticklabels(
-        ["-15", "-10", "-5", "0", "5"],
+        ax.get_yticks(),
         font=fonts.serif(),
         fontsize=fonts.axis_legend_size(),
     )
@@ -561,7 +561,7 @@ if __name__ == "__main__":
     savefigure = fiu.SaveFigure()
     xticks = fiu.XTicks()
     xticklabels = fiu.XTickLabels()
-    particle = sysdef.ParticleGeometry(r_bar=1, particle_perimeter=2 * pi, sampling_points_circle=300)
+    particle = sysdef.ParticleGeometry(r_bar=args.r_bar, particle_perimeter=args.particle_perimeter, sampling_points_circle=300)
 
     mechanics = sysdef.MechanicalProperties_Adaptation(
         testcase="testcase",
