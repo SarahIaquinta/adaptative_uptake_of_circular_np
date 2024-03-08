@@ -499,7 +499,7 @@ def parse_arguments():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-g0",
+        "-gamma_bar_0",
         "--gamma_bar_0",
         required=False,
         default=10.0,
@@ -507,7 +507,7 @@ def parse_arguments():
         help="initial adimensional lineic adhesion bt membrane and NP. Default value = 10.",
     )
     parser.add_argument(
-        "-gr",
+        "-gamma_bar_A",
         "--gamma_bar_r",
         required=False,
         default=1.0,
@@ -515,7 +515,7 @@ def parse_arguments():
         help="ratio of adimensional lineic adhesion bt membrane and NP. Default value = 1.",
     )
     parser.add_argument(
-        "-gfs",
+        "-gamma_bar_D",
         "--gamma_bar_fs",
         required=False,
         default=0.0,
@@ -523,7 +523,7 @@ def parse_arguments():
         help="adimensional lineic adhesion between the membrane and the particle, inflexion point. Default value = 0.",
     )
     parser.add_argument(
-        "-glambda",
+        "-gamma_bar_S",
         "--gamma_bar_lambda",
         required=False,
         default=10.0,
@@ -531,7 +531,7 @@ def parse_arguments():
         help="adimensional lineic adhesion between the membrane and the particle, smoothness. Default value = 10.",
     )
     parser.add_argument(
-        "-s0",
+        "-sigma_bar_0",
         "--sigma_bar_0",
         required=False,
         default=2.0,
@@ -539,31 +539,7 @@ def parse_arguments():
         help="adimensional membrane tension, value before wrapping. Default value = 2.",
     )
     parser.add_argument(
-        "-sr",
-        "--sigma_bar_r",
-        required=False,
-        default=1.0,
-        type=float,
-        help="adimensional membrane tension, ratio between final and initial value. Default value = 1.",
-    )
-    parser.add_argument(
-        "-sfs",
-        "--sigma_bar_fs",
-        required=False,
-        default=0.0,
-        type=float,
-        help="adimensional membrane tension, inflexion point. Default value = 0.",
-    )
-    parser.add_argument(
-        "-slambda",
-        "--sigma_bar_lambda",
-        required=False,
-        default=-10.0,
-        type=float,
-        help="adimensional membrane tension, smoothness. Default value = -10.",
-    )
-    parser.add_argument(
-        "-r", "--r_bar", required=False, default=1.0, type=float, help="particle aspect ratio. Default value = 1."
+        "-r_bar", "--r_bar", required=False, default=1.0, type=float, help="particle aspect ratio. Default value = 1."
     )
     parser.add_argument(
         "-p",
