@@ -814,11 +814,9 @@ def plot_gamma_ratio_article(
         fig,
         "params_sigmoid_gammaA_article_fig5a"
     )
-    print('png ok')
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"params_sigmoid_gammaA_article_fig5a.tex")
-    print('tkz ok')
 
 def plot_gamma_delay_article(
     wrapping,
@@ -876,11 +874,9 @@ def plot_gamma_delay_article(
         fig,
         "params_sigmoid_gammaD_article_fig5b",
     )
-    print('png ok')
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"params_sigmoid_gammaD_article_fig5b.tex")
-    print('tkz ok')
     
 def plot_gamma_slope_article(
     wrapping,
@@ -940,11 +936,9 @@ def plot_gamma_slope_article(
         "params_sigmoid_gammaS_article_fig5c"
     )
 
-    print('png ok')
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"params_sigmoid_gammaS_article_fig5c.tex")
-    print('tkz ok')
 
 
 if __name__ == "__main__":

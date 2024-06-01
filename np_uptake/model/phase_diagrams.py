@@ -50,7 +50,6 @@ def read_data_for_phasediagram_from_datafile(filename):
         sigma_bar_0_list_phase2 = []
         sigma_bar_0_list_phase3 = [] 
         for line in f:
-            print(line, end='')
             values = line.split()
             [r_bar, gamma_bar_r, gamma_bar_fs, gamma_bar_lambda, sigma_bar_0, gamma_bar_0, phase] = [float(s) for s in values]
             if phase == 1:
@@ -113,7 +112,6 @@ def plot_phase_diagram(filename, createfigure, fonts, xticks, xticklabels, savef
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"phasediagram.tex")
-    print('tkz ok')
         
 if __name__ == "__main__":
     args = cellupt.parse_arguments()

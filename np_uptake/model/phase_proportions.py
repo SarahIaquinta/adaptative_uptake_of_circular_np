@@ -102,7 +102,6 @@ def plot_phase_proportions_vs_rbar(filename, createfigure, fonts, savefigure):
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"phaseproportion_vs_r.tex")
-    print('tkz ok')
     
 if __name__ == "__main__":
     args = cellupt.parse_arguments()

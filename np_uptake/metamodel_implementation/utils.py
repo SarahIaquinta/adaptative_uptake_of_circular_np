@@ -34,7 +34,7 @@ def create_pkl_name_sensitivityalgo(
     training_amount,
     experiment_size,
     sobol_implementation,
-    folder="sensitivity_analysis",
+    folder='',
 ):
     """Creates the name of the .pkl file in which the sensitivity algorithm will be stored
 
@@ -60,7 +60,7 @@ def create_pkl_name_sensitivityalgo(
         Name of the .pkl file
 
     """
-    path = Path.cwd() / folder
+    path = Path.cwd() / "np_uptake" / "sensitivity_analysis"
     pkl_name = (
         "sensitivityalgo="
         + sobol_implementation

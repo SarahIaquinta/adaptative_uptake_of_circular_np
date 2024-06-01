@@ -575,7 +575,7 @@ def plot_sensitivity_indices_PCE(
 
 
 if __name__ == "__main__":
-    type_of_metamodel = "PCE"
+    type_of_metamodel = "Kriging"
     training_amount = 0.7
     sensitivity_experiment_size_list = [10000]
     type_of_Sobol_sensitivity_implementation_list = ["Saltelli", "Jansen", "MauntzKucherenko", "Martinez"]

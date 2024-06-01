@@ -500,11 +500,9 @@ def plot_energy(
     ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
 
     savefigure.save_as_png(fig, "DeltaE_vs_f")
-    print('png ok')
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"DeltaE_vs_f.tex")
-    print('tkz ok')
     
 def plot_energy_article(
     wrapping, energy_computation, createfigure, fonts, xticks, xticklabels, savefigure
@@ -594,11 +592,9 @@ def plot_energy_article(
     ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
 
     savefigure.save_as_png(fig, "DeltaE_vs_f_article_fig2a")
-    print('png ok')
     tikzplotlib_fix_ncols(fig)
     current_path = Path.cwd()
     tikzplotlib.save(current_path/"DeltaE_vs_f_article_fig2a.tex")
-    print('tkz ok')
 
 def plot_np_membrane_wrapping(f, particle, mechanics, membrane, wrapping, createfigure, fonts, savefigure):
     r2r_list, z2r_list, r2l_list, z2l_list = membrane.compute_r2r_r2l_z2r_z2l_from_analytic_expression(f, particle, mechanics, wrapping)
