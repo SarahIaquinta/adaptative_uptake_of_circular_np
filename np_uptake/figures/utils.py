@@ -273,3 +273,14 @@ class XTickLabels:
 
         xticklabels = ["0", "0.2", "0.4", "0.6", "0.8", "1"]
         return xticklabels
+
+
+def tikzplotlib_fix_ncols(obj):
+    """
+    workaround for matplotlib 3.6 renamed legend's _ncol to _ncols, which breaks tikzplotlib
+    """
+    if hasattr(obj, "_ncols"):
+        obj._ncol = obj._ncols
+    for child in obj.get_children():
+        tikzplotlib_fix_ncols(child)
+        

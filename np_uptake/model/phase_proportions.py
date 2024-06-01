@@ -5,7 +5,9 @@ import np_uptake.model.cellular_uptake_rigid_particle as cellupt
 import np_uptake.figures.utils as fiu
 import np_uptake.model.system_definition as sysdef
 import np_uptake.model.phase_diagrams as phdiag
-
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
+from pathlib import Path
 def generate_phase_proportion_dataset(args):
     r_list_horizontal1 = list(np.arange(1, 3.02, 0.02))
     r_list_horizontal2 = list(np.linspace(3, 6, 11))
@@ -98,6 +100,10 @@ def plot_phase_proportions_vs_rbar(filename, createfigure, fonts, savefigure):
     secax.set_xlabel(r"$\overline{r}$ for vertical NPs  [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
     ax.legend(prop=fonts.serif(), loc="center right", framealpha=0.9)
     savefigure.save_as_png(fig, "phaseproportion_vs_r")
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"phaseproportion_vs_r.tex")
+    print('tkz ok')
     
 if __name__ == "__main__":
     args = cellupt.parse_arguments()

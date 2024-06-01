@@ -5,6 +5,9 @@ import itertools
 import np_uptake.model.cellular_uptake_rigid_particle as cellupt
 import np_uptake.figures.utils as fiu
 import np_uptake.model.system_definition as sysdef
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
+from pathlib import Path
 
 def generate_phase_diagram_dataset(args, r_bar):
     particle = sysdef.ParticleGeometry(r_bar=r_bar, particle_perimeter=args.particle_perimeter, sampling_points_circle=300)
@@ -108,7 +111,10 @@ def plot_phase_diagram(filename, createfigure, fonts, xticks, xticklabels, savef
     ax.set_ylabel(r"$\overline{\gamma}_0$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
     ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.9)
     savefigure.save_as_png(fig, "phasediagram")    
-
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"phasediagram.tex")
+    print('tkz ok')
         
 if __name__ == "__main__":
     args = cellupt.parse_arguments()
@@ -119,4 +125,4 @@ if __name__ == "__main__":
     xticklabels = fiu.XTickLabels()
     # r_bar=1
     # generate_phase_diagram_dataset(args, r_bar)
-    plot_phase_diagram("data_for_phase_diagram_1.txt", createfigure, fonts, xticks, xticklabels, savefigure)
+    plot_phase_diagram("data_for_phase_diagram.txt", createfigure, fonts, xticks, xticklabels, savefigure)

@@ -6,6 +6,7 @@ import openturns.viewer as viewer
 from scipy.interpolate import UnivariateSpline
 
 ot.Log.Show(ot.Log.NONE)
+from pathlib import Path
 
 import seaborn as sns
 from matplotlib import pylab as plt
@@ -13,7 +14,8 @@ from matplotlib import pylab as plt
 import np_uptake.metamodel_implementation.utils as miu
 from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure, XTickLabels, XTicks
 from np_uptake.metamodel_implementation.metamodel_creation import DataPreSetting, MetamodelPostTreatment
-
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
 
 class MetamodelValidation:
     """A class that contains the methods to validate a metamodel
@@ -114,6 +116,43 @@ class MetamodelValidation:
         ax.set_ylabel(r"predicted values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
         savefigure.save_as_png(fig, type_of_metamodel + "_circular_" + str(pixels))
 
+    def plot_prediction_vs_true_value_manual_article_fig8(
+        self, type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+    ):
+        predicted_output = metamodel(inputTest)
+        fig = createfigure.square_figure_7(pixels=pixels)
+        ax = fig.gca()
+        palette = sns.color_palette("Paired")
+        orange = palette[-5]
+        purple = palette[-3]
+        color_plot = orange
+        if type_of_metamodel == "Kriging":
+            color_plot = purple
+        ax.plot(outputTest, predicted_output, "o", color=color_plot)
+        ax.plot([0, 1], [0, 1], "-k", linewidth=2)
+        ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+        ax.set_xticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+        ax.set_yticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_xlim((0, 0.83))
+        ax.set_ylim((0, 0.83))
+        ax.grid(linestyle="--")
+        ax.set_xlabel(r"true values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"predicted values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        savefigure.save_as_png(fig, "article_fig8a")
+        print('png ok')
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"article_fig8a.tex")
+        print('tkz ok')
 
 def metamodel_validation_routine_pce(
     datapresetting,
@@ -422,7 +461,10 @@ if __name__ == "__main__":
     metamodelposttreatment = MetamodelPostTreatment()
     metamodelvalidation = MetamodelValidation()
     training_amount_list = [0.8]
-
+    
+    metamodelvalidation.plot_prediction_vs_true_value_manual_article_fig8(
+        'Kriging', inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+    )
     # degree_list = [10]#np.arange(1, 13)
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)

@@ -3,15 +3,17 @@ import pickle
 import time
 from functools import lru_cache
 from math import exp, pi, sqrt, tan
-
+import time
 import numpy as np
 import scipy.integrate
 import scipy.signal
-
+import matplotlib.pyplot as plt
 import np_uptake.figures.utils as fiu
 import np_uptake.model.system_definition as sysdef
-
-
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
+from pathlib import Path
+import seaborn as sns
 class EnergyComputation:
     """A class that computes the total energy of the system
 
@@ -347,6 +349,91 @@ class EnergyComputation:
             energy_variation_computation_time_list[i] = energy_variation_computation_time
         return adimensional_total_energy_variation_list, energy_variation_computation_time_list
 
+def determine_eq_energy(f_list, energy_list):
+    min_energy_index_list = scipy.signal.argrelmin(energy_list)
+    max_energy_index_list = scipy.signal.argrelmax(energy_list)
+    min_energy_index_list = list(min_energy_index_list[0])
+    max_energy_index_list = list(max_energy_index_list[0])
+    min_energy_index_list_initial = min_energy_index_list.copy()
+    max_energy_index_list_initial = max_energy_index_list.copy()
+    if len(max_energy_index_list_initial) > 0:
+        for i in range(min(len(min_energy_index_list_initial), len(max_energy_index_list_initial))):
+            index_min = min_energy_index_list_initial[i]
+            index_max = max_energy_index_list_initial[i]
+            diff_index = abs(index_min - index_max)
+            close_indices = diff_index == 1
+            if close_indices:  # check if the minimum is directly after of before a minimum
+                # (i.e. if there is a peak of energy due to artefacts)
+                min_energy_index_list.remove(index_min)
+                max_energy_index_list.remove(index_max)
+    # check if the minimum is reached for f_list[-1]
+    if energy_list[-1] < energy_list[-2]:
+        min_energy_index_list = min_energy_index_list + [-1]
+
+    # check if the minimum is reached for f_list[0]
+    if energy_list[0] < energy_list[1]:
+        min_energy_index_list = [f_list[0]] + min_energy_index_list
+    if len(min_energy_index_list) == 0:
+        min_energy_index_list = [0]
+    min_energy_list = [energy_list[int(k)] for k in min_energy_index_list]
+    f_min_energy_list = [f_list[int(k)] for k in min_energy_index_list]
+    if len(max_energy_index_list) > 0:
+        max_energy_list = [energy_list[int(k)] for k in max_energy_index_list]
+        f_max_energy_list = [f_list[int(k)] for k in max_energy_index_list]
+    else:
+        max_energy_list = []
+        f_max_energy_list = []
+    # managing possible scipy.signal.argrelextrema outuput types
+    if type(min_energy_list[0]) == np.ndarray:
+        min_energy_list = min_energy_list[0]
+        f_min_energy_list = f_min_energy_list[0]
+
+    f_eq = f_min_energy_list[0]
+    energy_eq = min_energy_list[0]
+    return f_eq, energy_eq
+
+def determine_min_energy(f_list, energy_list):
+    min_energy_index_list = scipy.signal.argrelmin(energy_list)
+    max_energy_index_list = scipy.signal.argrelmax(energy_list)
+    min_energy_index_list = list(min_energy_index_list[0])
+    max_energy_index_list = list(max_energy_index_list[0])
+    min_energy_index_list_initial = min_energy_index_list.copy()
+    max_energy_index_list_initial = max_energy_index_list.copy()
+    if len(max_energy_index_list_initial) > 0:
+        for i in range(min(len(min_energy_index_list_initial), len(max_energy_index_list_initial))):
+            index_min = min_energy_index_list_initial[i]
+            index_max = max_energy_index_list_initial[i]
+            diff_index = abs(index_min - index_max)
+            close_indices = diff_index == 1
+            if close_indices:  # check if the minimum is directly after of before a minimum
+                # (i.e. if there is a peak of energy due to artefacts)
+                min_energy_index_list.remove(index_min)
+                max_energy_index_list.remove(index_max)
+    # check if the minimum is reached for f_list[-1]
+    if energy_list[-1] < energy_list[-2]:
+        min_energy_index_list = min_energy_index_list + [-1]
+
+    # check if the minimum is reached for f_list[0]
+    if energy_list[0] < energy_list[1]:
+        min_energy_index_list = [f_list[0]] + min_energy_index_list
+    if len(min_energy_index_list) == 0:
+        min_energy_index_list = [0]
+    min_energy_list = [energy_list[int(k)] for k in min_energy_index_list]
+    f_min_energy_list = [f_list[int(k)] for k in min_energy_index_list]
+    if len(max_energy_index_list) > 0:
+        max_energy_list = [energy_list[int(k)] for k in max_energy_index_list]
+        f_max_energy_list = [f_list[int(k)] for k in max_energy_index_list]
+    else:
+        max_energy_list = []
+        f_max_energy_list = []
+    # managing possible scipy.signal.argrelextrema outuput types
+    if type(min_energy_list[0]) == np.ndarray:
+        min_energy_list = min_energy_list[0]
+        f_min_energy_list = f_min_energy_list[0]
+
+    f_eq = f_min_energy_list[0]
+    energy_eq = min_energy_list[0]
+    return f_min_energy_list, min_energy_list
 
 def plot_energy(
     particle, mechanics, membrane, wrapping, energy_computation, createfigure, fonts, xticks, xticklabels, savefigure
@@ -413,7 +500,105 @@ def plot_energy(
     ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
 
     savefigure.save_as_png(fig, "DeltaE_vs_f")
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"DeltaE_vs_f.tex")
+    print('tkz ok')
+    
+def plot_energy_article(
+    wrapping, energy_computation, createfigure, fonts, xticks, xticklabels, savefigure
+):
+    """Plots the evolution of the adimensional variation of energy_computation during wrapping
 
+    Parameters:
+    ----------
+    particle: class
+        model.system_definition.ParticleGeometry class
+    mechanics: class
+        model.system_definition.MechanicalProperties_Adaptation class
+    membrane: class
+        model.system_definition.MembraneGeometry class
+    wrapping: class
+        model.system_definition.Wrapping class
+    createfigure: class
+        figures.utils.CreateFigure class
+    fonts: class
+        figures.utils.Fonts class
+    xticks: class
+        figures.utils.XTicks class
+    xticklabels: class
+        figures.utils.XTickLabels class
+    savefigure: class
+        figures.utils.SaveFigure class
+
+    Returns:
+    -------
+    None
+    """
+    mechanics_article = sysdef.MechanicalProperties_Adaptation(
+        testcase="testcase",
+        gamma_bar_r=1,
+        gamma_bar_fs=0,
+        gamma_bar_lambda=1,
+        gamma_bar_0=6,
+        sigma_bar=2,
+    )
+    particle_article = sysdef.ParticleGeometry(r_bar=0.3, particle_perimeter=args.particle_perimeter, sampling_points_circle=300)
+    membrane_article = sysdef.MembraneGeometry(particle_article, sampling_points_membrane=100)
+
+    energy_list_article, _ = energy_computation.compute_total_adimensional_energy_during_wrapping(
+        particle_article, mechanics_article, wrapping, membrane_article
+    )
+    f_eq, energy_eq = determine_eq_energy(wrapping.wrapping_list, energy_list_article)
+    f_min_energy_list, min_energy_list = determine_min_energy(wrapping.wrapping_list, energy_list_article)
+    f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
+        particle_article, mechanics_article, membrane_article, wrapping, energy_computation
+    )
+    palette = sns.color_palette("Greens", 3)
+    fig = createfigure.square_figure_7(pixels=360)
+    ax = fig.gca()
+    ax.plot(
+        wrapping.wrapping_list,
+        energy_list_article,
+        "-k",
+        label=r"$\overline{r} = $"
+        + str(np.round(particle.r_bar, 2))
+        + r" ; $\overline{\gamma}_0 = $"
+        + str(mechanics.gamma_bar_0)
+        + r" ; $\overline{\sigma} = $"
+        + str(mechanics.sigma_bar),
+        linewidth=4,
+    )
+    
+    ax.plot(f_eq, energy_eq, marker="o", markersize=15, markeredgecolor="r", markeredgewidth=2, fillstyle="none")
+    for i in range(len(f_min_energy_list)):
+        ax.plot(f_min_energy_list[i], min_energy_list[i], marker="o", markersize=10, markeredgecolor="k", markerfacecolor=palette[0])
+
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+
+    ax.set_yticks([-2, -1, 0, 1])
+    ax.set_yticklabels(
+        [-2, -1, 0, 1],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_ylim((-2.2, 1.4))
+    # ax.legend(prop=fonts.serif(), loc="lower left", framealpha=0.9)
+    ax.set_xlabel(r"$f$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\Delta E}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+
+    savefigure.save_as_png(fig, "DeltaE_vs_f_article_fig2a")
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"DeltaE_vs_f_article_fig2a.tex")
+    print('tkz ok')
 
 def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_computation):
     """Identifies the wrapping phase following the process introduced in [1]
@@ -482,7 +667,6 @@ def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_comp
         wrapping_phase_number = 3 if intersection_membrane < 0 else 2
         wrapping_phase = "full wrapping" if intersection_membrane < 0 else "partial wrapping"
     return (f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list)
-
 
 def parse_arguments():
     """Parses arguments to run the code in terminal
@@ -553,8 +737,8 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
-
 if __name__ == "__main__":
+    start = time.time()
     args = parse_arguments()
     createfigure = fiu.CreateFigure()
     fonts = fiu.Fonts()
@@ -578,10 +762,20 @@ if __name__ == "__main__":
 
     energy_computation = EnergyComputation()
 
-    plot_energy(
-        particle,
-        mechanics,
-        membrane,
+    # plot_energy(
+    #     particle,
+    #     mechanics,
+    #     membrane,
+    #     wrapping,
+    #     energy_computation,
+    #     createfigure,
+    #     fonts,
+    #     xticks,
+    #     xticklabels,
+    #     savefigure,
+    # )
+    
+    plot_energy_article(
         wrapping,
         energy_computation,
         createfigure,
@@ -590,8 +784,10 @@ if __name__ == "__main__":
         xticklabels,
         savefigure,
     )
+
     f_eq, wrapping_phase_number, wrapping_phase, energy_list, time_list = identify_wrapping_phase(
         particle, mechanics, membrane, wrapping, energy_computation
     )
     print("wrapping degree at equilibrium = ", np.round(f_eq, 2))
     print("wrapping phase at equilibrium: ", wrapping_phase)
+    print('time',time.time() - start)

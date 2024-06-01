@@ -5,9 +5,11 @@ import numpy as np
 from mpmath import coth, csch
 
 import np_uptake.model.cellular_uptake_rigid_particle as cellupt
-from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
-
-
+from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure, XTickLabels, XTicks
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
+from pathlib import Path
+import seaborn as sns
 class Fixed_Mechanical_Properties:
     """A class to represent the initial mechanical properties of the cell membrane and the particle.
 
@@ -141,7 +143,7 @@ class MechanicalProperties_Adaptation:
                     """
                     Sigmoid expression
                     """
-                    if self.gamma_bar_lambda > 0:
+                    if self.gamma_bar_lambda >= 0:
                         gamma_additional_term = self.gamma_bar_0
                     else:
                         gamma_additional_term = gamma_bar_final
@@ -220,7 +222,67 @@ class MechanicalProperties_Adaptation:
         ax.set_ylabel(r"$\overline{\gamma}$ [ - ] ", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.9)
         savefigure.save_as_png(fig, "adhesion_during_wrapping")
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"adhesion_during_wrapping.tex")
+        print('tkz ok')
 
+
+
+
+    def plot_gamma_bar_variation_article(self, wrapping, createfigure, savefigure, fonts):
+        """Plots the evolution of gamma_bar and sigma_bar with respect to the
+            wrapping degree f
+
+        Parameters:
+        ----------
+        wrapping: class
+            Wrapping class
+
+        Returns:
+        -------
+        None
+        """
+
+        fig = createfigure.rectangle_figure(pixels=360)
+        ax = fig.gca()
+        gamma_bar_list = self.gamma_bar_variation(wrapping)
+
+        ax.plot(
+            wrapping.wrapping_list,
+            gamma_bar_list,
+            "-k",
+            label=r"$\overline{\gamma}_0 = $ ; "
+            + str(self.gamma_bar_0)
+            + r" ; $\overline{\gamma}_{D} = $ ; "
+            + str(self.gamma_bar_fs)
+            + r" ; $\overline{\gamma}_{A} = $ ; "
+            + str(self.gamma_bar_r)
+            + r" ; $\overline{\gamma}_{S} = $ ; "
+            + str(self.gamma_bar_lambda),
+        )
+        ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+        ax.set_xticklabels(
+            [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+
+        ax.set_yticks([gamma_bar_list[0], gamma_bar_list[-1]])
+        ax.set_yticklabels(
+            [np.round(gamma_bar_list[0], 2), np.round(gamma_bar_list[-1], 2)],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+
+        ax.set_xlabel("f [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"$\overline{\gamma}$ [ - ] ", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.9)
+        savefigure.save_as_png(fig, "adhesion_during_wrapping_article_fig5a")
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"adhesion_during_wrapping_article_fig5a.tex")
+        print('tkz ok')
 
 class ParticleGeometry:
     """A class to define the geometry of the particle
@@ -690,12 +752,204 @@ class Wrapping:
         self.wrapping_list = wrapping_list
 
 
+
+def plot_gamma_ratio_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts,
+     xticks, xticklabels,
+):
+    testcase='0'
+    gamma_bar_r_list = [1, 2, 3, 4]
+    gamma_bar_fs, gamma_bar_lambda, gamma_bar_0, sigma_bar = 0, 50, 1, 2
+    mechanoadaptation_list = [MechanicalProperties_Adaptation(testcase, gamma_bar_r, gamma_bar_fs, gamma_bar_lambda, gamma_bar_0, sigma_bar) for gamma_bar_r in gamma_bar_r_list]
+    list_of_gamma_bar_r_vs_f = []
+    for i in range(len(mechanoadaptation_list)):
+        mechanoadaptation = mechanoadaptation_list[i]
+        gamma_bar_r_vs_f = [mechanoadaptation.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
+        list_of_gamma_bar_r_vs_f.append(gamma_bar_r_vs_f)
+    fig = createfigure.square_figure_7(pixels=180)
+    ax = fig.gca()
+    palette = sns.color_palette("rocket", len(mechanoadaptation_list)-1)
+    colors = ['k', palette[-2], palette[-1], palette[0]]
+    kwargs = {"linewidth": 4}
+    # r_bar_list_legend = ["1/5", "1/4", "1/3", "1/2", "1", "2", "3", "4", "5"]
+    # linestyle = ["dotted", "dashed", "dashdot", "-", (0, (1, 1)), "-", "dashdot", "dashed", "dotted"]
+    for i in range(len(list_of_gamma_bar_r_vs_f)):
+        gamma_bar_r_vs_f = list_of_gamma_bar_r_vs_f[i]
+        gamma_bar_r = gamma_bar_r_list[i]
+        ax.plot(
+            wrapping.wrapping_list,
+            gamma_bar_r_vs_f,
+            color=colors[-i],
+            label=r"$\overline{\gamma}_A = $ " + str(gamma_bar_r),
+            **kwargs,
+        )
+    # plt.legend()
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(
+        [1, 2, 3, 4],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_ylim((0.8, 4.2))
+    ax.set_xlabel(r"$f $ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\gamma}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.legend(prop=fonts.serif(), loc="upper left", framealpha=0.7)
+    savefigure.save_as_png(
+        fig,
+        "params_sigmoid_gammaA_article_fig5a"
+    )
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"params_sigmoid_gammaA_article_fig5a.tex")
+    print('tkz ok')
+
+def plot_gamma_delay_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts,
+    xticks,
+    xticklabels,
+
+):
+    testcase = 'figure_params_sigmoid_gammaD'
+    gamma_bar_fs_list = [-0.4, -0.2, 0, 0.2, 0.4]
+    gamma_bar_r, gamma_bar_lambda, gamma_bar_0, sigma_bar = 2, 50, 1, 2
+    mechanoadaptation_list = [MechanicalProperties_Adaptation(testcase, gamma_bar_r, gamma_bar_fs, gamma_bar_lambda, gamma_bar_0, sigma_bar) for gamma_bar_fs in gamma_bar_fs_list]
+    list_of_gamma_bar_fs_vs_f = []
+    for i in range(len(mechanoadaptation_list)):
+        mechanoadaptation = mechanoadaptation_list[i]
+        gamma_bar_fs_vs_f = [mechanoadaptation.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
+        list_of_gamma_bar_fs_vs_f.append(gamma_bar_fs_vs_f)
+    fig = createfigure.square_figure_7(pixels=180)
+    ax = fig.gca()
+    palette = sns.color_palette("Spectral", len(mechanoadaptation_list))
+    # colors = [palette[k] for k in ]
+    kwargs = {"linewidth": 4}
+    # r_bar_list_legend = ["1/5", "1/4", "1/3", "1/2", "1", "2", "3", "4", "5"]
+    # linestyle = ["dotted", "dashed", "dashdot", "-", (0, (1, 1)), "-", "dashdot", "dashed", "dotted"]
+    for i in range(len(list_of_gamma_bar_fs_vs_f)):
+        gamma_bar_fs_vs_f = list_of_gamma_bar_fs_vs_f[i]
+        gamma_bar_fs = gamma_bar_fs_list[i]
+        ax.plot(
+            wrapping.wrapping_list,
+            gamma_bar_fs_vs_f,
+            color=palette[i],
+            label=r"$\overline{\gamma}_D = $ " + str(gamma_bar_fs/2),
+            **kwargs,
+        )
+    # plt.legend()
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(
+        [1, 2, 3, 4],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_ylim((0.95, 2.05))
+    ax.set_xlabel(r"$f $ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\gamma}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.legend(prop=fonts.serif(), loc="upper left", framealpha=0.7)
+    savefigure.save_as_png(
+        fig,
+        "params_sigmoid_gammaD_article_fig5b",
+    )
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"params_sigmoid_gammaD_article_fig5b.tex")
+    print('tkz ok')
+    
+def plot_gamma_slope_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts,
+    xticks,
+    xticklabels,
+):
+    testcase = 'figure_params_sigmoid_gammaS'
+    gamma_bar_lambda_list = [0, 1, 2, 3, 4, 5, 10, 50, 100, 500]
+    gamma_bar_r, gamma_bar_fs, gamma_bar_0, sigma_bar = 2, 0, 1, 2
+    mechanoadaptation_list = [MechanicalProperties_Adaptation(testcase, gamma_bar_r, gamma_bar_fs, gamma_bar_lambda, gamma_bar_0, sigma_bar) for gamma_bar_lambda in gamma_bar_lambda_list]
+    list_of_gamma_bar_lambda_vs_f = []
+    
+    for i in range(len(mechanoadaptation_list)):
+        mechanoadaptation = mechanoadaptation_list[i]
+        gamma_bar_lambda_vs_f = [mechanoadaptation.gamma_bar(f, wrapping) for f in wrapping.wrapping_list]
+        list_of_gamma_bar_lambda_vs_f.append(gamma_bar_lambda_vs_f)
+    
+    fig = createfigure.square_figure_7(pixels=180)
+    ax = fig.gca()
+    palette = sns.color_palette("Spectral", len(mechanoadaptation_list))
+    # colors = [palette[k] for k in ]
+    kwargs = {"linewidth": 4}
+    # r_bar_list_legend = ["1/5", "1/4", "1/3", "1/2", "1", "2", "3", "4", "5"]
+    # linestyle = ["dotted", "dashed", "dashdot", "-", (0, (1, 1)), "-", "dashdot", "dashed", "dotted"]
+    for i in range(len(list_of_gamma_bar_lambda_vs_f)):
+        gamma_bar_lambda_vs_f = list_of_gamma_bar_lambda_vs_f[i]
+        gamma_bar_lambda = gamma_bar_lambda_list[i]
+        ax.plot(
+            wrapping.wrapping_list,
+            gamma_bar_lambda_vs_f,
+            color=palette[i],
+            label=r"$\overline{\gamma}_S = $ " + str(gamma_bar_lambda),
+            **kwargs,
+        )
+    # plt.legend()
+    ax.set_xticks(xticks.energy_plots())
+    ax.set_xticklabels(
+        xticklabels.energy_plots(),
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_yticks([1, 2, 3, 4])
+    ax.set_yticklabels(
+        [1, 2, 3, 4],
+        font=fonts.serif(),
+        fontsize=fonts.axis_legend_size(),
+    )
+    ax.set_ylim((0.95, 2.05))
+    ax.set_xlabel(r"$f $ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.set_ylabel(r"$\overline{\gamma}$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+    ax.legend(prop=fonts.serif(), loc="upper left", framealpha=0.7)
+    savefigure.save_as_png(
+        fig,
+        "params_sigmoid_gammaS_article_fig5c"
+    )
+
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"params_sigmoid_gammaS_article_fig5c.tex")
+    print('tkz ok')
+
+
+
+
 if __name__ == "__main__":
     wrapping = Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
     createfigure = CreateFigure()
     fonts = Fonts()
     savefigure = SaveFigure()
     args = cellupt.parse_arguments()
+    xticks = XTicks()
+    xticklabel = XTickLabels()
 
     mechanics = MechanicalProperties_Adaptation(
         testcase="test-classimplementation",
@@ -706,4 +960,24 @@ if __name__ == "__main__":
         sigma_bar=args.sigma_bar_0,
     )
 
-    mechanics.plot_gamma_bar_variation(wrapping, createfigure, savefigure, fonts)
+    # mechanics.plot_gamma_bar_variation(wrapping, createfigure, savefigure, fonts)
+#     plot_gamma_ratio_article(
+#     wrapping,
+#     createfigure,
+#     savefigure,
+#     fonts, xticks, xticklabel
+# )
+    
+    plot_gamma_slope_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts, xticks, xticklabel
+)
+    
+    plot_gamma_delay_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts, xticks, xticklabel
+)

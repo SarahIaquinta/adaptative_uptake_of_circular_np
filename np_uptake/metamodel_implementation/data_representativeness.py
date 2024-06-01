@@ -6,7 +6,8 @@ import openturns as ot
 from sklearn.neighbors import KernelDensity
 import seaborn as sns
 ot.Log.Show(ot.Log.NONE)
-
+import tikzplotlib
+from np_uptake.figures.utils import tikzplotlib_fix_ncols
 from np_uptake.figures.utils import CreateFigure, Fonts, SaveFigure
 
 
@@ -102,7 +103,7 @@ class SampleRepresentativeness:
         ax = fig.gca()
         X_plot_phase3 = np.linspace(0, 1, len(proportion_phase_3_list))[:, None].reshape(1, -1)
         kde_model = KernelDensity(kernel='gaussian', bandwidth=0.03).fit(proportion_phase_3_list.reshape(1, -1))
-        log_dens_model = kde_model.score_samples(X_plot_phase3)
+        log_dens_model = kde_model.score_samples(X_plot_phase3[0])
         ax.hist(proportion_phase_3_list, bins=20, density=True, color="lightgray", alpha=0.3, ec="black")
         ax.plot(
             X_plot_phase3[:, 0],
@@ -129,6 +130,45 @@ class SampleRepresentativeness:
         ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
         ax.grid(linestyle="--")
         savefigure.save_as_png(fig, "PDF_psi3")
+
+
+    def plot_PDF_phase3_article(self, createfigure, savefigure, fonts):
+        proportion_phase_3_list = self.generate_shuffled_samples()[:, 0]
+        fig = createfigure.square_figure_7(pixels=360)
+        ax = fig.gca()
+        X_plot_phase3 = np.linspace(0, 1, len(proportion_phase_3_list))[:, None].reshape(-1, 1)
+        kde_model = KernelDensity(kernel='gaussian', bandwidth=0.03).fit(proportion_phase_3_list.reshape(-1, 1))
+        log_dens_model = kde_model.score_samples(X_plot_phase3.reshape(-1, 1))
+        ax.hist(proportion_phase_3_list, bins=20, density=True, color="lightgray", alpha=0.8, ec="black")
+        x = np.array([s[0] for s in X_plot_phase3[:]])
+        ax.plot(
+            x,
+            np.exp(log_dens_model),
+            color='k',
+            lw=2,
+            linestyle="-", label="model",
+        )
+        ax.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+        ax.set_xticklabels(
+            [0, 0.2, 0.4, 0.6, 0.8, 1],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_yticks([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5])
+        ax.set_yticklabels(
+            [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_xlim((-0.02, 1.02))
+        ax.set_xlabel(r"$\Psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"$p_{\Psi_3}(\psi_3)$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        savefigure.save_as_png(fig, "PDF_psi3_article_fig7a")
+        print('png ok')
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"PDF_psi3_article_fig7a.tex")
+        print('tkz ok')
 
     def compute_cumulative_mean_std(self, vector):
         """Computes the cumulative mean and standard deviation (std) of a vector
@@ -350,6 +390,60 @@ class SampleRepresentativeness:
         ax.grid()
         savefigure.save_as_png(fig, "gradient_cumulative_mean_vs_sample_size")
 
+    def plot_gradient_cumulative_mean_vs_sample_size_article(
+        self,
+        createfigure,
+        savefigure,
+        fonts,
+    ):
+        """Plots the absolute gradient of the cumulative mean of a sample
+
+        Parameters:
+        ----------
+        None
+
+        Returns:
+        -------
+        None
+        """
+
+        with open("data_representativeness.pkl", "rb") as f:
+            [mean_of_cumulative_means, _, _, _, _] = pickle.load(f)
+
+        sample_size = np.arange(1, len(mean_of_cumulative_means) + 1)
+        fig = createfigure.rectangle_figure(self.pixels)
+        ax = fig.gca()
+        gradient = [
+            np.abs(np.diff(mean_of_cumulative_means)[k]) / mean_of_cumulative_means[k]
+            for k in range(len(mean_of_cumulative_means) - 1)
+        ]
+        ax.plot(sample_size[0:-1], gradient, "-k")
+        ax.plot(sample_size[0:-1], [1e-2] * len(sample_size[0:-1]), "--r")
+
+        ax.set_xticks([1, 250, 500, 750, 1000])
+        ax.set_xticklabels(
+            [1, 250, 500, 750, 1000],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_yscale("log")
+        ax.set_ylim(5e-7, 5e-1)
+        ax.set_yticks([1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1])
+        ax.set_yticklabels(
+            ["$10^{-6}$", "$10^{-5}$", "$10^{-4}$", "$10^{-3}$", "$10^{-2}$", "$10^{-1}$"],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_xlabel("Sample size [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"Grad of the Mean of $\psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.grid()
+        savefigure.save_as_png(fig, "gradient_cumulative_mean_vs_sample_size_article_fig7b")
+        print('png ok')
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"gradient_cumulative_mean_vs_sample_size_article_fig7b.tex")
+        print('tkz ok')
+
     def plot_gradient_cumulative_std_vs_size(
         self,
         createfigure,
@@ -396,6 +490,57 @@ class SampleRepresentativeness:
         ax.grid()
         savefigure.save_as_png(fig, "gradient_cumulative_std_vs_sample_size")
 
+    def plot_gradient_cumulative_std_vs_size_article(
+        self,
+        createfigure,
+        savefigure,
+        fonts,
+    ):
+        """
+        Plots the absolute gradient of the cumulative std of a sample
+
+        Parameters:
+        ----------
+        None
+
+        Returns:
+        -------
+        None
+        """
+
+        with open("data_representativeness.pkl", "rb") as f:
+            [_, _, cumulative_std, _, _] = pickle.load(f)
+
+        sample_size = np.arange(1, len(cumulative_std) + 1)
+        fig = createfigure.rectangle_figure(self.pixels)
+        ax = fig.gca()
+        gradient = [np.abs(np.diff(cumulative_std)[k]) / cumulative_std[k] for k in range(2, len(cumulative_std) - 1)]
+        ax.plot(sample_size[2:-1], gradient, "-k")
+        ax.plot(sample_size[2:-1], [1e-2] * len(sample_size[2:-1]), "--r")
+        ax.set_xticks([1, 250, 500, 750, 1000])
+        ax.set_xticklabels(
+            [1, 250, 500, 750, 1000],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_yscale("log")
+        ax.set_ylim(5e-7, 5e-1)
+        ax.set_yticks([1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1])
+        ax.set_yticklabels(
+            ["$10^{-6}$", "$10^{-5}$", "$10^{-4}$", "$10^{-3}$", "$10^{-2}$", "$10^{-1}$"],
+            font=fonts.serif(),
+            fontsize=fonts.axis_legend_size(),
+        )
+        ax.set_xlabel("Sample size [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.set_ylabel(r"Grad of the Std of $\psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
+        ax.grid()
+        savefigure.save_as_png(fig, "gradient_cumulative_std_vs_sample_size_article_fig7c")
+        print('png ok')
+        tikzplotlib_fix_ncols(fig)
+        current_path = Path.cwd()
+        tikzplotlib.save(current_path/"gradient_cumulative_std_vs_sample_size_article_fig7c.tex")
+        print('tkz ok')
+
 
 if __name__ == "__main__":
 
@@ -407,14 +552,14 @@ if __name__ == "__main__":
         filename_qMC_Sobol, training_amount=0.8, nb_of_shuffled_samples=200, pixels=360
     )
 
-    samplerepresentativeness.plot_PDF_phase3(createfigure, savefigure, fonts)
+    samplerepresentativeness.plot_PDF_phase3_article(createfigure, savefigure, fonts)
     
-    samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
+    # samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
 
-    samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
+    # samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
 
-    samplerepresentativeness.plot_cumulative_std_vs_sample_size(createfigure, savefigure, fonts)
+    # samplerepresentativeness.plot_cumulative_std_vs_sample_size(createfigure, savefigure, fonts)
 
-    samplerepresentativeness.plot_gradient_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
+    samplerepresentativeness.plot_gradient_cumulative_mean_vs_sample_size_article(createfigure, savefigure, fonts)
 
-    samplerepresentativeness.plot_gradient_cumulative_std_vs_size(createfigure, savefigure, fonts)
+    samplerepresentativeness.plot_gradient_cumulative_std_vs_size_article(createfigure, savefigure, fonts)
