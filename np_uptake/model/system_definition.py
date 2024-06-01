@@ -225,10 +225,6 @@ class MechanicalProperties_Adaptation:
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"adhesion_during_wrapping.tex")
-        print('tkz ok')
-
-
-
 
     def plot_gamma_bar_variation_article(self, wrapping, createfigure, savefigure, fonts):
         """Plots the evolution of gamma_bar and sigma_bar with respect to the
@@ -282,7 +278,6 @@ class MechanicalProperties_Adaptation:
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"adhesion_during_wrapping_article_fig5a.tex")
-        print('tkz ok')
 
 class ParticleGeometry:
     """A class to define the geometry of the particle
