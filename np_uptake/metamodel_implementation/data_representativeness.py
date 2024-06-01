@@ -164,11 +164,9 @@ class SampleRepresentativeness:
         ax.set_xlabel(r"$\Psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.set_ylabel(r"$p_{\Psi_3}(\psi_3)$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
         savefigure.save_as_png(fig, "PDF_psi3_article_fig7a")
-        print('png ok')
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"PDF_psi3_article_fig7a.tex")
-        print('tkz ok')
 
     def compute_cumulative_mean_std(self, vector):
         """Computes the cumulative mean and standard deviation (std) of a vector
@@ -438,11 +436,9 @@ class SampleRepresentativeness:
         ax.set_ylabel(r"Grad of the Mean of $\psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.grid()
         savefigure.save_as_png(fig, "gradient_cumulative_mean_vs_sample_size_article_fig7b")
-        print('png ok')
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"gradient_cumulative_mean_vs_sample_size_article_fig7b.tex")
-        print('tkz ok')
 
     def plot_gradient_cumulative_std_vs_size(
         self,
@@ -535,11 +531,9 @@ class SampleRepresentativeness:
         ax.set_ylabel(r"Grad of the Std of $\psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.grid()
         savefigure.save_as_png(fig, "gradient_cumulative_std_vs_sample_size_article_fig7c")
-        print('png ok')
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"gradient_cumulative_std_vs_sample_size_article_fig7c.tex")
-        print('tkz ok')
 
 
 if __name__ == "__main__":
@@ -554,11 +548,11 @@ if __name__ == "__main__":
 
     samplerepresentativeness.plot_PDF_phase3_article(createfigure, savefigure, fonts)
     
-    # samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
+    samplerepresentativeness.compute_means_stds_of_shuffled_samples_and_export_to_pkl()
 
-    # samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
+    samplerepresentativeness.plot_cumulative_mean_vs_sample_size(createfigure, savefigure, fonts)
 
-    # samplerepresentativeness.plot_cumulative_std_vs_sample_size(createfigure, savefigure, fonts)
+    samplerepresentativeness.plot_cumulative_std_vs_sample_size(createfigure, savefigure, fonts)
 
     samplerepresentativeness.plot_gradient_cumulative_mean_vs_sample_size_article(createfigure, savefigure, fonts)
 

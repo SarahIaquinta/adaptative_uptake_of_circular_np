@@ -373,8 +373,8 @@ def compute_sensitivity_indices_PCE(training_amount, degree):
         gamma_bar_r, gamma_bar_fs, gamma_bar_lambda
     """
 
-    complete_filename = miu.create_pkl_name("PCE" + str(degree), training_amount, folder="")
-    [_, results_from_algo] = miu.extract_metamodel_and_data_from_pkl(complete_filename)
+    complete_pkl_filename_pce = miu.create_pkl_name("PCE" + str(degree), training_amount)
+    [_, results_from_algo] = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename_pce)
     chaosSI = ot.FunctionalChaosSobolIndices(results_from_algo)
     first_order_indices = [chaosSI.getSobolIndex(k) for k in range(3)]
     total_order_indices = [chaosSI.getSobolTotalIndex(k) for k in range(3)]

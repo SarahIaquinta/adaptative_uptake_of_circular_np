@@ -25,7 +25,7 @@ def create_pkl_name(type_of_metamodel, training_amount, folder=""):
 
     path = Path.cwd() / folder
     pkl_name = "metamodel_" + type_of_metamodel + "_trainingamount_" + str(training_amount) + ".pkl"
-    complete_filename = path / pkl_name
+    complete_filename = path / "np_uptake" / "metamodel_implementation" / pkl_name
     return complete_filename
 
 

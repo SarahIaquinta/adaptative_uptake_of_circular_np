@@ -85,7 +85,7 @@ class MetamodelValidation:
         return Q2
 
     def plot_prediction_vs_true_value_manual(
-        self, type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+        self, type_of_metamodel, inputTest, outputTest, degree, metamodel, createfigure, savefigure, xticks, pixels
     ):
         predicted_output = metamodel(inputTest)
         fig = createfigure.square_figure_7(pixels=pixels)
@@ -114,10 +114,14 @@ class MetamodelValidation:
         ax.set_ylim((0, 0.83))
         ax.set_xlabel(r"true values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.set_ylabel(r"predicted values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
-        savefigure.save_as_png(fig, type_of_metamodel + "_circular_" + str(pixels))
+        if type_of_metamodel == "Kriging":
+            savefigure.save_as_png(fig, type_of_metamodel + "_circular_true_vs_predicted_" + str(pixels))
+        if type_of_metamodel == "PCE":
+            ax.set_title("PCE degree : " + str(degree), font=fonts.serif(), fontsize=fonts.axis_label_size())
+            savefigure.save_as_png(fig, type_of_metamodel + str(degree) + "_circular_true_vs_predicted" + str(pixels))
 
     def plot_prediction_vs_true_value_manual_article_fig8(
-        self, type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+        self, type_of_metamodel, inputTest, outputTest, degree, metamodel, createfigure, savefigure, xticks, pixels
     ):
         predicted_output = metamodel(inputTest)
         fig = createfigure.square_figure_7(pixels=pixels)
@@ -148,11 +152,9 @@ class MetamodelValidation:
         ax.set_xlabel(r"true values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
         ax.set_ylabel(r"predicted values of $\Psi_3$", font=fonts.serif(), fontsize=fonts.axis_label_size())
         savefigure.save_as_png(fig, "article_fig8a")
-        print('png ok')
         tikzplotlib_fix_ncols(fig)
         current_path = Path.cwd()
         tikzplotlib.save(current_path/"article_fig8a.tex")
-        print('tkz ok')
 
 def metamodel_validation_routine_pce(
     datapresetting,
@@ -210,7 +212,7 @@ def metamodel_validation_routine_pce(
         input_sample_Test_rescaled, outputTest, metamodel
     )
     metamodelvalidation.plot_prediction_vs_true_value_manual(
-        type_of_metamodel, input_sample_Test_rescaled, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+        type_of_metamodel, input_sample_Test_rescaled, outputTest, degree, metamodel, createfigure, savefigure, xticks, pixels
     )
     Q2 = metamodel_validator.computePredictivityFactor()
     residual, relative_error = metamodelposttreatment.get_errors_from_metamodel(results_from_algo)
@@ -255,9 +257,13 @@ def metamodel_validation_routine_kriging(
     shuffled_sample, results_from_algo = miu.extract_metamodel_and_data_from_pkl(complete_pkl_filename)
     metamodel = metamodelposttreatment.get_metamodel_from_results_algo(results_from_algo)
     inputTest, outputTest = datapresetting.extract_testing_data(shuffled_sample)
-
+    degree=0
     metamodelvalidation.plot_prediction_vs_true_value_manual(
-        type_of_metamodel, inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
+        type_of_metamodel, inputTest, outputTest, degree, metamodel, createfigure, savefigure, xticks, pixels
+    )
+    
+    metamodelvalidation.plot_prediction_vs_true_value_manual_article_fig8(
+        type_of_metamodel, inputTest, outputTest, degree, metamodel, createfigure, savefigure, xticks, pixels
     )
 
 
@@ -445,7 +451,7 @@ def plot_PDF_pce_kriging(metamodelposttreatment, degree, training_amount):
     ax.set_xlabel(r"$\Psi_3$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
     ax.set_ylabel("PDF (x $10^{-2})$ [ - ]", font=fonts.serif(), fontsize=fonts.axis_label_size())
     ax.legend(prop=fonts.serif(), loc="upper right", framealpha=0.7)
-    savefigure.save_as_png(fig, "PDF_metamodel_circular" + str(pixels))
+    savefigure.save_as_png(fig, "PDF_metamodel_circular_degree_" + str(degree) + "_trainingamount_" + str(training_amount))
 
 
 if __name__ == "__main__":
@@ -462,24 +468,10 @@ if __name__ == "__main__":
     metamodelvalidation = MetamodelValidation()
     training_amount_list = [0.8]
     
-    metamodelvalidation.plot_prediction_vs_true_value_manual_article_fig8(
-        'Kriging', inputTest, outputTest, metamodel, createfigure, savefigure, xticks, pixels
-    )
-    # degree_list = [10]#np.arange(1, 13)
+    degree_list = np.arange(1, 13)
     for training_amount in training_amount_list:
         datapresetting = DataPreSetting(filename_qMC_Sobol, training_amount)
 
-    #     optimize_degree_pce(
-    #         datapresetting,
-    #         metamodelposttreatment,
-    #         metamodelvalidation,
-    #         degree_list,
-    #         training_amount,
-    #         createfigure,
-    #         savefigure,
-    #         xticks,
-    #         pixels,
-    #     )
 
         metamodel_validation_routine_kriging(
             datapresetting,
@@ -492,5 +484,17 @@ if __name__ == "__main__":
             xticks,
             pixels,
         )
-
-    plot_PDF_pce_kriging(metamodelposttreatment, 10, 0.8)
+        for degree in degree_list:        
+            metamodel_validation_routine_pce(
+            datapresetting,
+            metamodelposttreatment,
+            metamodelvalidation,
+            "PCE",
+            training_amount,
+            degree,
+            createfigure,
+            savefigure,
+            xticks,
+            pixels,
+        )
+            # plot_PDF_pce_kriging(metamodelposttreatment, degree, 0.8)

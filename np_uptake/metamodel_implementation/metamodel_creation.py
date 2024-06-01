@@ -45,7 +45,7 @@ class DataPreSetting:
         None
         """
 
-        self.filename = Path.cwd() / "metamodel_implementation" / filename
+        self.filename = Path.cwd() / "np_uptake" / "metamodel_implementation" / filename
         self.training_amount = training_amount
 
     def shuffle_dataset_from_datafile(self):

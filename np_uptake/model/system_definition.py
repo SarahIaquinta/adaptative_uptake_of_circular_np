@@ -649,7 +649,6 @@ class ParticleGeometry:
         squared_dpsi_list_region3 = [p ** 2 for p in dpsi3_list_region3]
         return squared_dpsi_list_region3
 
-
 class MembraneGeometry:
     """A class to represent the membrane object.
 
@@ -741,7 +740,6 @@ class MembraneGeometry:
         r2l = np.array([r2r[0] - r2r[s] for s in range(len(self.S2))])
         z2l = z2r
         return r2r, z2r, r2l, z2l
-
 
 class Wrapping:
     """A class to represent the wrapping of the particle.
