@@ -64,7 +64,6 @@ def read_data_for_phasediagram_from_datafile(filename):
                 sigma_bar_0_list_phase3.append(sigma_bar_0)
     return gamma_bar_0_list_phase1, gamma_bar_0_list_phase2, gamma_bar_0_list_phase3, sigma_bar_0_list_phase1, sigma_bar_0_list_phase2, sigma_bar_0_list_phase3
 
-
 def plot_phase_diagram(filename, createfigure, fonts, xticks, xticklabels, savefigure):
     gamma_bar_0_list_phase1, gamma_bar_0_list_phase2, gamma_bar_0_list_phase3, sigma_bar_0_list_phase1, sigma_bar_0_list_phase2, sigma_bar_0_list_phase3 = read_data_for_phasediagram_from_datafile(filename)
     fig = createfigure.square_figure_7(pixels=360)
@@ -123,6 +122,7 @@ if __name__ == "__main__":
     savefigure = fiu.SaveFigure()
     xticks = fiu.XTicks()
     xticklabels = fiu.XTickLabels()
-    # r_bar=1
+    r_bar=1
     # generate_phase_diagram_dataset(args, r_bar)
-    plot_phase_diagram("data_for_phase_diagram.txt", createfigure, fonts, xticks, xticklabels, savefigure)
+    datafile_for_phase_diagram = "data_for_phase_diagram_" + str(r_bar) + ".txt"
+    plot_phase_diagram(datafile_for_phase_diagram, createfigure, fonts, xticks, xticklabels, savefigure)
