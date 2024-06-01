@@ -12,8 +12,9 @@ python np_uptake/model/system_definition.py     --r_bar 0.3     --particle_perim
 ## Plot Figure 7.a. (Phase diagram)
 # Obs: It takes approximately 1 hour without parallelization to generate the data necessary for plotting the phase diagram. 
 # As such, the dataset is first generated and then stored in a text file to avoid generating the data again for plotting. 
-# The data used to plot Figure 7.a. is provided as "data_for_phase_diagram.txt".
-# The function necessary for generating this data is coded in the file np_uptake/model/phase_diagrams.py but it not called (line 122 is commented)
+# The data used to plot Figure 7.a. is provided as "data_for_phase_diagram_1.txt".
+# Note that in this case, the "1" after the underscore at the end of the filename stands for the NP's aspect ratio r_bar.
+# The function necessary for generating this data is coded in the file np_uptake/model/phase_diagrams.py but it not called (line 126 is commented)
 python np_uptake/model/phase_diagrams.py 
 
 ## Plot Figure 7.b. (Phase proportions in terms of r_bar)
