@@ -439,6 +439,22 @@ class ParticleGeometry:
         z_coordinate = compute_y_coordinate(theta) - compute_y_coordinate(beta_left)
         return z_coordinate
 
+    def compute_r_z_list(self, f):
+        _, _, theta_list_region1, theta_list_region3, _, _, _, _ = self.define_particle_geometry_variables(f)
+        r_list_region_1 = np.zeros_like(theta_list_region1)
+        z_list_region_1 = np.zeros_like(theta_list_region1)
+        r_list_region_3 = np.zeros_like(theta_list_region3)
+        z_list_region_3 = np.zeros_like(theta_list_region3)   
+        for i in range(len(theta_list_region1)):
+            theta1 = theta_list_region1[i]
+            r_list_region_1[i] = self.compute_r_coordinate(f, theta1)     
+            z_list_region_1[i] = self.compute_z_coordinate(f, theta1)     
+        for j in range(len(theta_list_region3)):
+            theta3 = theta_list_region3[j]
+            r_list_region_3[j] = self.compute_r_coordinate(f, theta3)     
+            z_list_region_3[j] = self.compute_z_coordinate(f, theta3)  
+        return  r_list_region_1, z_list_region_1, r_list_region_3, z_list_region_3
+
     @lru_cache(maxsize=10)
     def get_alpha_angle(self, f):
         """Computes the value of the alpha angle (see figure *), for a given wrapping degree f
@@ -751,8 +767,6 @@ class Wrapping:
 
         self.wrapping_list = wrapping_list
 
-
-
 def plot_gamma_ratio_article(
     wrapping,
     createfigure,
@@ -940,8 +954,6 @@ def plot_gamma_slope_article(
     print('tkz ok')
 
 
-
-
 if __name__ == "__main__":
     wrapping = Wrapping(wrapping_list=np.arange(0.03, 0.97, 0.003125))
     createfigure = CreateFigure()
@@ -960,13 +972,20 @@ if __name__ == "__main__":
         sigma_bar=args.sigma_bar_0,
     )
 
-    # mechanics.plot_gamma_bar_variation(wrapping, createfigure, savefigure, fonts)
-#     plot_gamma_ratio_article(
-#     wrapping,
-#     createfigure,
-#     savefigure,
-#     fonts, xticks, xticklabel
-# )
+    mechanics.plot_gamma_bar_variation(wrapping, createfigure, savefigure, fonts)
+    plot_gamma_ratio_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts, xticks, xticklabel
+)
+    
+    plot_gamma_ratio_article(
+    wrapping,
+    createfigure,
+    savefigure,
+    fonts, xticks, xticklabel
+)
     
     plot_gamma_slope_article(
     wrapping,

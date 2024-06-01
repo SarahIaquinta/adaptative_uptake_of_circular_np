@@ -600,6 +600,46 @@ def plot_energy_article(
     tikzplotlib.save(current_path/"DeltaE_vs_f_article_fig2a.tex")
     print('tkz ok')
 
+def plot_np_membrane_wrapping(f, particle, mechanics, membrane, wrapping, createfigure, fonts, savefigure):
+    r2r_list, z2r_list, r2l_list, z2l_list = membrane.compute_r2r_r2l_z2r_z2l_from_analytic_expression(f, particle, mechanics, wrapping)
+    r_list_region_1, z_list_region_1, r_list_region_3, z_list_region_3 = particle.compute_r_z_list(f)
+    fig = createfigure.rectangle_figure(pixels=360)
+    palette = sns.color_palette("Paired")
+    color_paired_dark_blue = palette[1]
+    color_paired_dark_red = palette[5]
+    ax = fig.gca()
+    ax.plot(r2r_list, z2r_list, '-', color=color_paired_dark_red, lw=2)
+    ax.plot(r2l_list, z2l_list, '-', color=color_paired_dark_red, lw=2)
+    ax.plot(r_list_region_1, z_list_region_1, '-', color=color_paired_dark_blue, lw=2)
+    ax.plot(r_list_region_3, z_list_region_3, '-k')
+    
+    ax.set_aspect("equal", adjustable="box")
+    ax.set_xticks([-10, 0, 10])
+    ax.set_xticklabels(
+        [-10, 0, 10],
+        font=fonts.serif_3horizontal(),
+        fontsize=24,
+    )
+    ax.set_yticks([-2, 0, 2, 4])
+    ax.set_yticklabels(
+        [-2, 0, 2, 4],
+        font=fonts.serif_3horizontal(),
+        fontsize=24,
+    )
+    ax.set_ylim((-3, 4.1))
+    ax.set_xlim((-10, 10))
+    ax.set_xlabel("r " + r"$( \times 100)$ [nm]", font=fonts.serif(), fontsize=24)
+    ax.set_ylabel("z " + r"$( \times 100)$ [nm]", font=fonts.serif(), fontsize=22)
+    ax.legend(prop=fonts.serif(), loc='lower right', framealpha=0.7)
+
+    savefigure.save_as_png(fig, "system_during_wrapping_fig_2b")
+    print('png ok')
+    tikzplotlib_fix_ncols(fig)
+    current_path = Path.cwd()
+    tikzplotlib.save(current_path/"system_during_wrapping_fig_2b.tex")
+    print('tkz ok')
+    
+
 def identify_wrapping_phase(particle, mechanics, membrane, wrapping, energy_computation):
     """Identifies the wrapping phase following the process introduced in [1]
 
@@ -762,18 +802,18 @@ if __name__ == "__main__":
 
     energy_computation = EnergyComputation()
 
-    # plot_energy(
-    #     particle,
-    #     mechanics,
-    #     membrane,
-    #     wrapping,
-    #     energy_computation,
-    #     createfigure,
-    #     fonts,
-    #     xticks,
-    #     xticklabels,
-    #     savefigure,
-    # )
+    plot_energy(
+        particle,
+        mechanics,
+        membrane,
+        wrapping,
+        energy_computation,
+        createfigure,
+        fonts,
+        xticks,
+        xticklabels,
+        savefigure,
+    )
     
     plot_energy_article(
         wrapping,
@@ -791,3 +831,6 @@ if __name__ == "__main__":
     print("wrapping degree at equilibrium = ", np.round(f_eq, 2))
     print("wrapping phase at equilibrium: ", wrapping_phase)
     print('time',time.time() - start)
+    
+    f = f_eq
+    plot_np_membrane_wrapping(f, particle, mechanics, membrane, wrapping, createfigure, fonts, savefigure)

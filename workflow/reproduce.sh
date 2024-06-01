@@ -1,10 +1,12 @@
 ## These commands should be executed from the root of the repository (one level above np_uptake folder)
 
-## Plot Figure 2.a. (Energy vs wrapping degree)
+## Plot Figures 2.a. (Energy vs wrapping degree) and 2.b.
+# The following command generated both Figures 2.a. and 2.b. 
+# More especially, the function plot_energy displays the evolution of the total
+# potential energy in terms of the wrapping degree f (Figure 2.a.) and 
+# the function plot_np_membrane_wrapping displays the NP-membrane system for 
+# a given wrapping degree f (Figure 2.b.)
 python np_uptake/model/cellular_uptake_rigid_particle.py     --r_bar 0.3     --particle_perimeter 6.28 --gamma_bar_r 1 --sigma_bar_0 2 --gamma_bar_0 6
-
-## Plot Figure 2.b. (NP-membrane system during wrapping)
-# TODO
 
 ## Plot Figures 5 (Evolution of gamma_bar in terms of the wrapping degree f)
 python np_uptake/model/system_definition.py     --r_bar 0.3     --particle_perimeter 6.28 --gamma_bar_r 2 --sigma_bar_0 2 --gamma_bar_0 1 --gamma_bar_fs 0 --gamma_bar_lambda 50

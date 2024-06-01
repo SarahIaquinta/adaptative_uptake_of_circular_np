@@ -8,6 +8,7 @@ import np_uptake.model.phase_diagrams as phdiag
 import tikzplotlib
 from np_uptake.figures.utils import tikzplotlib_fix_ncols
 from pathlib import Path
+
 def generate_phase_proportion_dataset(args):
     r_list_horizontal1 = list(np.arange(1, 3.02, 0.02))
     r_list_horizontal2 = list(np.linspace(3, 6, 11))
@@ -24,7 +25,6 @@ def generate_phase_proportion_dataset(args):
         proportion_phase2 = len(gamma_bar_0_list_phase1) / (len(gamma_bar_0_list_phase1) + len(gamma_bar_0_list_phase2) + len(gamma_bar_0_list_phase3))
         proportion_phase3 = 1 - (proportion_phase1 + proportion_phase2)
         f.write(str(args.gamma_bar_r) + "\t" + str(args.gamma_bar_fs) + "\t" + str(args.gamma_bar_lambda) + "\t" + str(r_bar) + "\t" + str(proportion_phase1) + "\t" + str(proportion_phase2)+ "\t" + str(proportion_phase3) + "\n")
-
 
 def read_data_for_phaseproportions_from_datafile(filename):
     with open(filename) as f:
@@ -68,7 +68,6 @@ def read_data_for_phaseproportions_from_datafile(filename):
         phase_proportions_vs_rbar_horizontal[i, 2] = proportion_phase2_horizontal_list[i]
         phase_proportions_vs_rbar_horizontal[i, 3] = proportion_phase3_horizontal_list[i]
     return phase_proportions_vs_rbar_vertical, phase_proportions_vs_rbar_horizontal
-
 
 def plot_phase_proportions_vs_rbar(filename, createfigure, fonts, savefigure):
     phase_proportions_vs_rbar_vertical, phase_proportions_vs_rbar_horizontal = read_data_for_phaseproportions_from_datafile(filename)
@@ -116,10 +115,4 @@ if __name__ == "__main__":
     # generate_phase_proportion_dataset(args)
     plot_phase_proportions_vs_rbar("data_for_phase_proportion_vs_r.txt", createfigure, fonts, savefigure)
     
-
-    
-    
-    
-        
-
         
