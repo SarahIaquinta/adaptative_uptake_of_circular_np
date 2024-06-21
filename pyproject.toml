@@ -14,7 +14,6 @@ packages = [{include = "np_uptake"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9.12,<3.13"
-
 matplotlib = "3.6"
 mpmath = "1.1.0"
 numpy = "1.22.3"
