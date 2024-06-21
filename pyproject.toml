@@ -24,3 +24,7 @@ setuptools = "49.2.1"
 tikzplotlib = "0.10.1"
 scikit-learn = "1.5.0"
 seaborn = "0.13.2"
+
+[build-system]
+requires = ["poetry-core", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
