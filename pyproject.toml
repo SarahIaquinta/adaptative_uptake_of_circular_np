@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "np_uptake"
+version = "0.1.0"
+description = "Package to create and validate surrogate model and to compute Sobol's sensitivity indices"
+authors = [
+"Sarah Iaquinta <sarah.r.iaquinta@gmail.com>"
+]
+readme = "README.md"
+license = "GPL"
+repository = "https://github.com/SarahIaquinta/adaptative_uptake_of_circular_np"
+packages = [{include = "np_uptake/figures"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9.12,<3.13"
+
+

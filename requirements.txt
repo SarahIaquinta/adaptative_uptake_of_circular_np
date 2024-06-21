@@ -1,7 +1,10 @@
-matplotlib==3.5.1
+matplotlib==3.6
 mpmath==1.1.0
 numpy==1.22.3
 openturns==1.19.post1
 Pillow==9.1.1
-scipy==1.7.0
+scipy==1.11.4
 setuptools==49.2.1
+tikzplotlib==0.10.1
+scikit-learn==1.5.0
+seaborn==0.13.2
