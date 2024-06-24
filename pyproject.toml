@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "np_uptake"
+version = "0.1.0"
+description = "Package to create and validate surrogate model and to compute Sobol's sensitivity indices"
+authors = [
+"Sarah Iaquinta <sarah.r.iaquinta@gmail.com>"
+]
+readme = "README.md"
+license = "GPL"
+homepage = "https://github.com/SarahIaquinta/adaptative_uptake_of_circular_np"
+repository = "https://github.com/SarahIaquinta/adaptative_uptake_of_circular_np"
+documentation = "https://github.com/SarahIaquinta/adaptative_uptake_of_circular_np"
+packages = [{include = "np_uptake"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9.12,<3.13"
+matplotlib = "3.5.1"
+mpmath = "1.1.0"
+numpy = "1.22.3"
+openturns = "1.19.post1"
+Pillow = "9.1.1"
+scipy = "1.11.4"
+setuptools = "49.2.1"
+tikzplotlib = "0.10.1"
+scikit-learn = "1.5.0"
+seaborn = "0.13.2"
+
+[build-system]
+requires = ["poetry-core", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
